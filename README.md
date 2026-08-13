@@ -7,6 +7,8 @@ Multi-strategy, regime-adaptive, risk-managed trading agent.
 - **Gold (XAUUSD)** — Golden Pullback (EMA 200/50 + Smart Money Concepts)
 - **Oil (USOIL)** — SMA Cluster Reclaim (100/200 + liquidity sweep)
 - **Forex (GBPUSD, EURUSD)** — Correlation Hedge (rolling spread z-score, paired mean-reversion)
+- **Gold (XAUUSD) scalping** — EMA Ribbon Momentum Scalp (EMA 5/13/50 + RSI filter), run by a
+  separate `ScalpingTradingAgent` on fast M1 candles — see below
 
 ## Risk management
 
@@ -69,3 +71,37 @@ export OANDA_API_KEY=...
 export OANDA_ACCOUNT_ID=...
 python run_loop.py
 ```
+
+## Running the scalping agent (PAPER mode, Gold/XAUUSD)
+
+`run_scalp_loop.py` runs a separate `ScalpingTradingAgent` (in
+`scalping_agent.py`) dedicated to fast, short-timeframe scalping on XAUUSD.
+It's a standalone process from `run_loop.py`, with its own OANDA candle
+granularity, poll interval, risk settings, and state file, so it can poll
+much faster (M1 candles, default every 60s) without changing the swing
+strategies' M15/300s cadence.
+
+Strategy: **EMA Ribbon Momentum Scalp** — enters on a fresh EMA 5/EMA 13
+crossover in the direction of the EMA 50 slope, filtered by RSI to avoid
+chasing an already-exhausted move, with a tight ATR-based stop/target (0.6x
+/ 1.0x ATR) sized for a quick in-and-out trade rather than a multi-bar swing.
+
+Environment variables (all optional, shown with defaults):
+- `SCALP_GRANULARITY` (`M1`), `SCALP_POLL_INTERVAL_SECONDS` (`60`)
+- `SCALP_ACCOUNT_EQUITY` (`150000`), `SCALP_RISK_PER_TRADE` (`0.0025`, i.e.
+  0.25% — smaller than the swing agent's 1% given the higher trade
+  frequency), `SCALP_DAILY_LOSS_LIMIT` (`0.03`, i.e. 3%)
+- `SCALP_STATE_FILE` (`scalp_state.json`)
+
+It reuses `OANDA_API_KEY`, `OANDA_ACCOUNT_ID`, and `OANDA_ENV` from the main
+setup. Always runs in `TradingMode.PAPER` — no real orders are placed.
+
+```bash
+export OANDA_API_KEY=...
+export OANDA_ACCOUNT_ID=...
+python run_scalp_loop.py
+```
+
+On Railway, deploy this as a second service pointed at the same repo/branch,
+using the `scalper` process type from `Procfile` (the existing swing
+strategies keep running as the `worker` process type in their own service).
