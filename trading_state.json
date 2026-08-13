@@ -1,6 +1,6 @@
 {
-  "account_equity": 149841.4050659519,
-  "daily_pnl": -158.5949340481145,
+  "account_equity": 99997.7957,
+  "daily_pnl": 0.0,
   "positions": {},
   "trades": [
     {
@@ -27,5 +27,7 @@
       "pnl_percent": 0.10604925728440054,
       "strategy": "GBPUSD"
     }
-  ]
+  ],
+  "oanda_trade_ids": {},
+  "oanda_initial_balance": 99997.7957
 }
