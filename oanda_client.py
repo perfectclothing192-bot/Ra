@@ -8,7 +8,8 @@ Requires environment variables:
 """
 
 import os
-from datetime import datetime
+import time
+from datetime import datetime, timezone
 from typing import List
 
 import requests
@@ -34,6 +35,43 @@ def _headers() -> dict:
     return {"Authorization": f"Bearer {api_key}"}
 
 
+def _get_with_retry(url: str, params: dict, headers: dict, timeout: int = 15,
+                     max_retries: int = 3, backoff_base: float = 2.0) -> requests.Response:
+    """GET with retry/backoff for transient failures (network errors, rate limits, 5xx),
+    so a single blip doesn't fail a whole poll cycle when polling frequently."""
+    last_exc = None
+    for attempt in range(max_retries + 1):
+        try:
+            response = requests.get(url, params=params, headers=headers, timeout=timeout)
+            if response.status_code == 429 or response.status_code >= 500:
+                response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException as exc:
+            last_exc = exc
+            if attempt == max_retries:
+                break
+            time.sleep(backoff_base * (2 ** attempt))
+    raise last_exc
+
+
+def is_market_closed(now: datetime = None) -> bool:
+    """
+    Approximate check for the FX/Gold weekend closure: OANDA halts trading
+    from Friday ~21:00 UTC to Sunday ~21:00 UTC. This is an approximation of
+    the real boundary (5pm US Eastern, which shifts with US DST) but is
+    close enough to avoid polling into the weekend gap.
+    """
+    now = now or datetime.now(timezone.utc)
+    weekday = now.weekday()  # Monday=0 ... Sunday=6
+    if weekday == 5:  # Saturday: closed all day
+        return True
+    if weekday == 4 and now.hour >= 21:  # Friday after close
+        return True
+    if weekday == 6 and now.hour < 21:  # Sunday before reopen
+        return True
+    return False
+
+
 def fetch_candles(asset: str, granularity: str = "M15", count: int = 250) -> List[PriceBar]:
     """Fetch the most recent completed candles for an asset."""
     instrument = ASSET_TO_OANDA_INSTRUMENT.get(asset)
@@ -42,7 +80,7 @@ def fetch_candles(asset: str, granularity: str = "M15", count: int = 250) -> Lis
 
     url = f"{BASE_URL}/v3/instruments/{instrument}/candles"
     params = {"granularity": granularity, "count": count, "price": "M"}
-    response = requests.get(url, params=params, headers=_headers(), timeout=15)
+    response = _get_with_retry(url, params, _headers())
     response.raise_for_status()
     data = response.json()
 
@@ -73,7 +111,7 @@ def fetch_current_price(asset: str) -> float:
 
     url = f"{BASE_URL}/v3/accounts/{account_id}/pricing"
     params = {"instruments": instrument}
-    response = requests.get(url, params=params, headers=_headers(), timeout=15)
+    response = _get_with_retry(url, params, _headers())
     response.raise_for_status()
     prices = response.json().get("prices", [])
     if not prices:
