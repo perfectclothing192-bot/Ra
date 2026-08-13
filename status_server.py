@@ -14,11 +14,21 @@ _state_lock = threading.Lock()
 _state = {}
 
 
-def serialize_positions(positions: dict) -> dict:
-    return {
-        asset: {**asdict(pos), "entry_time": pos.entry_time.isoformat()}
-        for asset, pos in positions.items()
-    }
+def serialize_positions(positions: dict, current_prices: dict = None) -> dict:
+    current_prices = current_prices or {}
+    result = {}
+    for asset, pos in positions.items():
+        entry = {**asdict(pos), "entry_time": pos.entry_time.isoformat()}
+        price = current_prices.get(asset)
+        if price:
+            direction_multiplier = 1 if pos.direction == "LONG" else -1
+            entry["current_price"] = price
+            entry["unrealized_pnl"] = (price - pos.entry_price) * pos.quantity * direction_multiplier
+            entry["unrealized_pnl_percent"] = (
+                (price - pos.entry_price) / pos.entry_price * 100 * direction_multiplier
+            )
+        result[asset] = entry
+    return result
 
 
 def serialize_trades(trades: list, limit: int = 20) -> list:

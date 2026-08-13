@@ -58,6 +58,7 @@ def poll_once(agent):
             current_prices[asset] = bars[-1].close
 
     agent.update_positions(current_prices)
+    agent.last_prices = current_prices
 
     for asset, strategy_method in STRATEGIES.items():
         bars = agent.price_history.get(asset, [])
@@ -121,6 +122,8 @@ def run_once():
 
 
 def publish_status(agent, events):
+    positions = serialize_positions(agent.positions, getattr(agent, "last_prices", None))
+    unrealized_pnl = sum(p.get("unrealized_pnl", 0) for p in positions.values())
     update_status(
         agent_name="swing",
         assets=list(STRATEGIES.keys()) + list(CORRELATION_PAIR),
@@ -129,7 +132,8 @@ def publish_status(agent, events):
         mode=agent.mode.value,
         account_equity=agent.account_equity,
         daily_pnl=agent.daily_pnl,
-        positions=serialize_positions(agent.positions),
+        unrealized_pnl=unrealized_pnl,
+        positions=positions,
         recent_trades=serialize_trades(agent.trades),
         last_events=events,
     )

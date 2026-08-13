@@ -63,6 +63,7 @@ def poll_once(agent):
 
     if current_price is not None:
         agent.update_positions({ASSET: current_price})
+    agent.last_prices = {ASSET: current_price} if current_price is not None else {}
 
     if len(bars) < MIN_BARS:
         agent.logger.info(f"{ASSET}: waiting for more history ({len(bars)}/{MIN_BARS} bars)")
@@ -106,6 +107,8 @@ def run_once():
 
 
 def publish_status(agent, events):
+    positions = serialize_positions(agent.positions, getattr(agent, "last_prices", None))
+    unrealized_pnl = sum(p.get("unrealized_pnl", 0) for p in positions.values())
     update_status(
         agent_name="scalper",
         asset=ASSET,
@@ -115,7 +118,8 @@ def publish_status(agent, events):
         mode=agent.mode.value,
         account_equity=agent.account_equity,
         daily_pnl=agent.daily_pnl,
-        positions=serialize_positions(agent.positions),
+        unrealized_pnl=unrealized_pnl,
+        positions=positions,
         recent_trades=serialize_trades(agent.trades),
         last_events=events,
     )
