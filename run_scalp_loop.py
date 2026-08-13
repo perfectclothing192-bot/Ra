@@ -6,6 +6,12 @@ Runs as its own process, separate from run_loop.py (which covers the swing
 strategies), because scalping needs a much faster candle granularity and
 poll interval than the M15/300s swing setup.
 
+Built to stay up unattended: OANDA API calls retry with backoff on transient
+network/rate-limit/5xx errors (see oanda_client._get_with_retry), a failed
+poll cycle is caught and logged rather than crashing the process (see
+run_once/run_continuous below), and polling is skipped cleanly over the
+weekend FX/Gold market closure instead of erroring every cycle.
+
 Two run modes:
 - Continuous (default): a long-lived worker process that polls every
   SCALP_POLL_INTERVAL_SECONDS forever.
@@ -30,7 +36,7 @@ import time
 
 from scalping_agent import ScalpingTradingAgent
 from trading_agent import TradingMode
-from oanda_client import fetch_candles
+from oanda_client import fetch_candles, is_market_closed
 from state_io import save_state, load_state
 
 POLL_INTERVAL_SECONDS = int(os.environ.get("SCALP_POLL_INTERVAL_SECONDS", "60"))
@@ -44,6 +50,12 @@ MIN_BARS = 55
 def poll_once(agent):
     """Run a single poll/evaluate/execute cycle. Returns a list of event dicts."""
     events = []
+
+    if is_market_closed():
+        agent.logger.info(f"{ASSET}: market closed (weekend) - skipping poll")
+        events.append({"asset": ASSET, "status": "market_closed"})
+        return events
+
     bars = fetch_candles(ASSET, granularity=GRANULARITY, count=250)
     agent.price_history[ASSET] = bars
     current_price = bars[-1].close if bars else None

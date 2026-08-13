@@ -96,6 +96,12 @@ Environment variables (all optional, shown with defaults):
 It reuses `OANDA_API_KEY`, `OANDA_ACCOUNT_ID`, and `OANDA_ENV` from the main
 setup. Always runs in `TradingMode.PAPER` — no real orders are placed.
 
+Built to stay up unattended for continuous 24/7 operation: OANDA requests
+retry with backoff on transient network/rate-limit/server errors, a failed
+poll cycle is logged and skipped rather than crashing the process, and
+polling is skipped cleanly over the weekend FX/Gold market closure instead
+of erroring every cycle.
+
 ```bash
 export OANDA_API_KEY=...
 export OANDA_ACCOUNT_ID=...
