@@ -150,6 +150,13 @@ class AdvancedTradingAgent:
         self.daily_pnl = 0.0
         self.max_daily_loss = account_equity * daily_loss_limit
 
+        # Graduated drawdown protection: risk-per-trade scales down as equity
+        # falls below its peak, instead of only the all-or-nothing daily-loss
+        # circuit breaker above.
+        self.peak_equity = account_equity
+        self.drawdown_risk_threshold = 0.10  # start scaling down past 10% drawdown
+        self.drawdown_risk_scale = 0.5       # halve risk while in that drawdown
+
         # Market data cache
         self.price_history: Dict[str, List[PriceBar]] = {
             "XAUUSD": [],
@@ -445,8 +452,13 @@ class AdvancedTradingAgent:
             self.logger.warning(f"Daily loss limit reached. Halting new positions.")
             return 0
 
-        # Risk amount
-        risk_amount = self.account_equity * self.risk_per_trade
+        # Risk amount, scaled down under drawdown
+        self.peak_equity = max(self.peak_equity, self.account_equity)
+        drawdown = (self.peak_equity - self.account_equity) / self.peak_equity if self.peak_equity else 0
+        risk_scale = self.drawdown_risk_scale if drawdown > self.drawdown_risk_threshold else 1.0
+        if risk_scale < 1.0:
+            self.logger.warning(f"Drawdown {drawdown:.1%} past {self.drawdown_risk_threshold:.0%} threshold - risk scaled to {risk_scale:.0%}")
+        risk_amount = self.account_equity * self.risk_per_trade * risk_scale
 
         # Position size based on stop loss
         stop_distance = abs(signal.entry_price - signal.stop_loss)

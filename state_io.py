@@ -15,6 +15,7 @@ def save_state(agent: AdvancedTradingAgent, path: str):
     state = {
         "account_equity": agent.account_equity,
         "daily_pnl": agent.daily_pnl,
+        "peak_equity": agent.peak_equity,
         "positions": {
             asset: {**asdict(pos), "entry_time": pos.entry_time.isoformat()}
             for asset, pos in agent.positions.items()
@@ -41,6 +42,7 @@ def load_state(agent: AdvancedTradingAgent, path: str):
 
     agent.account_equity = state.get("account_equity", agent.account_equity)
     agent.daily_pnl = state.get("daily_pnl", agent.daily_pnl)
+    agent.peak_equity = state.get("peak_equity", max(agent.peak_equity, agent.account_equity))
 
     agent.positions = {}
     for asset, pos in state.get("positions", {}).items():
