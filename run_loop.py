@@ -29,6 +29,10 @@ STRATEGIES = {
     "USOIL": "sma_cluster_signal",
 }
 
+# Paired strategy: GBPUSD/EURUSD are traded together via correlation_hedge_signal.
+CORRELATION_PAIR = ("GBPUSD", "EURUSD")
+CORRELATION_LOOKBACK = 51
+
 
 def run():
     agent = AdvancedTradingAgent(
@@ -63,6 +67,28 @@ def run():
                 agent.logger.info(f"{asset}: price={price} | signal={signal.direction} ({signal.strategy})")
                 if signal.direction != "HOLD":
                     agent.execute_signal(signal)
+
+            gbp_asset, eur_asset = CORRELATION_PAIR
+            gbp_bars = agent.price_history.get(gbp_asset, [])
+            eur_bars = agent.price_history.get(eur_asset, [])
+            if len(gbp_bars) < CORRELATION_LOOKBACK or len(eur_bars) < CORRELATION_LOOKBACK:
+                agent.logger.info(
+                    f"{gbp_asset}/{eur_asset}: waiting for more history "
+                    f"({len(gbp_bars)}/{CORRELATION_LOOKBACK}, {len(eur_bars)}/{CORRELATION_LOOKBACK} bars)"
+                )
+            elif gbp_asset in agent.positions or eur_asset in agent.positions:
+                agent.logger.info(f"{gbp_asset}/{eur_asset}: position open on one leg, skipping signal check")
+            else:
+                gbp_signal, eur_signal = agent.correlation_hedge_signal(gbp_bars, eur_bars)
+                agent.logger.info(
+                    f"{gbp_asset}: price={current_prices.get(gbp_asset)} | signal={gbp_signal.direction} (correlation_hedge)"
+                )
+                agent.logger.info(
+                    f"{eur_asset}: price={current_prices.get(eur_asset)} | signal={eur_signal.direction} (correlation_hedge)"
+                )
+                if gbp_signal.direction != "HOLD" and eur_signal.direction != "HOLD":
+                    agent.execute_signal(gbp_signal)
+                    agent.execute_signal(eur_signal)
 
         except Exception as e:
             agent.logger.error(f"Loop iteration error: {e}")

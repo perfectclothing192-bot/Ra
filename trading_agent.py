@@ -287,6 +287,101 @@ class AdvancedTradingAgent:
         return Signal("USOIL", "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "sma_cluster", 0, datetime.now())
 
     # ============================================
+    # STRATEGY 3: CORRELATION HEDGE (FOREX)
+    # ============================================
+
+    def correlation_hedge_signal(self, gbp_bars: List[PriceBar], eur_bars: List[PriceBar]) -> Tuple[Signal, Signal]:
+        """
+        Correlation Hedge Strategy for GBPUSD / EURUSD
+
+        Rules:
+        1. GBPUSD and EURUSD are normally positively correlated (both quote USD
+           as the counter currency, so both tend to move together on USD strength
+           or weakness).
+        2. Track the rolling z-score of their cumulative-return spread over a
+           lookback window.
+        3. When the spread stretches beyond +/-2 std devs while the rolling
+           correlation stays strong (>0.5), treat it as a temporary dislocation:
+           BUY the laggard, SELL the leader, betting on reconvergence.
+        4. If the correlation itself has broken down (<0.5), stand aside on both
+           legs - the historical relationship no longer holds, so a spread trade
+           has no edge.
+
+        Always returns a signal for both legs together (never one without the
+        other), since this is a paired hedge, not two independent trades.
+        """
+        hold_pair = (
+            Signal("GBPUSD", "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "correlation_hedge", 0, datetime.now()),
+            Signal("EURUSD", "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "correlation_hedge", 0, datetime.now()),
+        )
+
+        lookback = 50
+        if len(gbp_bars) < lookback + 1 or len(eur_bars) < lookback + 1:
+            return hold_pair
+
+        gbp_closes = np.array([b.close for b in gbp_bars[-(lookback + 1):]])
+        eur_closes = np.array([b.close for b in eur_bars[-(lookback + 1):]])
+
+        gbp_returns = np.diff(gbp_closes) / gbp_closes[:-1]
+        eur_returns = np.diff(eur_closes) / eur_closes[:-1]
+
+        correlation = np.corrcoef(gbp_returns, eur_returns)[0, 1]
+        if np.isnan(correlation) or correlation < 0.5:
+            return hold_pair
+
+        spread = np.cumsum(gbp_returns) - np.cumsum(eur_returns)
+        spread_std = np.std(spread)
+        if spread_std == 0:
+            return hold_pair
+
+        z_score = (spread[-1] - np.mean(spread)) / spread_std
+        if abs(z_score) < 2.0:
+            return hold_pair
+
+        gbp_atr = self._atr(gbp_bars, 14)[-1]
+        eur_atr = self._atr(eur_bars, 14)[-1]
+        gbp_price = gbp_closes[-1]
+        eur_price = eur_closes[-1]
+
+        strength = SignalStrength.STRONG if abs(z_score) > 2.5 else SignalStrength.MEDIUM
+        confidence = min(0.5 + abs(z_score) * 0.1, 0.9)
+        risk_reward = 2.0 / 1.5
+
+        # z_score > 0: GBP has outrun EUR -> fade GBP (SELL), buy the laggard EUR
+        # z_score < 0: EUR has outrun GBP -> fade EUR (SELL), buy the laggard GBP
+        gbp_direction = "SELL" if z_score > 0 else "BUY"
+        eur_direction = "BUY" if z_score > 0 else "SELL"
+        gbp_sl_sign = 1 if gbp_direction == "SELL" else -1
+        eur_sl_sign = 1 if eur_direction == "SELL" else -1
+
+        gbp_signal = Signal(
+            asset="GBPUSD",
+            direction=gbp_direction,
+            strength=strength,
+            entry_price=gbp_price,
+            stop_loss=gbp_price + gbp_sl_sign * gbp_atr * 1.5,
+            take_profit=gbp_price - gbp_sl_sign * gbp_atr * 2.0,
+            risk_reward_ratio=risk_reward,
+            strategy="correlation_hedge",
+            confidence=confidence,
+            timestamp=datetime.now()
+        )
+        eur_signal = Signal(
+            asset="EURUSD",
+            direction=eur_direction,
+            strength=strength,
+            entry_price=eur_price,
+            stop_loss=eur_price + eur_sl_sign * eur_atr * 1.5,
+            take_profit=eur_price - eur_sl_sign * eur_atr * 2.0,
+            risk_reward_ratio=risk_reward,
+            strategy="correlation_hedge",
+            confidence=confidence,
+            timestamp=datetime.now()
+        )
+
+        return gbp_signal, eur_signal
+
+    # ============================================
     # MARKET REGIME DETECTION
     # ============================================
 

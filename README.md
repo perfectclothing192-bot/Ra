@@ -6,7 +6,7 @@ Multi-strategy, regime-adaptive, risk-managed trading agent.
 
 - **Gold (XAUUSD)** — Golden Pullback (EMA 200/50 + Smart Money Concepts)
 - **Oil (USOIL)** — SMA Cluster Reclaim (100/200 + liquidity sweep)
-- **Forex (GBPUSD, EURUSD)** — correlation hedge (planned)
+- **Forex (GBPUSD, EURUSD)** — Correlation Hedge (rolling spread z-score, paired mean-reversion)
 
 ## Risk management
 
@@ -32,9 +32,10 @@ pointing at your execution webhook before switching `mode` to `TradingMode.LIVE`
 ## Running continuously (PAPER mode, OANDA price data)
 
 `run_loop.py` polls [OANDA](https://developer.oanda.com/rest-live-v20/introduction/)
-for candle data and feeds it to the agent's implemented strategies
-(Golden Pullback on XAUUSD, SMA Cluster Reclaim on USOIL) on a timer. It
-always runs the agent in `TradingMode.PAPER` — no real orders are placed.
+for candle data and feeds it to the agent's implemented strategies (Golden
+Pullback on XAUUSD, SMA Cluster Reclaim on USOIL, Correlation Hedge on the
+GBPUSD/EURUSD pair) on a timer. It always runs the agent in
+`TradingMode.PAPER` — no real orders are placed.
 
 ### 1. Get an OANDA practice account and API key
 
