@@ -1,5 +1,5 @@
 """
-OANDA v20 REST API client for price data.
+OANDA v20 REST API client for price data and order execution.
 
 Requires environment variables:
 - OANDA_API_KEY: personal access token (generate in OANDA account settings)
@@ -60,6 +60,73 @@ def fetch_candles(asset: str, granularity: str = "M15", count: int = 250) -> Lis
             volume=int(candle.get("volume", 0)),
         ))
     return bars
+
+
+def get_account_summary() -> dict:
+    """Fetch account balance, currency, and margin info."""
+    account_id = os.environ.get("OANDA_ACCOUNT_ID")
+    if not account_id:
+        raise RuntimeError("OANDA_ACCOUNT_ID not configured")
+    url = f"{BASE_URL}/v3/accounts/{account_id}/summary"
+    response = requests.get(url, headers=_headers(), timeout=15)
+    response.raise_for_status()
+    return response.json()["account"]
+
+
+def place_market_order(asset: str, units: int, stop_loss_price: float = None, take_profit_price: float = None) -> dict:
+    """
+    Place a real market order on the OANDA account (practice or live, per OANDA_ENV).
+    units: positive = buy/long, negative = sell/short.
+    Returns the orderFillTransaction dict, which includes tradeOpened.tradeID.
+    """
+    account_id = os.environ.get("OANDA_ACCOUNT_ID")
+    if not account_id:
+        raise RuntimeError("OANDA_ACCOUNT_ID not configured")
+    instrument = ASSET_TO_OANDA_INSTRUMENT.get(asset)
+    if not instrument:
+        raise ValueError(f"No OANDA instrument mapping for asset '{asset}'")
+
+    order = {
+        "type": "MARKET",
+        "instrument": instrument,
+        "units": str(units),
+        "timeInForce": "FOK",
+        "positionFill": "DEFAULT",
+    }
+    if stop_loss_price is not None:
+        order["stopLossOnFill"] = {"price": f"{stop_loss_price:.5f}"}
+    if take_profit_price is not None:
+        order["takeProfitOnFill"] = {"price": f"{take_profit_price:.5f}"}
+
+    url = f"{BASE_URL}/v3/accounts/{account_id}/orders"
+    response = requests.post(url, headers=_headers(), json={"order": order}, timeout=15)
+    response.raise_for_status()
+    data = response.json()
+    if "orderFillTransaction" not in data:
+        raise RuntimeError(f"Order for {asset} did not fill: {data}")
+    return data["orderFillTransaction"]
+
+
+def get_open_trades() -> list:
+    """List currently open trades on the account."""
+    account_id = os.environ.get("OANDA_ACCOUNT_ID")
+    if not account_id:
+        raise RuntimeError("OANDA_ACCOUNT_ID not configured")
+    url = f"{BASE_URL}/v3/accounts/{account_id}/openTrades"
+    response = requests.get(url, headers=_headers(), timeout=15)
+    response.raise_for_status()
+    return response.json()["trades"]
+
+
+def get_trade(trade_id: str) -> dict:
+    """Fetch a single trade's current details (works for open or closed trades)."""
+    account_id = os.environ.get("OANDA_ACCOUNT_ID")
+    if not account_id:
+        raise RuntimeError("OANDA_ACCOUNT_ID not configured")
+    url = f"{BASE_URL}/v3/accounts/{account_id}/trades/{trade_id}"
+    response = requests.get(url, headers=_headers(), timeout=15)
+    response.raise_for_status()
+    return response.json()["trade"]
 
 
 def fetch_current_price(asset: str) -> float:

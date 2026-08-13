@@ -27,6 +27,10 @@ def save_state(agent: AdvancedTradingAgent, path: str):
             }
             for t in agent.trades
         ],
+        # Maps asset -> OANDA tradeID, for positions actually placed on OANDA.
+        # Not part of the core agent model; only meaningful to the OANDA-mirroring loop.
+        "oanda_trade_ids": getattr(agent, "oanda_trade_ids", {}),
+        "oanda_initial_balance": getattr(agent, "oanda_initial_balance", None),
     }
     with open(path, "w") as f:
         json.dump(state, f, indent=2)
@@ -54,3 +58,6 @@ def load_state(agent: AdvancedTradingAgent, path: str):
         t["entry_time"] = datetime.fromisoformat(t["entry_time"])
         t["exit_time"] = datetime.fromisoformat(t["exit_time"])
         agent.trades.append(Trade(**t))
+
+    agent.oanda_trade_ids = state.get("oanda_trade_ids", {})
+    agent.oanda_initial_balance = state.get("oanda_initial_balance")
