@@ -27,6 +27,16 @@ ASSET_TO_OANDA_INSTRUMENT = {
     "EURUSD": "EUR_USD",
 }
 
+# OANDA rejects orders whose price fields exceed the instrument's allowed
+# decimal precision (displayPrecision). Metals/commodities allow far fewer
+# decimals than FX majors.
+ASSET_PRICE_PRECISION = {
+    "XAUUSD": 3,
+    "USOIL": 3,
+    "GBPUSD": 5,
+    "EURUSD": 5,
+}
+
 
 def _headers() -> dict:
     api_key = os.environ.get("OANDA_API_KEY")
@@ -106,6 +116,8 @@ def place_market_order(asset: str, units: float, stop_loss: float = None, take_p
     if not instrument:
         raise ValueError(f"No OANDA instrument mapping for asset '{asset}'")
 
+    precision = ASSET_PRICE_PRECISION.get(asset, 5)
+
     order = {
         "type": "MARKET",
         "instrument": instrument,
@@ -114,9 +126,9 @@ def place_market_order(asset: str, units: float, stop_loss: float = None, take_p
         "positionFill": "DEFAULT",
     }
     if stop_loss:
-        order["stopLossOnFill"] = {"price": f"{stop_loss:.5f}"}
+        order["stopLossOnFill"] = {"price": f"{stop_loss:.{precision}f}"}
     if take_profit:
-        order["takeProfitOnFill"] = {"price": f"{take_profit:.5f}"}
+        order["takeProfitOnFill"] = {"price": f"{take_profit:.{precision}f}"}
 
     url = f"{BASE_URL}/v3/accounts/{account_id}/orders"
     response = _post_with_retry(url, {"order": order}, _headers())
