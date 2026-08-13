@@ -30,6 +30,7 @@ import time
 from trading_agent import AdvancedTradingAgent, TradingMode
 from oanda_client import fetch_candles, ASSET_TO_OANDA_INSTRUMENT
 from state_io import save_state, load_state
+from status_server import start_status_server, update_status, serialize_positions, serialize_trades
 
 POLL_INTERVAL_SECONDS = int(os.environ.get("POLL_INTERVAL_SECONDS", "300"))
 GRANULARITY = os.environ.get("OANDA_GRANULARITY", "M15")
@@ -119,14 +120,37 @@ def run_once():
     return events
 
 
+def publish_status(agent, events):
+    update_status(
+        agent_name="swing",
+        assets=list(STRATEGIES.keys()) + list(CORRELATION_PAIR),
+        granularity=GRANULARITY,
+        poll_interval_seconds=POLL_INTERVAL_SECONDS,
+        mode=agent.mode.value,
+        account_equity=agent.account_equity,
+        daily_pnl=agent.daily_pnl,
+        positions=serialize_positions(agent.positions),
+        recent_trades=serialize_trades(agent.trades),
+        last_events=events,
+    )
+
+
 def run_continuous():
     agent = build_agent()
     agent.logger.info(f"Starting PAPER trading loop | poll every {POLL_INTERVAL_SECONDS}s | granularity {GRANULARITY}")
+
+    port = os.environ.get("PORT")
+    if port:
+        start_status_server(int(port))
+        agent.logger.info(f"Status endpoint listening on :{port}/status")
+
     while True:
         try:
-            poll_once(agent)
+            events = poll_once(agent)
         except Exception as e:
             agent.logger.error(f"Loop iteration error: {e}")
+            events = [{"error": str(e)}]
+        publish_status(agent, events)
         save_state(agent, STATE_FILE)
         time.sleep(POLL_INTERVAL_SECONDS)
 
