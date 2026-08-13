@@ -1,6 +1,29 @@
 {
   "account_equity": 150000.0,
   "daily_pnl": 0.0,
-  "positions": {},
+  "positions": {
+    "GBPUSD": {
+      "asset": "GBPUSD",
+      "direction": "LONG",
+      "entry_price": 1.34843,
+      "entry_time": "2026-08-13T07:33:51.312451",
+      "quantity": 963590.9500479779,
+      "stop_loss": 1.3476516614322056,
+      "take_profit": 1.3494677847570593,
+      "risk_amount": 1500.0,
+      "position_id": "GBPUSD_1786606431.312452"
+    },
+    "EURUSD": {
+      "asset": "EURUSD",
+      "direction": "SHORT",
+      "entry_price": 1.15216,
+      "entry_time": "2026-08-13T07:33:51.312541",
+      "quantity": 1600552.0756427124,
+      "stop_loss": 1.1526285883148781,
+      "take_profit": 1.1515352155801628,
+      "risk_amount": 1500.0,
+      "position_id": "EURUSD_1786606431.312542"
+    }
+  },
   "trades": []
 }
