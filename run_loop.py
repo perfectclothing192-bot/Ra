@@ -55,9 +55,12 @@ def run():
                 if len(bars) < 200:
                     agent.logger.info(f"{asset}: waiting for more history ({len(bars)}/200 bars)")
                     continue
+                price = current_prices.get(asset)
                 if asset in agent.positions:
+                    agent.logger.info(f"{asset}: price={price} | position open, skipping signal check")
                     continue
                 signal = getattr(agent, strategy_method)(bars)
+                agent.logger.info(f"{asset}: price={price} | signal={signal.direction} ({signal.strategy})")
                 if signal.direction != "HOLD":
                     agent.execute_signal(signal)
 
