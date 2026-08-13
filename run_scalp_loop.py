@@ -25,8 +25,16 @@ Environment variables:
 - SCALP_GRANULARITY: OANDA candle granularity (default M1)
 - SCALP_ACCOUNT_EQUITY, SCALP_RISK_PER_TRADE, SCALP_DAILY_LOSS_LIMIT: agent risk settings
 - SCALP_STATE_FILE: path to persist agent state across invocations (default scalp_state.json)
+- OANDA_EXECUTE: "true" to also place real market orders on the configured
+  OANDA account for every signal (default "false" - the agent's own PAPER
+  simulation below always runs regardless)
+- OANDA_MIRROR_SCALE: fraction of the internally-computed position size
+  actually sent to OANDA when OANDA_EXECUTE is on (default 0.01)
 
-This loop always runs the agent in PAPER mode. No real orders are placed.
+This loop always runs the agent's own simulation in PAPER mode - no real
+orders from that simulation itself. Separately, when OANDA_EXECUTE=true, it
+also places real orders on the OANDA account configured via OANDA_ACCOUNT_ID
+(safe on a practice account, real money on a live one).
 """
 
 import argparse
@@ -36,7 +44,7 @@ import time
 
 from scalping_agent import ScalpingTradingAgent
 from trading_agent import TradingMode
-from oanda_client import fetch_candles, is_market_closed
+from oanda_client import fetch_candles, place_market_order, is_market_closed
 from state_io import save_state, load_state
 from status_server import start_status_server, update_status, serialize_positions, serialize_trades
 
@@ -46,6 +54,30 @@ STATE_FILE = os.environ.get("SCALP_STATE_FILE", "scalp_state.json")
 
 ASSET = "XAUUSD"
 MIN_BARS = 55
+
+# When enabled, every signal this loop acts on is also placed as a real market
+# order on the configured OANDA account (practice or live, per OANDA_ENV), so
+# trades are visible in the OANDA platform itself - independent of, and not
+# necessarily identical to, this app's own internal PAPER simulation below
+# (which drives the dashboard/status endpoint from its own simulated fills).
+OANDA_EXECUTE = os.environ.get("OANDA_EXECUTE", "false").lower() == "true"
+# Fraction of the internally-computed position size actually sent to OANDA,
+# to keep order size sane on an account sized independently of SCALP_ACCOUNT_EQUITY.
+OANDA_MIRROR_SCALE = float(os.environ.get("OANDA_MIRROR_SCALE", "0.01"))
+
+
+def mirror_to_oanda(agent, position):
+    if not OANDA_EXECUTE or position is None:
+        return
+    units = max(1, round(position.quantity * OANDA_MIRROR_SCALE))
+    if position.direction == "SHORT":
+        units = -units
+    try:
+        result = place_market_order(position.asset, units, stop_loss=position.stop_loss, take_profit=position.take_profit)
+        fill = result.get("orderFillTransaction", {})
+        agent.logger.info(f"[OANDA] {position.asset} order filled: {units} units | tradeID={fill.get('id')}")
+    except Exception as e:
+        agent.logger.error(f"[OANDA] {position.asset} order failed: {e}")
 
 
 def poll_once(agent):
@@ -79,7 +111,8 @@ def poll_once(agent):
     agent.logger.info(f"{ASSET}: price={current_price} | signal={signal.direction} ({signal.strategy})")
     events.append({"asset": ASSET, "price": current_price, "signal": signal.direction, "strategy": signal.strategy})
     if signal.direction != "HOLD":
-        agent.execute_signal(signal)
+        position = agent.execute_signal(signal)
+        mirror_to_oanda(agent, position)
 
     return events
 

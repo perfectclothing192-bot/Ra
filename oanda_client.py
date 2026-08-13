@@ -72,6 +72,60 @@ def is_market_closed(now: datetime = None) -> bool:
     return False
 
 
+def _post_with_retry(url: str, json_body: dict, headers: dict, timeout: int = 15,
+                      max_retries: int = 3, backoff_base: float = 2.0) -> requests.Response:
+    """POST with retry/backoff for transient failures (network errors, rate limits, 5xx)."""
+    last_exc = None
+    for attempt in range(max_retries + 1):
+        try:
+            response = requests.post(url, json=json_body, headers=headers, timeout=timeout)
+            if response.status_code == 429 or response.status_code >= 500:
+                response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException as exc:
+            last_exc = exc
+            if attempt == max_retries:
+                break
+            time.sleep(backoff_base * (2 ** attempt))
+    raise last_exc
+
+
+def place_market_order(asset: str, units: float, stop_loss: float = None, take_profit: float = None) -> dict:
+    """
+    Place a real market order against the configured OANDA account (practice
+    or live, per OANDA_ENV). This actually executes on OANDA's platform - on
+    a practice account that's still risk-free, but it's a genuinely different
+    thing from this app's own internal PAPER simulation (which drives the
+    dashboard/status endpoint): the two track independently and won't match
+    exactly, since fill price/timing come from OANDA's own execution.
+    """
+    account_id = os.environ.get("OANDA_ACCOUNT_ID")
+    if not account_id:
+        raise RuntimeError("OANDA_ACCOUNT_ID not configured")
+    instrument = ASSET_TO_OANDA_INSTRUMENT.get(asset)
+    if not instrument:
+        raise ValueError(f"No OANDA instrument mapping for asset '{asset}'")
+
+    order = {
+        "type": "MARKET",
+        "instrument": instrument,
+        "units": str(int(round(units))),
+        "timeInForce": "FOK",
+        "positionFill": "DEFAULT",
+    }
+    if stop_loss:
+        order["stopLossOnFill"] = {"price": f"{stop_loss:.5f}"}
+    if take_profit:
+        order["takeProfitOnFill"] = {"price": f"{take_profit:.5f}"}
+
+    url = f"{BASE_URL}/v3/accounts/{account_id}/orders"
+    response = _post_with_retry(url, {"order": order}, _headers())
+    body = response.json()
+    if response.status_code >= 400:
+        raise RuntimeError(f"OANDA order rejected: {body}")
+    return body
+
+
 def fetch_candles(asset: str, granularity: str = "M15", count: int = 250) -> List[PriceBar]:
     """Fetch the most recent completed candles for an asset."""
     instrument = ASSET_TO_OANDA_INSTRUMENT.get(asset)
