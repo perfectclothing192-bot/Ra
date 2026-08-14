@@ -134,6 +134,7 @@ class AdvancedTradingAgent:
                  account_equity: float = 150000,
                  risk_per_trade: float = 0.01,  # 1%
                  daily_loss_limit: float = 0.05,  # 5%
+                 min_equity_pct: float = 0.5,  # halt if equity falls below this fraction of where it started
                  ig_api_key: str = None,
                  ig_username: str = None):
 
@@ -141,6 +142,8 @@ class AdvancedTradingAgent:
         self.account_equity = account_equity
         self.risk_per_trade = risk_per_trade
         self.daily_loss_limit = daily_loss_limit
+        self.min_equity_pct = min_equity_pct
+        self.initial_equity = account_equity
         self.ig_api_key = ig_api_key
         self.ig_username = ig_username
 
@@ -475,9 +478,14 @@ class AdvancedTradingAgent:
             self.logger.error(f"CIRCUIT BREAKER: Daily loss limit hit. No new trades.")
             return True
 
-        # Equity protection
-        if self.account_equity < 100000:
-            self.logger.error(f"CIRCUIT BREAKER: Account below minimum. No new trades.")
+        # Equity protection - halt if equity has fallen meaningfully below
+        # where this agent started, rather than an arbitrary fixed number.
+        equity_floor = self.initial_equity * self.min_equity_pct
+        if self.account_equity < equity_floor:
+            self.logger.error(
+                f"CIRCUIT BREAKER: Equity ${self.account_equity:,.2f} below floor "
+                f"${equity_floor:,.2f} ({self.min_equity_pct:.0%} of starting ${self.initial_equity:,.2f}). No new trades."
+            )
             return True
 
         return False

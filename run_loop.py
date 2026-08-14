@@ -75,6 +75,9 @@ def sync_oanda_state(agent):
         agent.oanda_initial_balance = balance
     agent.account_equity = balance
     agent.daily_pnl = balance - agent.oanda_initial_balance
+    # Circuit breaker's equity floor should be relative to the real OANDA
+    # starting balance, not the agent's constructor default.
+    agent.initial_equity = agent.oanda_initial_balance
 
     for asset, trade_id in list(agent.oanda_trade_ids.items()):
         trade = get_trade(trade_id)
@@ -204,6 +207,7 @@ def build_agent():
         account_equity=float(os.environ.get("ACCOUNT_EQUITY", "150000")),
         risk_per_trade=float(os.environ.get("RISK_PER_TRADE", "0.05")),
         daily_loss_limit=float(os.environ.get("DAILY_LOSS_LIMIT", "0.05")),
+        min_equity_pct=float(os.environ.get("MIN_EQUITY_PCT", "0.5")),
     )
     agent.oanda_trade_ids = {}
     agent.oanda_initial_balance = None
