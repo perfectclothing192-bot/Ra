@@ -385,6 +385,115 @@ class AdvancedTradingAgent:
         return gbp_signal, eur_signal
 
     # ============================================
+    # STRATEGY 4: SMART MONEY CONCEPTS (GOLD)
+    # ============================================
+
+    def smc_signal(self, bars: List[PriceBar]) -> Signal:
+        """
+        Smart Money Concepts strategy for XAUUSD (liquidity sweep + break of structure).
+
+        Rules:
+        1. Track swing highs/lows via a simple fractal: a bar is a swing
+           point if its high (or low) is the most extreme among the 3 bars
+           on each side.
+        2. Liquidity sweep: the latest bar's low pierces below the most
+           recent confirmed swing low, then closes back above it - price
+           ran the resting stop-loss liquidity below that low and rejected
+           (the mirror image applies to the bearish case, using swing highs).
+        3. Break of structure: that same bar's close also breaks above the
+           swing high that preceded the swept low, confirming a genuine
+           structure shift rather than just a wick into the level.
+        4. Entry on the confirming close. Stop beyond the sweep's extreme
+           wick, target at 2x the stop distance.
+
+        This intentionally does not fire on every pullback - a sweep
+        without a structure break, or a structure break without a prior
+        sweep, is not enough on its own.
+        """
+        hold = Signal("XAUUSD", "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "smc", 0, datetime.now())
+
+        fractal = 3
+        if len(bars) < 80:
+            return hold
+
+        highs = np.array([b.high for b in bars])
+        lows = np.array([b.low for b in bars])
+        closes = np.array([b.close for b in bars])
+        n = len(bars)
+
+        swing_low_idxs = [
+            i for i in range(fractal, n - fractal)
+            if lows[i] == min(lows[i - fractal:i + fractal + 1])
+        ]
+        swing_high_idxs = [
+            i for i in range(fractal, n - fractal)
+            if highs[i] == max(highs[i - fractal:i + fractal + 1])
+        ]
+
+        if not swing_low_idxs or not swing_high_idxs:
+            return hold
+
+        current_close = closes[-1]
+        current_low = lows[-1]
+        current_high = highs[-1]
+        atr = self._atr(bars, 14)[-1]
+
+        # Bullish: most recent confirmed swing low got swept and reclaimed,
+        # and price also broke back above the swing high that preceded it.
+        last_swing_low_idx = swing_low_idxs[-1]
+        last_swing_low = lows[last_swing_low_idx]
+        prior_swing_highs = [h for h in swing_high_idxs if h < last_swing_low_idx]
+
+        if prior_swing_highs:
+            structure_high = highs[prior_swing_highs[-1]]
+            swept_low = current_low < last_swing_low and current_close > last_swing_low
+            broke_structure = current_close > structure_high
+            if swept_low and broke_structure:
+                entry_price = current_close
+                stop_loss = current_low - atr * 0.3
+                take_profit = entry_price + (entry_price - stop_loss) * 2.0
+                return Signal(
+                    asset="XAUUSD",
+                    direction="BUY",
+                    strength=SignalStrength.STRONG,
+                    entry_price=entry_price,
+                    stop_loss=stop_loss,
+                    take_profit=take_profit,
+                    risk_reward_ratio=2.0,
+                    strategy="smc",
+                    confidence=0.78,
+                    timestamp=datetime.now()
+                )
+
+        # Bearish: mirror image, using swing highs.
+        last_swing_high_idx = swing_high_idxs[-1]
+        last_swing_high = highs[last_swing_high_idx]
+        prior_swing_lows = [l for l in swing_low_idxs if l < last_swing_high_idx]
+
+        if prior_swing_lows:
+            structure_low = lows[prior_swing_lows[-1]]
+            swept_high = current_high > last_swing_high and current_close < last_swing_high
+            broke_structure = current_close < structure_low
+            if swept_high and broke_structure:
+                entry_price = current_close
+                stop_loss = current_high + atr * 0.3
+                take_profit = entry_price - (stop_loss - entry_price) * 2.0
+                return Signal(
+                    asset="XAUUSD",
+                    direction="SELL",
+                    strength=SignalStrength.STRONG,
+                    entry_price=entry_price,
+                    stop_loss=stop_loss,
+                    take_profit=take_profit,
+                    risk_reward_ratio=2.0,
+                    strategy="smc",
+                    confidence=0.78,
+                    timestamp=datetime.now()
+                )
+
+        return hold
+
+    # ============================================
     # MARKET REGIME DETECTION
     # ============================================
 

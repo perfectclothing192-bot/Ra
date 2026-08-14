@@ -53,9 +53,11 @@ GRANULARITY = os.environ.get("OANDA_GRANULARITY", "M15")
 STATE_FILE = os.environ.get("STATE_FILE", "trading_state.json")
 
 # Only assets with an implemented strategy are traded automatically.
+# XAUUSD checks each strategy in order and takes the first non-HOLD signal,
+# so Golden Pullback and SMC never fight over the same position.
 STRATEGIES = {
-    "XAUUSD": "golden_pullback_signal",
-    "USOIL": "sma_cluster_signal",
+    "XAUUSD": ["golden_pullback_signal", "smc_signal"],
+    "USOIL": ["sma_cluster_signal"],
 }
 
 # Paired strategy: GBPUSD/EURUSD are traded together via correlation_hedge_signal.
@@ -154,7 +156,7 @@ def poll_once(agent):
         if bars:
             current_prices[asset] = bars[-1].close
 
-    for asset, strategy_method in STRATEGIES.items():
+    for asset, strategy_methods in STRATEGIES.items():
         bars = agent.price_history.get(asset, [])
         if len(bars) < 200:
             agent.logger.info(f"{asset}: waiting for more history ({len(bars)}/200 bars)")
@@ -165,7 +167,11 @@ def poll_once(agent):
             agent.logger.info(f"{asset}: price={price} | position open on OANDA, skipping signal check")
             events.append({"asset": asset, "price": price, "status": "position_open"})
             continue
-        signal = getattr(agent, strategy_method)(bars)
+        signal = None
+        for method_name in strategy_methods:
+            signal = getattr(agent, method_name)(bars)
+            if signal.direction != "HOLD":
+                break
         agent.logger.info(f"{asset}: price={price} | signal={signal.direction} ({signal.strategy})")
         events.append({"asset": asset, "price": price, "signal": signal.direction, "strategy": signal.strategy})
         if signal.direction != "HOLD":
