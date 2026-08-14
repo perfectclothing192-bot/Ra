@@ -111,3 +111,51 @@ python run_scalp_loop.py
 On Railway, deploy this as a second service pointed at the same repo/branch,
 using the `scalper` process type from `Procfile` (the existing swing
 strategies keep running as the `worker` process type in their own service).
+
+## Shopify marketing agent (Perfect Store)
+
+`shopify_agent.py` is a separate, unrelated agent in this repo: a marketing
+automation agent for the Perfect Store Shopify shop, built from
+`COMPLETE_AUTOMATION_SETUP_GUIDE.md` / `READY_TO_COPY_CONTENT_LIBRARY.md`.
+It plays the same "Zapier" role that guide assigns to Zapier - mirroring new
+Shopify customers, orders, and abandoned checkouts into Klaviyo lists/events
+so Klaviyo's flows fire - plus creates the store's discount codes.
+
+- `shopify_client.py` — Shopify Admin API (orders, customers, abandoned
+  checkouts, discount codes)
+- `klaviyo_client.py` — Klaviyo API (profiles, lists, events, email templates)
+- `content_library.py` — the email copy and discount codes from the guide, as data
+- `shopify_agent.py` — `ShopifyMarketingAgent`: `bootstrap()` (discount codes +
+  Klaviyo lists/templates) and `run_cycle()` (the per-poll sync)
+- `run_shopify_loop.py` — drives the agent, same `--once`/continuous pattern as `run_loop.py`
+
+**What it does not do:** build the Klaviyo flows themselves (trigger -> wait
+-> send steps) - Klaviyo's flow canvas has no practical REST equivalent, so
+wiring each flow to fire on "added to list X" using the templates this
+agent creates is a one-time manual step in the Klaviyo UI. Everything after
+that (who lands on which list, when) is automatic.
+
+### Setup
+
+1. In Shopify Admin, create a custom app with Admin API scopes
+   `read_orders`, `read_customers`, `read_checkouts`, `write_price_rules`,
+   `write_discounts`, and install it to get an access token.
+2. In Klaviyo, create a private API key (Settings -> API Keys).
+3. Set environment variables:
+   - `SHOPIFY_STORE_DOMAIN` (e.g. `perfectstore12345.myshopify.com`)
+   - `SHOPIFY_ACCESS_TOKEN`
+   - `KLAVIYO_API_KEY`
+   - Optional: `SHOPIFY_API_VERSION` (default `2024-10`), `KLAVIYO_API_REVISION`
+     (default `2024-10-15`), `POLL_INTERVAL_SECONDS` (default `900`),
+     `REENGAGEMENT_DAYS` (default `30`), `STATE_FILE` (default `shopify_state.json`)
+4. Run the one-time bootstrap: `python run_shopify_loop.py --bootstrap`.
+   This creates the `WELCOME15`/`WELCOME20`/`COMEBACK15`/`COMEBACK25`/`BUNDLE20`
+   discount codes in Shopify and the 4 Klaviyo lists + 11 email templates.
+5. In Klaviyo, build the 4 flows (Welcome, Abandoned Cart, Post-Purchase,
+   Re-engagement), each triggered by "added to list" on the matching list,
+   using the templates just created and the `delay_hours` in
+   `content_library.py` for the wait steps.
+6. Run the sync loop: `python run_shopify_loop.py` (continuous) or
+   `python run_shopify_loop.py --once` (single cycle, for external
+   scheduling). On Railway, deploy as a third service using the `shopify`
+   process type from `Procfile`.
