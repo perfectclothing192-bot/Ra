@@ -53,10 +53,12 @@ GRANULARITY = os.environ.get("OANDA_GRANULARITY", "M15")
 STATE_FILE = os.environ.get("STATE_FILE", "trading_state.json")
 
 # Only assets with an implemented strategy are traded automatically.
-# XAUUSD checks each strategy in order and takes the first non-HOLD signal,
-# so Golden Pullback and SMC never fight over the same position.
+# Golden Pullback was pulled from live trading after a 1-year backtest
+# showed -77.7R over 324 trades (17% win rate) - see the strategy
+# comparison report from 2026-08-14. The method still exists in
+# trading_agent.py for reference; it's just no longer invoked here.
 STRATEGIES = {
-    "XAUUSD": ["golden_pullback_signal", "smc_signal"],
+    "XAUUSD": ["smc_signal"],
     "USOIL": ["sma_cluster_signal"],
 }
 
