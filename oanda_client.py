@@ -24,6 +24,7 @@ ASSET_TO_OANDA_INSTRUMENT = {
     "USOIL": "WTICO_USD",
     "GBPUSD": "GBP_USD",
     "EURUSD": "EUR_USD",
+    "BTCUSD": "BTC_USD",
 }
 
 

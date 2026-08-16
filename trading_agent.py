@@ -158,7 +158,8 @@ class AdvancedTradingAgent:
             "XAUUSD": [],
             "USOIL": [],
             "GBPUSD": [],
-            "EURUSD": []
+            "EURUSD": [],
+            "BTCUSD": []
         }
 
         # Logging
@@ -490,6 +491,94 @@ class AdvancedTradingAgent:
                     confidence=0.78,
                     timestamp=datetime.now()
                 )
+
+        return hold
+
+    # ============================================
+    # STRATEGY 5: VOLATILITY BREAKOUT (BITCOIN)
+    # ============================================
+
+    def volatility_breakout_signal(self, bars: List[PriceBar]) -> Signal:
+        """
+        Volatility Breakout strategy for BTCUSD.
+
+        Crypto behaves differently enough from forex/gold/oil that reusing
+        a mean-reversion-flavored strategy here would be a mismatch: BTC
+        trends tend to extend hard once genuinely underway, and "buying
+        the dip" during a real breakdown is a common way to get run over.
+        This is deliberately a momentum/breakout design instead:
+
+        1. Track a rolling 20-bar Donchian channel (highest high / lowest
+           low over the prior 20 bars, excluding the current one).
+        2. Require volatility to actually be expanding first: current ATR
+           must exceed its own 20-bar average by 30%. A channel breakout
+           during a quiet, illiquid stretch is much more likely to be
+           noise than the start of a real move - this filter is what
+           keeps the strategy from firing on every minor wiggle.
+        3. Entry: the current bar's close breaks above the channel high
+           (bullish) or below the channel low (bearish), with volatility
+           already expanding.
+        4. Stop: 1.5x ATR from entry. Target: 3x ATR (2:1 reward-to-risk)
+           - wide enough to let a genuine trend run rather than clip it
+           at the first pullback, which is the whole point of trading
+           breakouts on an asset this momentum-driven.
+        """
+        hold = Signal("BTCUSD", "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "volatility_breakout", 0, datetime.now())
+
+        channel = 20
+        if len(bars) < channel + 21:
+            return hold
+
+        highs = np.array([b.high for b in bars])
+        lows = np.array([b.low for b in bars])
+        closes = np.array([b.close for b in bars])
+
+        atr_series = self._atr(bars, 14)
+        if len(atr_series) < 21:
+            return hold
+        current_atr = atr_series[-1]
+        avg_atr = np.mean(atr_series[-21:-1])
+
+        if avg_atr == 0 or current_atr < avg_atr * 1.3:
+            return hold
+
+        channel_high = np.max(highs[-(channel + 1):-1])
+        channel_low = np.min(lows[-(channel + 1):-1])
+        current_close = closes[-1]
+
+        if current_close > channel_high:
+            entry_price = current_close
+            stop_loss = entry_price - current_atr * 1.5
+            take_profit = entry_price + current_atr * 3.0
+            return Signal(
+                asset="BTCUSD",
+                direction="BUY",
+                strength=SignalStrength.STRONG,
+                entry_price=entry_price,
+                stop_loss=stop_loss,
+                take_profit=take_profit,
+                risk_reward_ratio=2.0,
+                strategy="volatility_breakout",
+                confidence=0.72,
+                timestamp=datetime.now()
+            )
+
+        if current_close < channel_low:
+            entry_price = current_close
+            stop_loss = entry_price + current_atr * 1.5
+            take_profit = entry_price - current_atr * 3.0
+            return Signal(
+                asset="BTCUSD",
+                direction="SELL",
+                strength=SignalStrength.STRONG,
+                entry_price=entry_price,
+                stop_loss=stop_loss,
+                take_profit=take_profit,
+                risk_reward_ratio=2.0,
+                strategy="volatility_breakout",
+                confidence=0.72,
+                timestamp=datetime.now()
+            )
 
         return hold
 
