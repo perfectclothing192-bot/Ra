@@ -52,6 +52,15 @@ POLL_INTERVAL_SECONDS = int(os.environ.get("POLL_INTERVAL_SECONDS", "300"))
 GRANULARITY = os.environ.get("OANDA_GRANULARITY", "M15")
 STATE_FILE = os.environ.get("STATE_FILE", "trading_state.json")
 
+# Per-asset granularity overrides. XAUUSD/SMC backtested notably better on
+# M5 (90-day: 55.6% win rate, +18R, PF 2.50) than M15 (1yr: 38.6%, +9R,
+# PF 1.26) - see the M5-vs-M15 comparison from 2026-08-17. Everything else
+# stays on the default GRANULARITY, since SMA Cluster and Correlation
+# Hedge both backtested worse on M5.
+ASSET_GRANULARITY = {
+    "XAUUSD": "M5",
+}
+
 # Only assets with an implemented strategy are traded automatically.
 # Golden Pullback was pulled from live trading after a 1-year backtest
 # showed -77.7R over 324 trades (17% win rate) - see the strategy
@@ -153,7 +162,8 @@ def poll_once(agent):
 
     current_prices = {}
     for asset in ASSET_TO_OANDA_INSTRUMENT:
-        bars = fetch_candles(asset, granularity=GRANULARITY, count=250)
+        granularity = ASSET_GRANULARITY.get(asset, GRANULARITY)
+        bars = fetch_candles(asset, granularity=granularity, count=250)
         agent.price_history[asset] = bars
         if bars:
             current_prices[asset] = bars[-1].close
