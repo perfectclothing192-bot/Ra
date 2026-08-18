@@ -583,6 +583,96 @@ class AdvancedTradingAgent:
         return hold
 
     # ============================================
+    # STRATEGY 6: JESSE LIVERMORE PIVOTAL POINT
+    # ============================================
+
+    def jesse_livermore_signal(self, bars: List[PriceBar], asset: str = "XAUUSD") -> Signal:
+        """
+        Jesse Livermore-style Pivotal Point strategy, adapted from
+        "Reminiscences of a Stock Operator": trade only with the line of
+        least resistance, and enter at pivotal points rather than dips.
+
+        1. Primary trend ("line of least resistance") is SMA 50 vs SMA
+           200 - only longs are considered in an uptrend, only shorts in
+           a downtrend. Livermore's biggest losses came from fighting the
+           tape; this filter exists to prevent that outright.
+        2. A pivotal point is the highest high / lowest low of the prior
+           20 bars (excluding the current one) - the edge of the base the
+           market has been building. A close beyond it, in the direction
+           of the primary trend, is the breakout he bought (or sold).
+        3. Stop sits just beyond the most recent 10-bar minor swing point
+           opposite the breakout, plus a small ATR buffer - true to "cut
+           losses quickly." Target is 3x that risk - true to "let your
+           winners run," the other half of the same discipline.
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "jesse_livermore", 0, datetime.now())
+
+        pivot_window = 20
+        swing_window = 10
+        trend_window = 200
+        if len(bars) < trend_window + 1:
+            return hold
+
+        highs = np.array([b.high for b in bars])
+        lows = np.array([b.low for b in bars])
+        closes = np.array([b.close for b in bars])
+
+        sma_50 = self._sma(closes, 50)[-1]
+        sma_200 = self._sma(closes, 200)[-1]
+        atr = self._atr(bars, 14)[-1]
+        current_close = closes[-1]
+
+        pivot_high = np.max(highs[-(pivot_window + 1):-1])
+        pivot_low = np.min(lows[-(pivot_window + 1):-1])
+        recent_low = np.min(lows[-(swing_window + 1):-1])
+        recent_high = np.max(highs[-(swing_window + 1):-1])
+
+        uptrend = sma_50 > sma_200
+        downtrend = sma_50 < sma_200
+
+        if uptrend and current_close > pivot_high:
+            entry_price = current_close
+            stop_loss = recent_low - atr * 0.3
+            risk = entry_price - stop_loss
+            if risk <= 0:
+                return hold
+            take_profit = entry_price + risk * 3.0
+            return Signal(
+                asset=asset,
+                direction="BUY",
+                strength=SignalStrength.STRONG,
+                entry_price=entry_price,
+                stop_loss=stop_loss,
+                take_profit=take_profit,
+                risk_reward_ratio=3.0,
+                strategy="jesse_livermore",
+                confidence=0.75,
+                timestamp=datetime.now()
+            )
+
+        if downtrend and current_close < pivot_low:
+            entry_price = current_close
+            stop_loss = recent_high + atr * 0.3
+            risk = stop_loss - entry_price
+            if risk <= 0:
+                return hold
+            take_profit = entry_price - risk * 3.0
+            return Signal(
+                asset=asset,
+                direction="SELL",
+                strength=SignalStrength.STRONG,
+                entry_price=entry_price,
+                stop_loss=stop_loss,
+                take_profit=take_profit,
+                risk_reward_ratio=3.0,
+                strategy="jesse_livermore",
+                confidence=0.75,
+                timestamp=datetime.now()
+            )
+
+        return hold
+
+    # ============================================
     # MARKET REGIME DETECTION
     # ============================================
 
