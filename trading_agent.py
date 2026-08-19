@@ -129,6 +129,18 @@ class AdvancedTradingAgent:
     - Professional Risk Management
     """
 
+    # Per-strategy risk override. correlation_hedge's stops are only a
+    # handful of pips on GBP/EUR, so risk_per_trade's normal 5% translates
+    # into a position size millions of units large - far more notional
+    # than OANDA's 30:1 margin rate (~3.33%) can support on this account
+    # (a single leg alone needs ~$116k margin against a ~$100k account).
+    # 1% matches the level that actually filled on Aug 13, before risk was
+    # raised to 5% for the other strategies, which have wider stops
+    # relative to their instruments and don't hit this ceiling.
+    STRATEGY_RISK_OVERRIDE = {
+        "correlation_hedge": 0.01,
+    }
+
     def __init__(self,
                  mode: TradingMode = TradingMode.PAPER,
                  account_equity: float = 150000,
@@ -736,8 +748,10 @@ class AdvancedTradingAgent:
             self.logger.warning(f"Daily loss limit reached. Halting new positions.")
             return 0
 
-        # Risk amount
-        risk_amount = self.account_equity * self.risk_per_trade
+        # Risk amount (per-strategy override for strategies whose stops
+        # are too tight for the standard risk_per_trade to be marginable)
+        risk_pct = self.STRATEGY_RISK_OVERRIDE.get(signal.strategy, self.risk_per_trade)
+        risk_amount = self.account_equity * risk_pct
 
         # Position size based on stop loss
         stop_distance = abs(signal.entry_price - signal.stop_loss)
