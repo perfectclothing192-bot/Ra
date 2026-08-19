@@ -1,19 +1,7 @@
 {
-  "account_equity": 99359.1161,
-  "daily_pnl": -638.6796000000031,
-  "positions": {
-    "EURUSD": {
-      "asset": "EURUSD",
-      "direction": "SHORT",
-      "entry_price": 1.16066,
-      "entry_time": "2026-08-19T11:11:50.486522",
-      "quantity": 744494.2366261461,
-      "stop_loss": 1.1613308217793106,
-      "take_profit": 1.1597655709609191,
-      "risk_amount": 4994.229485,
-      "position_id": "EURUSD_1787137910.486523"
-    }
-  },
+  "account_equity": 98290.1852,
+  "daily_pnl": -1707.6104999999952,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -50,10 +38,20 @@
       "pnl": -525.4736,
       "pnl_percent": -0.528862997805996,
       "strategy": "GBPUSD"
+    },
+    {
+      "asset": "EURUSD",
+      "entry_price": 1.16066,
+      "exit_price": 1.16135,
+      "direction": "SHORT",
+      "quantity": 744494.2366261461,
+      "entry_time": "2026-08-19T11:11:50.486522",
+      "exit_time": "2026-08-19T12:34:44.547315",
+      "pnl": -1082.27,
+      "pnl_percent": -1.101096714588345,
+      "strategy": "EURUSD"
     }
   ],
-  "oanda_trade_ids": {
-    "EURUSD": "476"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957
 }
