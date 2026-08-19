@@ -44,7 +44,8 @@ from oanda_client import (
     ASSET_TO_OANDA_INSTRUMENT,
     get_account_summary,
     place_market_order,
-    get_trade,
+    get_open_trades,
+    get_trade_close_info,
 )
 from state_io import save_state, load_state
 
@@ -92,14 +93,17 @@ def sync_oanda_state(agent):
     # starting balance, not the agent's constructor default.
     agent.initial_equity = agent.oanda_initial_balance
 
+    open_trade_ids = {t["id"] for t in get_open_trades()}
     for asset, trade_id in list(agent.oanda_trade_ids.items()):
-        trade = get_trade(trade_id)
-        if trade["state"] == "CLOSED":
+        if trade_id in open_trade_ids:
+            continue
+        close_info = get_trade_close_info(trade_id)
+        if close_info is not None:
             position = agent.positions.pop(asset, None)
             del agent.oanda_trade_ids[asset]
             if position is not None:
-                exit_price = float(trade["averageClosePrice"])
-                realized_pl = float(trade["realizedPL"])
+                exit_price = close_info["exit_price"]
+                realized_pl = close_info["realized_pl"]
                 agent.trades.append(Trade(
                     asset=asset,
                     entry_price=position.entry_price,

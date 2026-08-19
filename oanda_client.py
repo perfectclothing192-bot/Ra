@@ -119,6 +119,39 @@ def get_open_trades() -> list:
     return response.json()["trades"]
 
 
+def get_trade_close_info(trade_id: str, lookback: int = 300) -> dict:
+    """
+    Find the exit price and realized P&L for a trade that's no longer
+    open, by scanning recent transaction history for the fill that
+    closed it.
+
+    Needed because this OANDA practice environment doesn't keep closed
+    trades queryable the documented way - GET /trades/{id} 404s and
+    GET /trades?state=CLOSED returns empty immediately after a trade
+    closes, rather than returning the trade with state=CLOSED. The
+    transaction log is the one place the close details reliably persist.
+
+    Returns None if no closing fill for this trade is found within the
+    lookback window (still open, or genuinely not found).
+    """
+    account_id = os.environ.get("OANDA_ACCOUNT_ID")
+    if not account_id:
+        raise RuntimeError("OANDA_ACCOUNT_ID not configured")
+    summary = get_account_summary()
+    last_id = int(summary["lastTransactionID"])
+    from_id = max(1, last_id - lookback)
+    url = f"{BASE_URL}/v3/accounts/{account_id}/transactions/idrange"
+    response = requests.get(url, headers=_headers(), params={"from": from_id, "to": last_id}, timeout=15)
+    response.raise_for_status()
+    for txn in response.json().get("transactions", []):
+        if txn.get("type") != "ORDER_FILL":
+            continue
+        for closed in txn.get("tradesClosed", []):
+            if closed.get("tradeID") == str(trade_id):
+                return {"exit_price": float(txn["price"]), "realized_pl": float(closed["realizedPL"])}
+    return None
+
+
 def get_trade(trade_id: str) -> dict:
     """Fetch a single trade's current details (works for open or closed trades)."""
     account_id = os.environ.get("OANDA_ACCOUNT_ID")
