@@ -1,28 +1,28 @@
 {
-  "account_equity": 97122.8262,
-  "daily_pnl": -2874.9695000000065,
+  "account_equity": 96984.1447,
+  "daily_pnl": -3013.650999999998,
   "positions": {
     "GBPUSD": {
       "asset": "GBPUSD",
       "direction": "SHORT",
-      "entry_price": 1.36445,
-      "entry_time": "2026-08-20T11:11:44.260461",
-      "quantity": 425819.2056400722,
-      "stop_loss": 1.3655907562307337,
-      "take_profit": 1.362928991692355,
-      "risk_amount": 4857.559120000001,
-      "position_id": "GBPUSD_1787224304.260462"
+      "entry_price": 1.3632,
+      "entry_time": "2026-08-20T12:11:56.256390",
+      "quantity": 401152.8736433097,
+      "stop_loss": 1.3644088177733737,
+      "take_profit": 1.3615882429688348,
+      "risk_amount": 4849.207235000001,
+      "position_id": "GBPUSD_1787227916.256391"
     },
     "EURUSD": {
       "asset": "EURUSD",
       "direction": "LONG",
-      "entry_price": 1.1697,
-      "entry_time": "2026-08-20T11:11:44.260573",
-      "quantity": 515097.07972301956,
-      "stop_loss": 1.1687569624035508,
-      "take_profit": 1.170957383461932,
-      "risk_amount": 4857.559120000001,
-      "position_id": "EURUSD_1787224304.260575"
+      "entry_price": 1.16846,
+      "entry_time": "2026-08-20T12:11:56.256519",
+      "quantity": 490418.0527899053,
+      "stop_loss": 1.1674712094757904,
+      "take_profit": 1.169778387365613,
+      "risk_amount": 4849.207235000001,
+      "position_id": "EURUSD_1787227916.25652"
     }
   },
   "trades": [
@@ -145,11 +145,35 @@
       "pnl": -580.5765,
       "pnl_percent": -0.5976010642974943,
       "strategy": "EURUSD"
+    },
+    {
+      "asset": "GBPUSD",
+      "entry_price": 1.36445,
+      "exit_price": 1.36292,
+      "direction": "SHORT",
+      "quantity": 425819.2056400722,
+      "entry_time": "2026-08-20T11:11:44.260461",
+      "exit_time": "2026-08-20T12:11:51.305660",
+      "pnl": 177.9539,
+      "pnl_percent": 0.18348762114721212,
+      "strategy": "GBPUSD"
+    },
+    {
+      "asset": "EURUSD",
+      "entry_price": 1.1697,
+      "exit_price": 1.16874,
+      "direction": "LONG",
+      "quantity": 515097.07972301956,
+      "entry_time": "2026-08-20T11:11:44.260573",
+      "exit_time": "2026-08-20T12:11:52.474148",
+      "pnl": -307.0819,
+      "pnl_percent": -0.31663103381474683,
+      "strategy": "EURUSD"
     }
   ],
   "oanda_trade_ids": {
-    "GBPUSD": "563",
-    "EURUSD": "567"
+    "GBPUSD": "587",
+    "EURUSD": "591"
   },
   "oanda_initial_balance": 99997.7957
 }
