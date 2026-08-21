@@ -33,6 +33,22 @@ ASSET_TO_OANDA_INSTRUMENT = {
     "BTCUSD": "BTC_USD",
 }
 
+# Each OANDA instrument only accepts prices at its own tick precision
+# (GET /instruments' displayPrecision) - stopLossOnFill/takeProfitOnFill
+# get rejected with *_PRICE_PRECISION_EXCEEDED if given more decimal
+# places than this. Forex pairs happen to be 5, which is why formatting
+# every order at a blanket 5 decimals worked by luck for GBP/EUR but
+# silently would have failed the first time gold or oil produced a stop/
+# target price with a non-zero digit past the 3rd decimal (as happened
+# 2026-08-21 with the first Jesse Livermore XAUUSD_M15 signal).
+INSTRUMENT_PRICE_PRECISION = {
+    "XAU_USD": 3,
+    "WTICO_USD": 3,
+    "EUR_USD": 5,
+    "GBP_USD": 5,
+    "BTC_USD": 1,
+}
+
 
 def _headers() -> dict:
     api_key = os.environ.get("OANDA_API_KEY")
@@ -93,6 +109,7 @@ def place_market_order(asset: str, units: int, stop_loss_price: float = None, ta
     if not instrument:
         raise ValueError(f"No OANDA instrument mapping for asset '{asset}'")
 
+    precision = INSTRUMENT_PRICE_PRECISION.get(instrument, 5)
     order = {
         "type": "MARKET",
         "instrument": instrument,
@@ -101,9 +118,9 @@ def place_market_order(asset: str, units: int, stop_loss_price: float = None, ta
         "positionFill": "DEFAULT",
     }
     if stop_loss_price is not None:
-        order["stopLossOnFill"] = {"price": f"{stop_loss_price:.5f}"}
+        order["stopLossOnFill"] = {"price": f"{stop_loss_price:.{precision}f}"}
     if take_profit_price is not None:
-        order["takeProfitOnFill"] = {"price": f"{take_profit_price:.5f}"}
+        order["takeProfitOnFill"] = {"price": f"{take_profit_price:.{precision}f}"}
 
     url = f"{BASE_URL}/v3/accounts/{account_id}/orders"
     response = requests.post(url, headers=_headers(), json={"order": order}, timeout=15)
