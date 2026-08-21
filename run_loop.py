@@ -72,8 +72,12 @@ STRATEGIES = {
     "USOIL": ["sma_cluster_signal"],
 }
 
-# Paired strategy: GBPUSD/EURUSD are traded together via correlation_hedge_signal.
-CORRELATION_PAIR = ("GBPUSD", "EURUSD")
+# Paired strategy: GBPUSD/EURUSD were traded together via correlation_hedge_signal
+# until 2026-08-21. Suspended from live trading after post-margin-fix live
+# results turned out net negative (7 trades, -$4,549.39) - see the trade
+# history on the trading-state branch. Set to None to disable; the method
+# still exists in trading_agent.py for reference/backtesting.
+CORRELATION_PAIR = None
 CORRELATION_LOOKBACK = 51
 
 
@@ -194,6 +198,9 @@ def poll_once(agent):
             position = agent.execute_signal(signal)
             if position is not None:
                 mirror_to_oanda(agent, asset, position)
+
+    if CORRELATION_PAIR is None:
+        return events
 
     gbp_asset, eur_asset = CORRELATION_PAIR
     gbp_bars = agent.price_history.get(gbp_asset, [])
