@@ -60,6 +60,7 @@ STATE_FILE = os.environ.get("STATE_FILE", "trading_state.json")
 # Hedge both backtested worse on M5.
 ASSET_GRANULARITY = {
     "XAUUSD": "M5",
+    "XAUUSD_M15": "M15",
 }
 
 # Only assets with an implemented strategy are traded automatically.
@@ -69,6 +70,18 @@ ASSET_GRANULARITY = {
 # trading_agent.py for reference; it's just no longer invoked here.
 STRATEGIES = {
     "XAUUSD": ["smc_signal"],
+    # "XAUUSD_M15" is a synthetic second key for the same XAU_USD
+    # instrument (see ASSET_TO_OANDA_INSTRUMENT in oanda_client.py) -
+    # runs jesse_livermore_signal on its own independent M15 candles and
+    # its own position slot, alongside (not instead of) smc_signal's M5
+    # gold trading. Added 2026-08-21 at the user's request to trade
+    # XAUUSD more; backtested 1yr M15, out-of-sample checked: +51.0R over
+    # 109 trades (36.7% WR, PF 1.74 full year; PF 2.0 train / PF 1.39
+    # test on a 70/30 split) - the strongest, most robust single-asset
+    # backtest of any strategy tried so far. Risk trimmed to 3% (see
+    # STRATEGY_RISK_OVERRIDE) since it can be open at the same time as
+    # the M5 SMC gold position.
+    "XAUUSD_M15": ["jesse_livermore_xauusd_m15_signal"],
     "USOIL": ["sma_cluster_signal"],
     # GBPUSD/EURUSD were traded together via correlation_hedge_signal (a
     # paired strategy) until 2026-08-21, when it was suspended after

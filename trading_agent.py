@@ -142,9 +142,18 @@ class AdvancedTradingAgent:
     # tightest observed ~0.026%), so even 1% risk can demand ~150% of
     # account equity in margin for a single leg in the tight-stop tail.
     # 0.25% keeps worst-case single-leg margin under ~40% of equity.
+    # jesse_livermore's stops are much wider (median ~0.79% of price on
+    # XAUUSD M15, vs fx_range_reversion's ~0.045%) so it doesn't hit the
+    # same wall - default 5% risk alone maxes out around 30-60% of equity
+    # in margin (gold's marginRate is 5%, i.e. 20:1, not FX's 30:1).
+    # Trimmed to 3% specifically because this runs *alongside* smc_signal
+    # on the same underlying instrument (XAUUSD M5 + XAUUSD_M15 can both
+    # be open at once) - leaves headroom instead of two full-size 5%
+    # gold positions both maxing margin at the same time.
     STRATEGY_RISK_OVERRIDE = {
         "correlation_hedge": 0.01,
         "fx_range_reversion": 0.0025,
+        "jesse_livermore": 0.03,
     }
 
     def __init__(self,
@@ -793,6 +802,13 @@ class AdvancedTradingAgent:
             )
 
         return hold
+
+    def jesse_livermore_xauusd_m15_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper so this fits the bars-only calling convention, using
+        the synthetic "XAUUSD_M15" asset key so this M15 position slot
+        stays independent of the M5 smc_signal position on "XAUUSD" -
+        see the ASSET_TO_OANDA_INSTRUMENT comment in oanda_client.py."""
+        return self.jesse_livermore_signal(bars, asset="XAUUSD_M15")
 
     def fx_range_reversion_gbpusd_signal(self, bars: List[PriceBar]) -> Signal:
         """Thin wrapper so this fits the single-asset (bars-only) calling

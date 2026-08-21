@@ -18,9 +18,15 @@ from trading_agent import PriceBar
 OANDA_ENV = os.environ.get("OANDA_ENV", "practice")
 BASE_URL = "https://api-fxpractice.oanda.com" if OANDA_ENV == "practice" else "https://api-fxtrade.oanda.com"
 
-# Map internal asset names to OANDA instrument codes
+# Map internal asset names to OANDA instrument codes.
+# "XAUUSD_M15" is a synthetic second key for the same XAU_USD instrument -
+# it lets the M15 Jesse Livermore strategy hold its own independent
+# position/trade-ID slot (agent.positions / agent.oanda_trade_ids are
+# keyed by asset string) alongside the M5 SMC strategy on plain "XAUUSD",
+# without either one clobbering the other's tracked state.
 ASSET_TO_OANDA_INSTRUMENT = {
     "XAUUSD": "XAU_USD",
+    "XAUUSD_M15": "XAU_USD",
     "USOIL": "WTICO_USD",
     "GBPUSD": "GBP_USD",
     "EURUSD": "EUR_USD",
