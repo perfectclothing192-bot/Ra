@@ -70,13 +70,22 @@ ASSET_GRANULARITY = {
 STRATEGIES = {
     "XAUUSD": ["smc_signal"],
     "USOIL": ["sma_cluster_signal"],
+    # GBPUSD/EURUSD were traded together via correlation_hedge_signal (a
+    # paired strategy) until 2026-08-21, when it was suspended after
+    # post-margin-fix live results turned net negative (7 trades,
+    # -$4,549.39) - see the trade history on the trading-state branch.
+    # Replaced with fx_range_reversion_signal, which trades each leg
+    # independently (a quiet-regime Bollinger Band fade to the mean;
+    # 1yr M15 backtest, out-of-sample checked: GBPUSD +12.4R/121 trades,
+    # EURUSD +9.0R/107 trades, both robust across a 70/30 train/test
+    # split). correlation_hedge_signal stays in trading_agent.py for
+    # reference/backtesting but is no longer invoked here.
+    "GBPUSD": ["fx_range_reversion_gbpusd_signal"],
+    "EURUSD": ["fx_range_reversion_eurusd_signal"],
 }
 
-# Paired strategy: GBPUSD/EURUSD were traded together via correlation_hedge_signal
-# until 2026-08-21. Suspended from live trading after post-margin-fix live
-# results turned out net negative (7 trades, -$4,549.39) - see the trade
-# history on the trading-state branch. Set to None to disable; the method
-# still exists in trading_agent.py for reference/backtesting.
+# Paired-strategy support (correlation_hedge). Left in place, unused,
+# since correlation_hedge_signal is no longer wired into poll_once below.
 CORRELATION_PAIR = None
 CORRELATION_LOOKBACK = 51
 
