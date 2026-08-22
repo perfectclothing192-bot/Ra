@@ -150,10 +150,17 @@ class AdvancedTradingAgent:
     # on the same underlying instrument (XAUUSD M5 + XAUUSD_M15 can both
     # be open at once) - leaves headroom instead of two full-size 5%
     # gold positions both maxing margin at the same time.
+    # jesse_livermore_btc (BTCUSD) needs its own entry, not "jesse_livermore"'s
+    # 3% - BTC_USD's OANDA marginRate is 0.5 (2:1 leverage, far stricter than
+    # gold's 5%/20:1), and its stops are wider too (median ~1.31% of price,
+    # tightest observed ~0.69%). At 5% risk, worst case alone requires ~363%
+    # of equity in margin. 0.5% keeps worst-case margin to ~36% of equity,
+    # matching the same headroom philosophy used for gold.
     STRATEGY_RISK_OVERRIDE = {
         "correlation_hedge": 0.01,
         "fx_range_reversion": 0.0025,
         "jesse_livermore": 0.03,
+        "jesse_livermore_btc": 0.005,
     }
 
     def __init__(self,
@@ -613,7 +620,7 @@ class AdvancedTradingAgent:
     # STRATEGY 6: JESSE LIVERMORE PIVOTAL POINT
     # ============================================
 
-    def jesse_livermore_signal(self, bars: List[PriceBar], asset: str = "XAUUSD") -> Signal:
+    def jesse_livermore_signal(self, bars: List[PriceBar], asset: str = "XAUUSD", strategy_label: str = "jesse_livermore") -> Signal:
         """
         Jesse Livermore-style Pivotal Point strategy, adapted from
         "Reminiscences of a Stock Operator": trade only with the line of
@@ -631,8 +638,14 @@ class AdvancedTradingAgent:
            opposite the breakout, plus a small ATR buffer - true to "cut
            losses quickly." Target is 3x that risk - true to "let your
            winners run," the other half of the same discipline.
+
+        strategy_label lets different instruments running this same logic
+        (e.g. XAUUSD vs BTCUSD) get independent STRATEGY_RISK_OVERRIDE
+        entries - their stop distances as a percent of price are very
+        different (BTC's median ~1.3% vs gold's ~0.79%), so one shared
+        risk_pct would be wrong for at least one of them.
         """
-        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "jesse_livermore", 0, datetime.now())
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
 
         pivot_window = 20
         swing_window = 10
@@ -672,7 +685,7 @@ class AdvancedTradingAgent:
                 stop_loss=stop_loss,
                 take_profit=take_profit,
                 risk_reward_ratio=3.0,
-                strategy="jesse_livermore",
+                strategy=strategy_label,
                 confidence=0.75,
                 timestamp=datetime.now()
             )
@@ -692,7 +705,7 @@ class AdvancedTradingAgent:
                 stop_loss=stop_loss,
                 take_profit=take_profit,
                 risk_reward_ratio=3.0,
-                strategy="jesse_livermore",
+                strategy=strategy_label,
                 confidence=0.75,
                 timestamp=datetime.now()
             )
@@ -809,6 +822,12 @@ class AdvancedTradingAgent:
         stays independent of the M5 smc_signal position on "XAUUSD" -
         see the ASSET_TO_OANDA_INSTRUMENT comment in oanda_client.py."""
         return self.jesse_livermore_signal(bars, asset="XAUUSD_M15")
+
+    def jesse_livermore_btcusd_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for BTCUSD, using its own "jesse_livermore_btc" strategy
+        label so STRATEGY_RISK_OVERRIDE can size it independently of gold's
+        jesse_livermore slot - see the comment there for why."""
+        return self.jesse_livermore_signal(bars, asset="BTCUSD", strategy_label="jesse_livermore_btc")
 
     def fx_range_reversion_gbpusd_signal(self, bars: List[PriceBar]) -> Signal:
         """Thin wrapper so this fits the single-asset (bars-only) calling

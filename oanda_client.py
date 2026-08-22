@@ -49,6 +49,21 @@ INSTRUMENT_PRICE_PRECISION = {
     "BTC_USD": 1,
 }
 
+# Each instrument also has its own tradeable unit precision (OANDA's
+# tradeUnitsPrecision) - the order "units" field, unlike prices, was being
+# blanket-rounded to a whole integer regardless of instrument. That was a
+# silent 0.1oz-ish rounding error for gold (immaterial at ~90oz positions)
+# but would be a severe distortion for BTC_USD, whose OANDA-allowed
+# precision is 0.001 and whose computed position sizes are sub-1 BTC -
+# rounding e.g. 0.89 to the nearest whole unit (1) oversizes by ~12%.
+INSTRUMENT_UNITS_PRECISION = {
+    "XAU_USD": 1,
+    "WTICO_USD": 0,
+    "EUR_USD": 0,
+    "GBP_USD": 0,
+    "BTC_USD": 3,
+}
+
 
 def _headers() -> dict:
     api_key = os.environ.get("OANDA_API_KEY")
@@ -96,10 +111,13 @@ def get_account_summary() -> dict:
     return response.json()["account"]
 
 
-def place_market_order(asset: str, units: int, stop_loss_price: float = None, take_profit_price: float = None) -> dict:
+def place_market_order(asset: str, units: float, stop_loss_price: float = None, take_profit_price: float = None) -> dict:
     """
     Place a real market order on the OANDA account (practice or live, per OANDA_ENV).
-    units: positive = buy/long, negative = sell/short.
+    units: positive = buy/long, negative = sell/short. Rounded to the
+    instrument's own tradeable unit precision (see INSTRUMENT_UNITS_PRECISION)
+    before sending - callers should pass the raw signed position size and
+    let this function handle instrument-specific rounding.
     Returns the orderFillTransaction dict, which includes tradeOpened.tradeID.
     """
     account_id = os.environ.get("OANDA_ACCOUNT_ID")
@@ -109,18 +127,20 @@ def place_market_order(asset: str, units: int, stop_loss_price: float = None, ta
     if not instrument:
         raise ValueError(f"No OANDA instrument mapping for asset '{asset}'")
 
-    precision = INSTRUMENT_PRICE_PRECISION.get(instrument, 5)
+    price_precision = INSTRUMENT_PRICE_PRECISION.get(instrument, 5)
+    units_precision = INSTRUMENT_UNITS_PRECISION.get(instrument, 0)
+    units_str = f"{units:.{units_precision}f}"
     order = {
         "type": "MARKET",
         "instrument": instrument,
-        "units": str(units),
+        "units": units_str,
         "timeInForce": "FOK",
         "positionFill": "DEFAULT",
     }
     if stop_loss_price is not None:
-        order["stopLossOnFill"] = {"price": f"{stop_loss_price:.{precision}f}"}
+        order["stopLossOnFill"] = {"price": f"{stop_loss_price:.{price_precision}f}"}
     if take_profit_price is not None:
-        order["takeProfitOnFill"] = {"price": f"{take_profit_price:.{precision}f}"}
+        order["takeProfitOnFill"] = {"price": f"{take_profit_price:.{price_precision}f}"}
 
     url = f"{BASE_URL}/v3/accounts/{account_id}/orders"
     response = requests.post(url, headers=_headers(), json={"order": order}, timeout=15)

@@ -95,6 +95,17 @@ STRATEGIES = {
     # reference/backtesting but is no longer invoked here.
     "GBPUSD": ["fx_range_reversion_gbpusd_signal"],
     "EURUSD": ["fx_range_reversion_eurusd_signal"],
+    # BTCUSD was backtested earlier (volatility_breakout_signal) but held
+    # back as "awaiting go-live" - that backtest's edge nearly vanished
+    # out-of-sample (test PF 1.04) once checked with a 70/30 split, so it
+    # wasn't trustworthy. jesse_livermore_signal (already live on gold)
+    # was retested against BTCUSD instead: 1yr M15, +13.0R/155 trades
+    # (27.1% WR, PF 1.12 full year; PF 1.18 train / PF 1.15 test on a
+    # 70/30 split) - modest but consistent across both halves, unlike
+    # volatility_breakout. BTC_USD's OANDA marginRate is 0.5 (2:1, far
+    # stricter than gold's 5%/20:1) so risk is cut hard - see
+    # STRATEGY_RISK_OVERRIDE["jesse_livermore_btc"] in trading_agent.py.
+    "BTCUSD": ["jesse_livermore_btcusd_signal"],
 }
 
 # Paired-strategy support (correlation_hedge). Left in place, unused,
@@ -149,7 +160,7 @@ def mirror_to_oanda(agent, asset, position):
     """Place a real OANDA order matching a just-opened local position.
     On failure, reverts the local position so state doesn't diverge from
     what's actually on the account."""
-    units = int(round(position.quantity))
+    units = position.quantity
     if position.direction == "SHORT":
         units = -units
     try:
