@@ -39,6 +39,7 @@ from trading_agent import AdvancedTradingAgent, TradingMode
 from oanda_client import fetch_candles, place_market_order, ASSET_TO_OANDA_INSTRUMENT
 from state_io import save_state, load_state
 from status_server import start_status_server, update_status, serialize_positions, serialize_trades
+import etoro_client
 
 POLL_INTERVAL_SECONDS = int(os.environ.get("POLL_INTERVAL_SECONDS", "300"))
 GRANULARITY = os.environ.get("OANDA_GRANULARITY", "M15")
@@ -54,6 +55,16 @@ OANDA_EXECUTE = os.environ.get("OANDA_EXECUTE", "false").lower() == "true"
 # to keep order size sane on an account sized independently of ACCOUNT_EQUITY.
 OANDA_MIRROR_SCALE = float(os.environ.get("OANDA_MIRROR_SCALE", "0.01"))
 
+# Same idea, mirrored to eToro's Agent Portfolios API instead/as well - see
+# etoro_client.py's module docstring: THIS INTEGRATION IS UNVERIFIED against
+# a real eToro account (no credentials were available to test it). Leave
+# this off until it's been confirmed against ETORO_ENV=demo.
+ETORO_EXECUTE = os.environ.get("ETORO_EXECUTE", "false").lower() == "true"
+# Dollar amount to invest per mirrored eToro order (eToro sizes orders in
+# account currency, not asset units, so this isn't scaled from `quantity`
+# the way OANDA_MIRROR_SCALE is).
+ETORO_ORDER_AMOUNT = float(os.environ.get("ETORO_ORDER_AMOUNT", "20"))
+
 
 def mirror_to_oanda(agent, position):
     if not OANDA_EXECUTE or position is None:
@@ -67,6 +78,20 @@ def mirror_to_oanda(agent, position):
         agent.logger.info(f"[OANDA] {position.asset} order filled: {units} units | tradeID={fill.get('id')}")
     except Exception as e:
         agent.logger.error(f"[OANDA] {position.asset} order failed: {e}")
+
+
+def mirror_to_etoro(agent, position):
+    if not ETORO_EXECUTE or position is None:
+        return
+    direction = "BUY" if position.direction == "LONG" else "SELL"
+    try:
+        result = etoro_client.place_order(
+            position.asset, direction, ETORO_ORDER_AMOUNT,
+            stop_loss_rate=position.stop_loss, take_profit_rate=position.take_profit,
+        )
+        agent.logger.info(f"[ETORO] {position.asset} order response: {result}")
+    except Exception as e:
+        agent.logger.error(f"[ETORO] {position.asset} order failed: {e}")
 
 
 # Only assets with an implemented strategy are traded automatically.
@@ -110,6 +135,7 @@ def poll_once(agent):
         if signal.direction != "HOLD":
             position = agent.execute_signal(signal)
             mirror_to_oanda(agent, position)
+            mirror_to_etoro(agent, position)
 
     gbp_asset, eur_asset = CORRELATION_PAIR
     gbp_bars = agent.price_history.get(gbp_asset, [])
@@ -131,6 +157,8 @@ def poll_once(agent):
             eur_position = agent.execute_signal(eur_signal)
             mirror_to_oanda(agent, gbp_position)
             mirror_to_oanda(agent, eur_position)
+            mirror_to_etoro(agent, gbp_position)
+            mirror_to_etoro(agent, eur_position)
 
     return events
 

@@ -47,6 +47,7 @@ from trading_agent import TradingMode
 from oanda_client import fetch_candles, place_market_order, is_market_closed
 from state_io import save_state, load_state
 from status_server import start_status_server, update_status, serialize_positions, serialize_trades
+import etoro_client
 
 POLL_INTERVAL_SECONDS = int(os.environ.get("SCALP_POLL_INTERVAL_SECONDS", "60"))
 GRANULARITY = os.environ.get("SCALP_GRANULARITY", "M1")
@@ -65,6 +66,15 @@ OANDA_EXECUTE = os.environ.get("OANDA_EXECUTE", "false").lower() == "true"
 # to keep order size sane on an account sized independently of SCALP_ACCOUNT_EQUITY.
 OANDA_MIRROR_SCALE = float(os.environ.get("OANDA_MIRROR_SCALE", "0.01"))
 
+# Same idea, mirrored to eToro's Agent Portfolios API instead/as well - see
+# etoro_client.py's module docstring: THIS INTEGRATION IS UNVERIFIED against
+# a real eToro account (no credentials were available to test it). Leave
+# this off until it's been confirmed against ETORO_ENV=demo. Also note this
+# loop polls every 60s and can round-trip a position within a couple of
+# minutes - at $20/order that's a lot of order volume if ever enabled live.
+ETORO_EXECUTE = os.environ.get("ETORO_EXECUTE", "false").lower() == "true"
+ETORO_ORDER_AMOUNT = float(os.environ.get("ETORO_ORDER_AMOUNT", "20"))
+
 
 def mirror_to_oanda(agent, position):
     if not OANDA_EXECUTE or position is None:
@@ -78,6 +88,20 @@ def mirror_to_oanda(agent, position):
         agent.logger.info(f"[OANDA] {position.asset} order filled: {units} units | tradeID={fill.get('id')}")
     except Exception as e:
         agent.logger.error(f"[OANDA] {position.asset} order failed: {e}")
+
+
+def mirror_to_etoro(agent, position):
+    if not ETORO_EXECUTE or position is None:
+        return
+    direction = "BUY" if position.direction == "LONG" else "SELL"
+    try:
+        result = etoro_client.place_order(
+            position.asset, direction, ETORO_ORDER_AMOUNT,
+            stop_loss_rate=position.stop_loss, take_profit_rate=position.take_profit,
+        )
+        agent.logger.info(f"[ETORO] {position.asset} order response: {result}")
+    except Exception as e:
+        agent.logger.error(f"[ETORO] {position.asset} order failed: {e}")
 
 
 def poll_once(agent):
@@ -113,6 +137,7 @@ def poll_once(agent):
     if signal.direction != "HOLD":
         position = agent.execute_signal(signal)
         mirror_to_oanda(agent, position)
+        mirror_to_etoro(agent, position)
 
     return events
 
