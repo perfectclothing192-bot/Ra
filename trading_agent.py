@@ -272,7 +272,10 @@ class AdvancedTradingAgent:
         Rules:
         1. Price tests SMA 100/200 cluster (consolidated zone)
         2. Price breaks above cluster on volume = BUY
-        3. Liquidity sweep confirmation: Price touches then rejects lower
+        3. Price breaks below cluster on volume = SELL (mirror image of
+           the bullish case - a cluster breakdown on a volume surge is
+           the same "the range has resolved" signal, just to the downside)
+        4. Liquidity sweep confirmation: Price touches then rejects lower
 
         Returns: Signal with entry, SL, TP
         """
@@ -312,6 +315,29 @@ class AdvancedTradingAgent:
             return Signal(
                 asset="USOIL",
                 direction="BUY",
+                strength=SignalStrength.STRONG if volume_surge else SignalStrength.MEDIUM,
+                entry_price=entry_price,
+                stop_loss=stop_loss,
+                take_profit=take_profit,
+                risk_reward_ratio=risk_reward,
+                strategy="sma_cluster",
+                confidence=0.80,
+                timestamp=datetime.now()
+            )
+
+        # Breakdown: Price breaks below cluster on high volume
+        price_below_cluster = current_price < cluster_zone_low
+
+        if in_cluster and price_below_cluster and volume_surge:
+            entry_price = current_price
+            stop_loss = cluster_zone_high + atr * 0.5
+            take_profit = current_price - atr * 2.0
+
+            risk_reward = (entry_price - take_profit) / (stop_loss - entry_price) if entry_price != stop_loss else 0
+
+            return Signal(
+                asset="USOIL",
+                direction="SELL",
                 strength=SignalStrength.STRONG if volume_surge else SignalStrength.MEDIUM,
                 entry_price=entry_price,
                 stop_loss=stop_loss,
