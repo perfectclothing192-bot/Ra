@@ -156,11 +156,24 @@ class AdvancedTradingAgent:
     # tightest observed ~0.69%). At 5% risk, worst case alone requires ~363%
     # of equity in margin. 0.5% keeps worst-case margin to ~36% of equity,
     # matching the same headroom philosophy used for gold.
+    # smc (XAUUSD) was the last strategy still running at the unadjusted 5%
+    # default, on the assumption its stops were wide enough not to need
+    # trimming (unverified - it hadn't fired a real signal yet in this
+    # trial). Its first live signal (2026-08-25, a SELL) had a stop just
+    # ATR*0.3 beyond the sweep extreme - 0.27% of price - and at 5% risk
+    # demanded ~$98.4k margin (~91% of account equity) for that one leg,
+    # which OANDA rejected as INSUFFICIENT_MARGIN since jesse_livermore's
+    # XAUUSD_M15 and jesse_livermore_btc's BTCUSD positions were also open
+    # and already holding ~$33k of the account's margin. 1% brings that
+    # same trade down to ~$19.7k (~18% of equity) - enough headroom to
+    # coexist with both other strategies at once, matching the philosophy
+    # used everywhere else in this table.
     STRATEGY_RISK_OVERRIDE = {
         "correlation_hedge": 0.01,
         "fx_range_reversion": 0.0025,
         "jesse_livermore": 0.03,
         "jesse_livermore_btc": 0.005,
+        "smc": 0.01,
     }
 
     def __init__(self,
