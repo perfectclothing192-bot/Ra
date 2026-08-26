@@ -877,6 +877,140 @@ class AdvancedTradingAgent:
     def fx_range_reversion_eurusd_signal(self, bars: List[PriceBar]) -> Signal:
         return self.fx_range_reversion_signal(bars, "EURUSD")
 
+    def rsi2_pullback_signal(self, bars: List[PriceBar], asset: str) -> Signal:
+        """
+        Candidate replacement for fx_range_reversion on GBPUSD/EURUSD -
+        Larry Connors-style RSI(2) pullback: only take a mean-reversion
+        entry when it's a pullback WITHIN an established trend, not a
+        fade against one.
+
+        1. Trend filter: close above/below SMA200 defines the only
+           direction traded (longs only in an uptrend, shorts only in a
+           downtrend) - unlike fx_range_reversion, which fades either
+           direction from a Bollinger extreme regardless of the broader
+           trend.
+        2. Entry: 2-period RSI drops below 10 (deeply oversold) in an
+           uptrend, or above 90 (deeply overbought) in a downtrend - a
+           short-term panic against the prevailing trend, not a range
+           extreme.
+        3. Stop beyond the signal bar's high/low plus a 0.5x ATR buffer;
+           target is the 5-period SMA (a quick reversion back to the
+           recent mean, not the full swing).
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "rsi2_pullback", 0, datetime.now())
+
+        warmup = 210
+        if len(bars) < warmup:
+            return hold
+
+        closes = np.array([b.close for b in bars])
+        atr = self._atr(bars, 14)[-1]
+        sma_200 = self._sma(closes, 200)[-1]
+        sma_5 = self._sma(closes, 5)[-1]
+        rsi_2 = self._rsi(closes, 2)[-1]
+
+        current_close = closes[-1]
+        current_high, current_low = bars[-1].high, bars[-1].low
+        uptrend = current_close > sma_200
+        downtrend = current_close < sma_200
+
+        if uptrend and rsi_2 < 10:
+            entry_price = current_close
+            stop_loss = current_low - atr * 0.5
+            risk = entry_price - stop_loss
+            if risk <= 0:
+                return hold
+            take_profit = sma_5
+            if take_profit <= entry_price:
+                return hold
+            return Signal(
+                asset=asset, direction="BUY", strength=SignalStrength.MEDIUM,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=(take_profit - entry_price) / risk,
+                strategy="rsi2_pullback", confidence=0.55, timestamp=datetime.now()
+            )
+
+        if downtrend and rsi_2 > 90:
+            entry_price = current_close
+            stop_loss = current_high + atr * 0.5
+            risk = stop_loss - entry_price
+            if risk <= 0:
+                return hold
+            take_profit = sma_5
+            if take_profit >= entry_price:
+                return hold
+            return Signal(
+                asset=asset, direction="SELL", strength=SignalStrength.MEDIUM,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=(entry_price - take_profit) / risk,
+                strategy="rsi2_pullback", confidence=0.55, timestamp=datetime.now()
+            )
+
+        return hold
+
+    def donchian_breakout_signal(self, bars: List[PriceBar], asset: str, channel: int = 20) -> Signal:
+        """
+        Candidate replacement for fx_range_reversion on GBPUSD/EURUSD -
+        classic Donchian channel breakout trend-follower (Turtle-style):
+        the opposite regime bet from fx_range_reversion's mean reversion.
+
+        1. Break out: current close makes a new N-bar high (BUY) or low
+           (SELL), N=20 by default.
+        2. Only take it when ATR is expanding (current ATR > its 50-bar
+           average) - a breakout in a quiet/contracting range is more
+           likely a fakeout than a fresh trend leg.
+        3. Stop at the opposite side of the channel; target at 2x the
+           stop distance (fixed R:R, no discretion).
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "donchian_breakout", 0, datetime.now())
+
+        warmup = channel + 60
+        if len(bars) < warmup:
+            return hold
+
+        closes = np.array([b.close for b in bars])
+        highs = np.array([b.high for b in bars])
+        lows = np.array([b.low for b in bars])
+        atr_series = self._atr(bars, 14)
+        atr = atr_series[-1]
+        atr_avg50 = np.mean(atr_series[-50:])
+        if atr_avg50 <= 0 or atr <= atr_avg50:
+            return hold
+
+        prior_high = highs[-channel - 1:-1].max()
+        prior_low = lows[-channel - 1:-1].min()
+        current_close = closes[-1]
+
+        if current_close > prior_high:
+            entry_price = current_close
+            stop_loss = prior_low
+            risk = entry_price - stop_loss
+            if risk <= 0:
+                return hold
+            take_profit = entry_price + risk * 2.0
+            return Signal(
+                asset=asset, direction="BUY", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy="donchian_breakout", confidence=0.65,
+                timestamp=datetime.now()
+            )
+
+        if current_close < prior_low:
+            entry_price = current_close
+            stop_loss = prior_high
+            risk = stop_loss - entry_price
+            if risk <= 0:
+                return hold
+            take_profit = entry_price - risk * 2.0
+            return Signal(
+                asset=asset, direction="SELL", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy="donchian_breakout", confidence=0.65,
+                timestamp=datetime.now()
+            )
+
+        return hold
+
     def mark_douglas_signal(self, bars: List[PriceBar], asset: str = "XAUUSD") -> Signal:
         """
         "Mark Douglas" trend-continuation strategy - named for the trading
@@ -1189,6 +1323,19 @@ class AdvancedTradingAgent:
     def _sma(data: np.ndarray, period: int) -> np.ndarray:
         """Simple Moving Average"""
         return np.convolve(data, np.ones(period)/period, mode='valid') if len(data) >= period else data
+
+    @staticmethod
+    def _rsi(data: np.ndarray, period: int = 14) -> np.ndarray:
+        """Relative Strength Index, Wilder's smoothing."""
+        series = pd.Series(data)
+        delta = series.diff()
+        gain = delta.clip(lower=0)
+        loss = -delta.clip(upper=0)
+        avg_gain = gain.ewm(alpha=1 / period, adjust=False).mean()
+        avg_loss = loss.ewm(alpha=1 / period, adjust=False).mean()
+        rs = avg_gain / avg_loss.replace(0, np.nan)
+        rsi = 100 - (100 / (1 + rs))
+        return rsi.fillna(50).values
 
     @staticmethod
     def _atr(bars: List[PriceBar], period: int = 14) -> np.ndarray:
