@@ -46,6 +46,7 @@ from oanda_client import (
     place_market_order,
     get_open_trades,
     get_trade_close_info,
+    fetch_current_price,
 )
 from state_io import save_state, load_state
 
@@ -163,6 +164,32 @@ def mirror_to_oanda(agent, asset, position):
     units = position.quantity
     if position.direction == "SHORT":
         units = -units
+
+    # Signals are computed from the last CLOSED candle (up to one
+    # granularity period stale - e.g. 5min for XAUUSD/smc), but stop_loss
+    # is a fixed price submitted as stopLossOnFill on a live market order.
+    # If the live price has already crossed that stop by the time we get
+    # here, OANDA rejects the whole order with STOP_LOSS_ON_FILL_LOSS
+    # (attaching a stop that would trigger immediately on fill) - seen live
+    # 2026-08-26 on a tight-stop smc XAUUSD BUY. Check freshness first so a
+    # stale, already-invalidated setup is skipped instead of thrown at
+    # OANDA to fail.
+    try:
+        live_price = fetch_current_price(asset)
+        stop_breached = (
+            (position.direction == "LONG" and live_price <= position.stop_loss) or
+            (position.direction == "SHORT" and live_price >= position.stop_loss)
+        )
+        if stop_breached:
+            agent.logger.error(
+                f"OANDA order SKIPPED for {asset}: live price {live_price} has already crossed "
+                f"stop_loss {position.stop_loss} since the signal candle closed — setup stale, reverting local position"
+            )
+            agent.positions.pop(asset, None)
+            return False
+    except Exception as e:
+        agent.logger.error(f"Live price freshness check failed for {asset}: {e} — proceeding with order anyway")
+
     try:
         fill = place_market_order(asset, units, position.stop_loss, position.take_profit)
         trade_id = fill["tradeOpened"]["tradeID"]
