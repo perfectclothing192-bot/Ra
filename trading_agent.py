@@ -877,6 +877,106 @@ class AdvancedTradingAgent:
     def fx_range_reversion_eurusd_signal(self, bars: List[PriceBar]) -> Signal:
         return self.fx_range_reversion_signal(bars, "EURUSD")
 
+    def mark_douglas_signal(self, bars: List[PriceBar], asset: str = "XAUUSD") -> Signal:
+        """
+        "Mark Douglas" trend-continuation strategy - named for the trading
+        psychologist (Trading in the Zone), not a technical pattern of his.
+        The rules exist to mechanize his core teachings so there's no
+        discretion left to apply under pressure:
+          - trade a well-defined, rules-based setup every time it appears,
+            not only when it "feels right" (consistency is the edge)
+          - define risk before entry (hard structural stop) and never
+            widen it
+          - take profit at a fixed, predetermined R multiple every time -
+            never cut a winner short out of fear, never let a loser run
+            hoping it turns around
+
+        Rules:
+        1. Trend: EMA50 above EMA200 AND EMA200 rising (slope over the
+           last 10 bars) - requires an actual established, still-advancing
+           trend, not just price sitting above a flat/falling EMA200. This
+           is the main thing golden_pullback_signal (EMA200-only trend
+           filter, no slope check) got wrong - it backtested at 17% win
+           rate / -77.7R over 1yr M15 because "price > EMA200" alone fires
+           in choppy, non-trending conditions.
+        2. Pullback: the current bar's low touches or dips below EMA20
+           without closing below EMA50 (a shallow pullback within the
+           trend, not a deeper reversal).
+        3. Confirmation: the current bar closes back above EMA20 AND above
+           its own open (a decisive bullish bar, not just a doji poking
+           the MA) - golden_pullback's confirmation was just "close above
+           EMA50, previous close below it," which fires on weak/indecisive
+           bars too.
+        4. Stop below the lower of the last two bars' lows (the pullback's
+           actual structural low), not a blanket ATR offset from the MA.
+           Target fixed at 2R exactly - mechanical, no discretion.
+        Mirror image for downtrends/SELL.
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "mark_douglas", 0, datetime.now())
+
+        if len(bars) < 210:
+            return hold
+
+        closes = np.array([bar.close for bar in bars])
+        lows = np.array([bar.low for bar in bars])
+        highs = np.array([bar.high for bar in bars])
+        opens = np.array([bar.open for bar in bars])
+
+        ema_20 = self._ema(closes, 20)
+        ema_50 = self._ema(closes, 50)
+        ema_200 = self._ema(closes, 200)
+        atr = self._atr(bars, 14)[-1]
+
+        current_close = closes[-1]
+        current_open = opens[-1]
+        current_low = lows[-1]
+        current_high = highs[-1]
+
+        uptrend = ema_50[-1] > ema_200[-1] and ema_200[-1] > ema_200[-10]
+        downtrend = ema_50[-1] < ema_200[-1] and ema_200[-1] < ema_200[-10]
+
+        if uptrend:
+            pullback = current_low <= ema_20[-1] and current_close > ema_50[-1]
+            confirmed = current_close > ema_20[-1] and current_close > current_open
+            if pullback and confirmed:
+                entry_price = current_close
+                stop_loss = min(current_low, lows[-2]) - atr * 0.2
+                take_profit = entry_price + (entry_price - stop_loss) * 2.0
+                return Signal(
+                    asset=asset,
+                    direction="BUY",
+                    strength=SignalStrength.STRONG,
+                    entry_price=entry_price,
+                    stop_loss=stop_loss,
+                    take_profit=take_profit,
+                    risk_reward_ratio=2.0,
+                    strategy="mark_douglas",
+                    confidence=0.75,
+                    timestamp=datetime.now()
+                )
+
+        if downtrend:
+            pullback = current_high >= ema_20[-1] and current_close < ema_50[-1]
+            confirmed = current_close < ema_20[-1] and current_close < current_open
+            if pullback and confirmed:
+                entry_price = current_close
+                stop_loss = max(current_high, highs[-2]) + atr * 0.2
+                take_profit = entry_price - (stop_loss - entry_price) * 2.0
+                return Signal(
+                    asset=asset,
+                    direction="SELL",
+                    strength=SignalStrength.STRONG,
+                    entry_price=entry_price,
+                    stop_loss=stop_loss,
+                    take_profit=take_profit,
+                    risk_reward_ratio=2.0,
+                    strategy="mark_douglas",
+                    confidence=0.75,
+                    timestamp=datetime.now()
+                )
+
+        return hold
+
     # ============================================
     # MARKET REGIME DETECTION
     # ============================================
