@@ -9,7 +9,7 @@ Requires environment variables:
 
 import os
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import List
 
 import requests
@@ -164,6 +164,56 @@ def fetch_candles(asset: str, granularity: str = "M15", count: int = 250) -> Lis
             volume=int(candle.get("volume", 0)),
         ))
     return bars
+
+
+def fetch_candles_range(asset: str, granularity: str, start: datetime, end: datetime) -> List[PriceBar]:
+    """
+    Fetch all completed candles between start and end (inclusive), paginating
+    since OANDA caps a single request at 5000 candles. Used for backtesting
+    over long windows that a single fetch_candles(count=...) can't cover.
+    """
+    instrument = ASSET_TO_OANDA_INSTRUMENT.get(asset)
+    if not instrument:
+        raise ValueError(f"No OANDA instrument mapping for asset '{asset}'")
+
+    url = f"{BASE_URL}/v3/instruments/{instrument}/candles"
+    bars = []
+    cursor = start
+    while cursor < end:
+        # OANDA rejects from+to+count together - page forward with from+count.
+        params = {
+            "granularity": granularity,
+            "price": "M",
+            "from": cursor.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "count": 5000,
+        }
+        response = _get_with_retry(url, params, _headers())
+        response.raise_for_status()
+        candles = response.json().get("candles", [])
+        if not candles:
+            break
+
+        last_time = cursor
+        for candle in candles:
+            if not candle.get("complete"):
+                continue
+            mid = candle["mid"]
+            ts = datetime.fromisoformat(candle["time"].replace("Z", "+00:00"))
+            bars.append(PriceBar(
+                timestamp=ts,
+                open=float(mid["o"]),
+                high=float(mid["h"]),
+                low=float(mid["l"]),
+                close=float(mid["c"]),
+                volume=int(candle.get("volume", 0)),
+            ))
+            last_time = ts
+
+        if len(candles) < 5000 or last_time <= cursor:
+            break
+        cursor = last_time + timedelta(seconds=1)
+
+    return [b for b in bars if b.timestamp <= end]
 
 
 def fetch_current_price(asset: str) -> float:
