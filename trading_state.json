@@ -1,30 +1,7 @@
 {
-  "account_equity": 104275.6099,
-  "daily_pnl": 4277.814199999993,
-  "positions": {
-    "GBPUSD_FIB": {
-      "asset": "GBPUSD_FIB",
-      "direction": "SHORT",
-      "entry_price": 1.3579,
-      "entry_time": "2026-08-28T13:34:41.372240",
-      "quantity": 129406.9958394534,
-      "stop_loss": 1.3589072447129267,
-      "take_profit": 1.35737,
-      "risk_amount": 5213.780495,
-      "position_id": "GBPUSD_FIB_1787924081.372242"
-    },
-    "EURUSD_FIB": {
-      "asset": "EURUSD_FIB",
-      "direction": "SHORT",
-      "entry_price": 1.16432,
-      "entry_time": "2026-08-28T13:34:43.427942",
-      "quantity": 262951.2950942215,
-      "stop_loss": 1.1648156983091804,
-      "take_profit": 1.16394,
-      "risk_amount": 5213.780495,
-      "position_id": "EURUSD_FIB_1787924083.427943"
-    }
-  },
+  "account_equity": 104473.7646,
+  "daily_pnl": 4475.968899999993,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -289,11 +266,32 @@
       "pnl": -75.8516,
       "pnl_percent": -0.07274145897851038,
       "strategy": "BTCUSD_FIB"
+    },
+    {
+      "asset": "GBPUSD_FIB",
+      "entry_price": 1.3579,
+      "exit_price": 1.35735,
+      "direction": "SHORT",
+      "quantity": 129406.9958394534,
+      "entry_time": "2026-08-28T13:34:41.372240",
+      "exit_time": "2026-08-28T14:11:59.551997",
+      "pnl": 93.1448,
+      "pnl_percent": 0.08915616313495035,
+      "strategy": "GBPUSD_FIB"
+    },
+    {
+      "asset": "EURUSD_FIB",
+      "entry_price": 1.16432,
+      "exit_price": 1.16394,
+      "direction": "SHORT",
+      "quantity": 262951.2950942215,
+      "entry_time": "2026-08-28T13:34:43.427942",
+      "exit_time": "2026-08-28T14:12:00.830478",
+      "pnl": 130.2811,
+      "pnl_percent": 0.12470221638782605,
+      "strategy": "EURUSD_FIB"
     }
   ],
-  "oanda_trade_ids": {
-    "GBPUSD_FIB": "910",
-    "EURUSD_FIB": "916"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957
 }
