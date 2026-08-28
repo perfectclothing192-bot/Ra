@@ -36,7 +36,7 @@ from oanda_client import fetch_candles_range
 
 MEAN_WINDOW = 20     # 20 S5 bars = 100 seconds
 BAND_K = 2.0
-STOP_K = 3.5
+STOP_K = 1.5          # was 3.5 - that risked more (3.5sigma) than the 2sigma target, a losing R:R by construction
 SPREAD_COST = 0.30   # $ round-trip cost per unit, approximating OANDA's typical XAU_USD spread
 
 
