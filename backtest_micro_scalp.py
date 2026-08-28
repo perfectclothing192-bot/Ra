@@ -154,7 +154,7 @@ def summarize(trades, starting_equity, ending_equity, equity_curve, bars):
     total_return = (ending_equity - starting_equity) / starting_equity * 100
     span = bars[-1].timestamp - bars[0].timestamp
 
-    print(f"Period: {bars[0].timestamp} -> {bars[-1].timestamp} ({span}, {len(bars)} S5 bars)")
+    print(f"Period: {bars[0].timestamp} -> {bars[-1].timestamp} ({span}, {len(bars)} bars)")
     print(f"Total trades: {len(trades)}  ({len(trades) / max(span.total_seconds() / 3600, 1):.1f} trades/hour of data)")
     print(f"Win rate: {win_rate:.1f}% ({len(wins)}W / {len(losses)}L)")
     print(f"Avg win: ${avg_win:,.2f}  |  Avg loss: ${avg_loss:,.2f}")
@@ -168,14 +168,17 @@ def summarize(trades, starting_equity, ending_equity, equity_curve, bars):
 
 if __name__ == "__main__":
     days = 14
+    granularity = "S5"
     args = sys.argv[1:]
     if "--days" in args:
         days = int(args[args.index("--days") + 1])
+    if "--granularity" in args:
+        granularity = args[args.index("--granularity") + 1]
 
     end = datetime.now(timezone.utc)
     start = end - timedelta(days=days)
-    print(f"Fetching {days}d of S5 XAUUSD candles from OANDA ({start.date()} -> {end.date()})...")
-    bars = fetch_candles_range("XAUUSD", "S5", start, end)
+    print(f"Fetching {days}d of {granularity} XAUUSD candles from OANDA ({start.date()} -> {end.date()})...")
+    bars = fetch_candles_range("XAUUSD", granularity, start, end)
     print(f"Fetched {len(bars)} bars.\n")
 
     trades, ending_equity, equity_curve = run_backtest(bars)
