@@ -9,6 +9,10 @@ Multi-strategy, regime-adaptive, risk-managed trading agent.
 - **Forex (GBPUSD, EURUSD)** — Correlation Hedge (rolling spread z-score, paired mean-reversion)
 - **Gold (XAUUSD) scalping** — EMA Ribbon Momentum Scalp (EMA 5/13/50 + RSI filter), run by a
   separate `ScalpingTradingAgent` on fast M1 candles — see below
+- **Gold (XAUUSD) mean reversion** — Micro Mean-Reversion (rolling mean/stdev bands on M5
+  candles), run by a separate `MeanReversionAgent` — see `backtest_micro_scalp.py` for the
+  backtest behind it (net negative, -3.59% over 88 days; running live in PAPER mode purely to
+  keep collecting data, not because it has a proven edge)
 
 ## Risk management
 

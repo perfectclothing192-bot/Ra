@@ -36,7 +36,8 @@ from oanda_client import fetch_candles_range
 
 MEAN_WINDOW = 20     # 20 S5 bars = 100 seconds
 BAND_K = 2.0
-STOP_K = 1.5          # was 3.5 - that risked more (3.5sigma) than the 2sigma target, a losing R:R by construction
+STOP_K = 3.5          # tested against 1.5 (tighter stop) - 1.5 performed worse (more premature
+                      # stop-outs from pre-reversion noise), so this wider stop is the kept default
 SPREAD_COST = 0.30   # $ round-trip cost per unit, approximating OANDA's typical XAU_USD spread
 
 
