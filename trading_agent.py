@@ -168,12 +168,27 @@ class AdvancedTradingAgent:
     # same trade down to ~$19.7k (~18% of equity) - enough headroom to
     # coexist with both other strategies at once, matching the philosophy
     # used everywhere else in this table.
+    # fib_retracement_* entries: deployed 2026-08-28 on all 5 assets at the
+    # user's explicit request, despite the 1yr M15 backtest showing a real,
+    # robust edge on USOIL only (+40.1R, both train/test halves positive)
+    # and flat-or-negative, non-robust results on the other four (XAUUSD
+    # -3.5R, GBPUSD -5.0R, EURUSD -23.9R, BTCUSD -12.8R - each either flat
+    # or sign-flipping between the 70/30 split). Risk sized per-instrument
+    # from each one's own median fib_retracement stop distance (checked
+    # live via OANDA's actual marginRate per instrument) to target ~12-18%
+    # margin usage per position, leaving headroom to coexist with the
+    # other strategy already trading that same instrument.
     STRATEGY_RISK_OVERRIDE = {
         "correlation_hedge": 0.01,
         "fx_range_reversion": 0.0025,
         "jesse_livermore": 0.03,
         "jesse_livermore_btc": 0.005,
         "smc": 0.01,
+        "fib_retracement_xauusd": 0.01,
+        "fib_retracement_usoil": 0.01,
+        "fib_retracement_gbpusd": 0.0025,
+        "fib_retracement_eurusd": 0.0025,
+        "fib_retracement_btcusd": 0.0015,
     }
 
     def __init__(self,
@@ -1011,7 +1026,7 @@ class AdvancedTradingAgent:
 
         return hold
 
-    def fib_retracement_signal(self, bars: List[PriceBar], asset: str) -> Signal:
+    def fib_retracement_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "fib_retracement") -> Signal:
         """
         Fibonacci retracement continuation strategy, M15.
 
@@ -1028,8 +1043,14 @@ class AdvancedTradingAgent:
            than confirming it), plus a small ATR buffer. Target back at
            the leg's swing extreme (a retest/continuation, not a new
            extension - the conservative target for this pattern).
+
+        strategy_label lets each instrument running this same logic get an
+        independent STRATEGY_RISK_OVERRIDE entry - their stop distances as
+        a percent of price ranged from ~0.06% (EURUSD) to ~0.65% (USOIL) in
+        the 1yr M15 backtest (2026-08-28), so one shared risk_pct would be
+        badly wrong for most of them.
         """
-        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "fib_retracement", 0, datetime.now())
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
 
         fractal = 3
         if len(bars) < 80:
@@ -1085,7 +1106,7 @@ class AdvancedTradingAgent:
                     asset=asset, direction="BUY", strength=SignalStrength.MEDIUM,
                     entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
                     risk_reward_ratio=(take_profit - entry_price) / risk,
-                    strategy="fib_retracement", confidence=0.6, timestamp=datetime.now()
+                    strategy=strategy_label, confidence=0.6, timestamp=datetime.now()
                 )
 
         if last_low_idx > last_high_idx:
@@ -1113,10 +1134,36 @@ class AdvancedTradingAgent:
                     asset=asset, direction="SELL", strength=SignalStrength.MEDIUM,
                     entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
                     risk_reward_ratio=(entry_price - take_profit) / risk,
-                    strategy="fib_retracement", confidence=0.6, timestamp=datetime.now()
+                    strategy=strategy_label, confidence=0.6, timestamp=datetime.now()
                 )
 
         return hold
+
+    def fib_retracement_xauusd_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for the "XAUUSD_FIB" synthetic position slot, alongside
+        (not instead of) smc_signal's M5 gold and jesse_livermore's M15
+        gold slots."""
+        return self.fib_retracement_signal(bars, asset="XAUUSD_FIB", strategy_label="fib_retracement_xauusd")
+
+    def fib_retracement_usoil_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for the "USOIL_FIB" synthetic position slot, alongside
+        (not instead of) sma_cluster_signal's USOIL slot."""
+        return self.fib_retracement_signal(bars, asset="USOIL_FIB", strategy_label="fib_retracement_usoil")
+
+    def fib_retracement_gbpusd_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for the "GBPUSD_FIB" synthetic position slot, alongside
+        (not instead of) fx_range_reversion_signal's GBPUSD slot."""
+        return self.fib_retracement_signal(bars, asset="GBPUSD_FIB", strategy_label="fib_retracement_gbpusd")
+
+    def fib_retracement_eurusd_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for the "EURUSD_FIB" synthetic position slot, alongside
+        (not instead of) fx_range_reversion_signal's EURUSD slot."""
+        return self.fib_retracement_signal(bars, asset="EURUSD_FIB", strategy_label="fib_retracement_eurusd")
+
+    def fib_retracement_btcusd_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for the "BTCUSD_FIB" synthetic position slot, alongside
+        (not instead of) jesse_livermore_btcusd_signal's BTCUSD slot."""
+        return self.fib_retracement_signal(bars, asset="BTCUSD_FIB", strategy_label="fib_retracement_btcusd")
 
     def mark_douglas_signal(self, bars: List[PriceBar], asset: str = "XAUUSD") -> Signal:
         """

@@ -107,6 +107,19 @@ STRATEGIES = {
     # stricter than gold's 5%/20:1) so risk is cut hard - see
     # STRATEGY_RISK_OVERRIDE["jesse_livermore_btc"] in trading_agent.py.
     "BTCUSD": ["jesse_livermore_btcusd_signal"],
+    # fib_retracement_signal ("*_FIB" synthetic keys, M15) - deployed
+    # 2026-08-28 on all 5 assets at the user's explicit request, despite a
+    # 1yr M15 backtest showing a robust edge on USOIL only (+40.1R, both
+    # train/test halves positive) and flat-or-negative, non-robust results
+    # elsewhere (XAUUSD -3.5R, GBPUSD -5.0R, EURUSD -23.9R, BTCUSD -12.8R -
+    # see STRATEGY_RISK_OVERRIDE's comment in trading_agent.py for the
+    # full breakdown). Each runs alongside, not instead of, the instrument's
+    # existing strategy - watch these positions especially closely.
+    "XAUUSD_FIB": ["fib_retracement_xauusd_signal"],
+    "USOIL_FIB": ["fib_retracement_usoil_signal"],
+    "GBPUSD_FIB": ["fib_retracement_gbpusd_signal"],
+    "EURUSD_FIB": ["fib_retracement_eurusd_signal"],
+    "BTCUSD_FIB": ["fib_retracement_btcusd_signal"],
 }
 
 # Paired-strategy support (correlation_hedge). Left in place, unused,

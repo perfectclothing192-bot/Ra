@@ -31,6 +31,15 @@ ASSET_TO_OANDA_INSTRUMENT = {
     "GBPUSD": "GBP_USD",
     "EURUSD": "EUR_USD",
     "BTCUSD": "BTC_USD",
+    # "*_FIB" synthetic keys, same pattern as XAUUSD_M15 above - give
+    # fib_retracement_signal its own independent position/trade-ID slot
+    # per instrument, alongside (not instead of) each instrument's
+    # existing strategy.
+    "XAUUSD_FIB": "XAU_USD",
+    "USOIL_FIB": "WTICO_USD",
+    "GBPUSD_FIB": "GBP_USD",
+    "EURUSD_FIB": "EUR_USD",
+    "BTCUSD_FIB": "BTC_USD",
 }
 
 # Each OANDA instrument only accepts prices at its own tick precision
