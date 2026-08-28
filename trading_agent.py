@@ -1011,6 +1011,113 @@ class AdvancedTradingAgent:
 
         return hold
 
+    def fib_retracement_signal(self, bars: List[PriceBar], asset: str) -> Signal:
+        """
+        Fibonacci retracement continuation strategy, M15.
+
+        1. Track swing highs/lows via the same 3-bar fractal used by
+           smc_signal. The two most recent confirmed swing points define
+           the last impulse leg; whichever point is more recent sets the
+           leg's direction (low-then-high = up leg, high-then-low = down
+           leg).
+        2. Wait for price to pull back into the "golden zone" between the
+           50% and 61.8% retracement of that leg, then close back in the
+           leg's original direction (confirmation, not just a touch).
+        3. Stop just beyond the 78.6% retracement level (deeper than the
+           entry zone - a pullback past 78.6% invalidates the leg rather
+           than confirming it), plus a small ATR buffer. Target back at
+           the leg's swing extreme (a retest/continuation, not a new
+           extension - the conservative target for this pattern).
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "fib_retracement", 0, datetime.now())
+
+        fractal = 3
+        if len(bars) < 80:
+            return hold
+
+        highs = np.array([b.high for b in bars])
+        lows = np.array([b.low for b in bars])
+        closes = np.array([b.close for b in bars])
+        opens = np.array([b.open for b in bars])
+        n = len(bars)
+
+        swing_low_idxs = [
+            i for i in range(fractal, n - fractal)
+            if lows[i] == min(lows[i - fractal:i + fractal + 1])
+        ]
+        swing_high_idxs = [
+            i for i in range(fractal, n - fractal)
+            if highs[i] == max(highs[i - fractal:i + fractal + 1])
+        ]
+        if not swing_low_idxs or not swing_high_idxs:
+            return hold
+
+        last_low_idx = swing_low_idxs[-1]
+        last_high_idx = swing_high_idxs[-1]
+        atr = self._atr(bars, 14)[-1]
+        current_close = closes[-1]
+        current_open = opens[-1]
+        current_low = lows[-1]
+        current_high = highs[-1]
+
+        if last_high_idx > last_low_idx:
+            swing_low = lows[last_low_idx]
+            swing_high = highs[last_high_idx]
+            impulse = swing_high - swing_low
+            if impulse <= 0:
+                return hold
+            fib_50 = swing_high - 0.5 * impulse
+            fib_618 = swing_high - 0.618 * impulse
+            fib_786 = swing_high - 0.786 * impulse
+
+            in_golden_zone = current_low <= fib_50 and current_low >= fib_618
+            confirmed = current_close > current_open and current_close > fib_618
+            if in_golden_zone and confirmed:
+                entry_price = current_close
+                stop_loss = fib_786 - atr * 0.2
+                risk = entry_price - stop_loss
+                if risk <= 0:
+                    return hold
+                take_profit = swing_high
+                if take_profit <= entry_price:
+                    return hold
+                return Signal(
+                    asset=asset, direction="BUY", strength=SignalStrength.MEDIUM,
+                    entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                    risk_reward_ratio=(take_profit - entry_price) / risk,
+                    strategy="fib_retracement", confidence=0.6, timestamp=datetime.now()
+                )
+
+        if last_low_idx > last_high_idx:
+            swing_high = highs[last_high_idx]
+            swing_low = lows[last_low_idx]
+            impulse = swing_high - swing_low
+            if impulse <= 0:
+                return hold
+            fib_50 = swing_low + 0.5 * impulse
+            fib_618 = swing_low + 0.618 * impulse
+            fib_786 = swing_low + 0.786 * impulse
+
+            in_golden_zone = current_high >= fib_50 and current_high <= fib_618
+            confirmed = current_close < current_open and current_close < fib_618
+            if in_golden_zone and confirmed:
+                entry_price = current_close
+                stop_loss = fib_786 + atr * 0.2
+                risk = stop_loss - entry_price
+                if risk <= 0:
+                    return hold
+                take_profit = swing_low
+                if take_profit >= entry_price:
+                    return hold
+                return Signal(
+                    asset=asset, direction="SELL", strength=SignalStrength.MEDIUM,
+                    entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                    risk_reward_ratio=(entry_price - take_profit) / risk,
+                    strategy="fib_retracement", confidence=0.6, timestamp=datetime.now()
+                )
+
+        return hold
+
     def mark_douglas_signal(self, bars: List[PriceBar], asset: str = "XAUUSD") -> Signal:
         """
         "Mark Douglas" trend-continuation strategy - named for the trading
