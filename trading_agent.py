@@ -189,6 +189,12 @@ class AdvancedTradingAgent:
         "fib_retracement_gbpusd": 0.0025,
         "fib_retracement_eurusd": 0.0025,
         "fib_retracement_btcusd": 0.0015,
+        # Silver (XAGUSD), added 2026-08-28: XAG_USD's marginRate is 0.10
+        # (10:1, double gold's 5%) and jesse_livermore's own stop distance
+        # on silver is wider too (~1.86% median vs gold's ~0.79%) - the two
+        # effects roughly cancel, so 3% risk (same as gold's jesse_livermore)
+        # lands at a similar ~16% margin usage.
+        "jesse_livermore_xagusd": 0.03,
     }
 
     def __init__(self,
@@ -876,6 +882,18 @@ class AdvancedTradingAgent:
         stays independent of the M5 smc_signal position on "XAUUSD" -
         see the ASSET_TO_OANDA_INSTRUMENT comment in oanda_client.py."""
         return self.jesse_livermore_signal(bars, asset="XAUUSD_M15")
+
+    def jesse_livermore_xagusd_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for XAGUSD (silver), using its own "jesse_livermore_xagusd"
+        strategy label so STRATEGY_RISK_OVERRIDE can size it independently.
+        1yr M15 backtest, out-of-sample checked (2026-08-28): +19.0R over
+        61 trades (32.8% WR, PF 1.46 full year; train +18.0R / test +1.0R
+        on a 70/30 split) - positive on both halves, though a thinner
+        sample and thinner out-of-sample margin than gold's own
+        jesse_livermore backtest. smc and fib_retracement were also tried
+        on silver but neither held up out-of-sample (both flipped sign
+        between the split's two halves) - only this one is deployed."""
+        return self.jesse_livermore_signal(bars, asset="XAGUSD", strategy_label="jesse_livermore_xagusd")
 
     def jesse_livermore_btcusd_signal(self, bars: List[PriceBar]) -> Signal:
         """Wrapper for BTCUSD, using its own "jesse_livermore_btc" strategy

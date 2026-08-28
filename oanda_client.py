@@ -40,6 +40,7 @@ ASSET_TO_OANDA_INSTRUMENT = {
     "GBPUSD_FIB": "GBP_USD",
     "EURUSD_FIB": "EUR_USD",
     "BTCUSD_FIB": "BTC_USD",
+    "XAGUSD": "XAG_USD",
 }
 
 # Each OANDA instrument only accepts prices at its own tick precision
@@ -56,6 +57,7 @@ INSTRUMENT_PRICE_PRECISION = {
     "EUR_USD": 5,
     "GBP_USD": 5,
     "BTC_USD": 1,
+    "XAG_USD": 5,
 }
 
 # Each instrument also has its own tradeable unit precision (OANDA's
@@ -71,6 +73,7 @@ INSTRUMENT_UNITS_PRECISION = {
     "EUR_USD": 0,
     "GBP_USD": 0,
     "BTC_USD": 3,
+    "XAG_USD": 0,
 }
 
 

@@ -120,6 +120,11 @@ STRATEGIES = {
     "GBPUSD_FIB": ["fib_retracement_gbpusd_signal"],
     "EURUSD_FIB": ["fib_retracement_eurusd_signal"],
     "BTCUSD_FIB": ["fib_retracement_btcusd_signal"],
+    # Silver, added 2026-08-28. smc and fib_retracement were both tried on
+    # silver too but neither held up out-of-sample - see
+    # jesse_livermore_xagusd_signal's docstring in trading_agent.py for the
+    # full comparison. Only jesse_livermore is deployed here.
+    "XAGUSD": ["jesse_livermore_xagusd_signal"],
 }
 
 # Paired-strategy support (correlation_hedge). Left in place, unused,
