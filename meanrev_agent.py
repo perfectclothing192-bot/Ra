@@ -19,6 +19,7 @@ from trading_agent import AdvancedTradingAgent, PriceBar, Signal, SignalStrength
 MEAN_WINDOW = 20   # bars - 20 M5 bars = 100 minutes, matching backtest_micro_scalp.py
 BAND_K = 2.0
 STOP_K = 3.5
+MAX_HOLD_HOURS = 4.0  # force-close a position that never reverted, instead of holding indefinitely
 
 
 class MeanReversionAgent(AdvancedTradingAgent):
@@ -50,7 +51,30 @@ class MeanReversionAgent(AdvancedTradingAgent):
             ig_username=ig_username,
         )
         self.price_history = {"XAUUSD": []}
-        self.logger.info("Strategy: Micro Mean-Reversion | Asset: XAUUSD | M5")
+        self.logger.info(f"Strategy: Micro Mean-Reversion | Asset: XAUUSD | M5 | max hold {MAX_HOLD_HOURS}h")
+
+    def update_positions(self, current_prices):
+        """
+        Extends the base SL/TP check with a max-hold-time exit: pure
+        mean-reversion has no time component, so a position that never
+        reverts can otherwise sit open indefinitely (seen live - one trade
+        stayed open 3+ days). Force-close anything still open past
+        MAX_HOLD_HOURS at the current market price instead.
+        """
+        super().update_positions(current_prices)
+
+        now = datetime.now()
+        closed = []
+        for asset, position in list(self.positions.items()):
+            hours_held = (now - position.entry_time).total_seconds() / 3600
+            if hours_held >= MAX_HOLD_HOURS:
+                price = current_prices.get(asset)
+                if price:
+                    self.logger.info(f"{asset}: max hold time reached ({hours_held:.1f}h >= {MAX_HOLD_HOURS}h) - force-closing")
+                    self._close_position(position, price, "TIME")
+                    closed.append(asset)
+        for asset in closed:
+            del self.positions[asset]
 
     def micro_mean_reversion_signal(self, bars: List[PriceBar]) -> Signal:
         if len(bars) < MEAN_WINDOW + 1:
