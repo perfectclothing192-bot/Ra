@@ -1,7 +1,19 @@
 {
   "account_equity": 109205.1198,
   "daily_pnl": 9207.324099999998,
-  "positions": {},
+  "positions": {
+    "XAUUSD": {
+      "asset": "XAUUSD",
+      "direction": "LONG",
+      "entry_price": 4457.0,
+      "entry_time": "2026-08-31T12:11:25.009600",
+      "quantity": 145.83129155743444,
+      "stop_loss": 4449.511544084008,
+      "take_profit": 4471.976911831984,
+      "risk_amount": 5460.255990000001,
+      "position_id": "XAUUSD_1788178285.009602"
+    }
+  },
   "trades": [
     {
       "asset": "EURUSD",
@@ -400,6 +412,8 @@
       "strategy": "BTCUSD_FIB"
     }
   ],
-  "oanda_trade_ids": {},
+  "oanda_trade_ids": {
+    "XAUUSD": "1043"
+  },
   "oanda_initial_balance": 99997.7957
 }
