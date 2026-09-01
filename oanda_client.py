@@ -8,6 +8,7 @@ Requires environment variables:
 """
 
 import os
+import time
 from datetime import datetime
 from typing import List
 
@@ -84,6 +85,32 @@ def _headers() -> dict:
     return {"Authorization": f"Bearer {api_key}"}
 
 
+def _get_with_retry(url: str, headers: dict = None, params: dict = None, timeout: int = 15,
+                     retries: int = 2, backoff: float = 2.0) -> requests.Response:
+    """
+    GET wrapper with a couple of short retries for transient upstream
+    hiccups. Every read call in this poll loop used to be a single
+    unretried request - one flaky response from OANDA (401, 503, 504 all
+    observed live, self-resolving within seconds) would throw and abort
+    the *entire* poll cycle for every other asset, not just the one that
+    hit it. Seen live 2026-09-01: a cycle got 401 then 504 back-to-back on
+    candle fetches while get_account_summary() succeeded moments later
+    with the same key, confirming it wasn't a bad credential - just
+    upstream flakiness worth a couple of retries before giving up.
+    """
+    last_exc = None
+    for attempt in range(retries + 1):
+        try:
+            response = requests.get(url, headers=headers, params=params, timeout=timeout)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException as e:
+            last_exc = e
+            if attempt < retries:
+                time.sleep(backoff * (attempt + 1))
+    raise last_exc
+
+
 def fetch_candles(asset: str, granularity: str = "M15", count: int = 250) -> List[PriceBar]:
     """Fetch the most recent completed candles for an asset."""
     instrument = ASSET_TO_OANDA_INSTRUMENT.get(asset)
@@ -92,8 +119,7 @@ def fetch_candles(asset: str, granularity: str = "M15", count: int = 250) -> Lis
 
     url = f"{BASE_URL}/v3/instruments/{instrument}/candles"
     params = {"granularity": granularity, "count": count, "price": "M"}
-    response = requests.get(url, params=params, headers=_headers(), timeout=15)
-    response.raise_for_status()
+    response = _get_with_retry(url, params=params, headers=_headers())
     data = response.json()
 
     bars = []
@@ -118,8 +144,7 @@ def get_account_summary() -> dict:
     if not account_id:
         raise RuntimeError("OANDA_ACCOUNT_ID not configured")
     url = f"{BASE_URL}/v3/accounts/{account_id}/summary"
-    response = requests.get(url, headers=_headers(), timeout=15)
-    response.raise_for_status()
+    response = _get_with_retry(url, headers=_headers())
     return response.json()["account"]
 
 
@@ -169,8 +194,7 @@ def get_open_trades() -> list:
     if not account_id:
         raise RuntimeError("OANDA_ACCOUNT_ID not configured")
     url = f"{BASE_URL}/v3/accounts/{account_id}/openTrades"
-    response = requests.get(url, headers=_headers(), timeout=15)
-    response.raise_for_status()
+    response = _get_with_retry(url, headers=_headers())
     return response.json()["trades"]
 
 
@@ -196,8 +220,7 @@ def get_trade_close_info(trade_id: str, lookback: int = 300) -> dict:
     last_id = int(summary["lastTransactionID"])
     from_id = max(1, last_id - lookback)
     url = f"{BASE_URL}/v3/accounts/{account_id}/transactions/idrange"
-    response = requests.get(url, headers=_headers(), params={"from": from_id, "to": last_id}, timeout=15)
-    response.raise_for_status()
+    response = _get_with_retry(url, headers=_headers(), params={"from": from_id, "to": last_id})
     for txn in response.json().get("transactions", []):
         if txn.get("type") != "ORDER_FILL":
             continue
@@ -213,8 +236,7 @@ def get_trade(trade_id: str) -> dict:
     if not account_id:
         raise RuntimeError("OANDA_ACCOUNT_ID not configured")
     url = f"{BASE_URL}/v3/accounts/{account_id}/trades/{trade_id}"
-    response = requests.get(url, headers=_headers(), timeout=15)
-    response.raise_for_status()
+    response = _get_with_retry(url, headers=_headers())
     return response.json()["trade"]
 
 
@@ -229,8 +251,7 @@ def fetch_current_price(asset: str) -> float:
 
     url = f"{BASE_URL}/v3/accounts/{account_id}/pricing"
     params = {"instruments": instrument}
-    response = requests.get(url, params=params, headers=_headers(), timeout=15)
-    response.raise_for_status()
+    response = _get_with_retry(url, params=params, headers=_headers())
     prices = response.json().get("prices", [])
     if not prices:
         raise RuntimeError(f"No price returned for instrument '{instrument}'")
