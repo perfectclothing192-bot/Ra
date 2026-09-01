@@ -183,6 +183,35 @@ def mirror_to_oanda(agent, asset, position):
     if position.direction == "SHORT":
         units = -units
 
+    # Several synthetic asset keys share the same underlying OANDA
+    # instrument (e.g. BTCUSD and BTCUSD_FIB both trade BTC_USD - see
+    # ASSET_TO_OANDA_INSTRUMENT). This code tracks them as independent
+    # positions/trade-ID slots, but OANDA only knows about the instrument:
+    # placing an order here while another tracked asset already has an
+    # open trade on the same instrument doesn't open an independent trade -
+    # OANDA nets it against the existing one, partially or fully closing it
+    # for a real, untracked realized P&L. Seen live 2026-09-01 (BTCUSD_FIB
+    # BUY netted 0.193 units off the open BTCUSD SHORT, realizing -$90.14
+    # that this code had no record of, and crashed on the KeyError from the
+    # fill response using a different shape than the tradeOpened one this
+    # code expected). Block the order instead of letting OANDA net it.
+    instrument = ASSET_TO_OANDA_INSTRUMENT.get(asset)
+    for other_asset, other_trade_id in agent.oanda_trade_ids.items():
+        if other_asset == asset or other_trade_id is None:
+            continue
+        if ASSET_TO_OANDA_INSTRUMENT.get(other_asset) != instrument:
+            continue
+        if other_asset not in agent.positions:
+            continue
+        agent.logger.error(
+            f"OANDA order SKIPPED for {asset}: {other_asset} already has an open OANDA "
+            f"trade ({other_trade_id}) on the same instrument ({instrument}) — placing "
+            f"this order would net against it instead of opening an independent trade, "
+            f"reverting local position"
+        )
+        agent.positions.pop(asset, None)
+        return False
+
     # Signals are computed from the last CLOSED candle (up to one
     # granularity period stale - e.g. 5min for XAUUSD/smc), but stop_loss
     # is a fixed price submitted as stopLossOnFill on a live market order.
