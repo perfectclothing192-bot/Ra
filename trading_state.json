@@ -1,6 +1,6 @@
 {
-  "account_equity": 121852.8611,
-  "daily_pnl": 21855.065399999992,
+  "account_equity": 121934.6154,
+  "daily_pnl": 21936.819699999993,
   "positions": {
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
@@ -35,16 +35,27 @@
       "risk_amount": 6092.6430550000005,
       "position_id": "XAGUSD_1788441130.630959"
     },
-    "GBPUSD_FIB": {
-      "asset": "GBPUSD_FIB",
+    "USOIL_FIB": {
+      "asset": "USOIL_FIB",
+      "direction": "SHORT",
+      "entry_price": 92.619,
+      "entry_time": "2026-09-03T15:11:22.420168",
+      "quantity": 750.9049653391156,
+      "stop_loss": 93.43091775942601,
+      "take_profit": 92.103,
+      "risk_amount": 6096.73077,
+      "position_id": "USOIL_FIB_1788448282.420169"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
       "direction": "LONG",
-      "entry_price": 1.35174,
-      "entry_time": "2026-09-03T14:11:40.117206",
-      "quantity": 61256.90430294574,
-      "stop_loss": 1.3492534872042876,
-      "take_profit": 1.3522,
-      "risk_amount": 6092.6430550000005,
-      "position_id": "GBPUSD_FIB_1788444700.117208"
+      "entry_price": 1.16183,
+      "entry_time": "2026-09-03T15:11:24.398583",
+      "quantity": 102260.55796980181,
+      "stop_loss": 1.1603395106825545,
+      "take_profit": 1.16302,
+      "risk_amount": 6096.73077,
+      "position_id": "EURUSD_FIB_1788448284.398584"
     }
   },
   "trades": [
@@ -707,13 +718,26 @@
       "pnl": 512.4206,
       "pnl_percent": 0.42052406104726253,
       "strategy": "EURUSD_FIB"
+    },
+    {
+      "asset": "GBPUSD_FIB",
+      "entry_price": 1.35174,
+      "exit_price": 1.3522,
+      "direction": "LONG",
+      "quantity": 61256.90430294574,
+      "entry_time": "2026-09-03T14:11:40.117206",
+      "exit_time": "2026-09-03T15:11:12.320176",
+      "pnl": 81.7543,
+      "pnl_percent": 0.06704765478761661,
+      "strategy": "GBPUSD_FIB"
     }
   ],
   "oanda_trade_ids": {
     "XAUUSD_M15": "1256",
     "BTCUSD": "1298",
     "XAGUSD": "1302",
-    "GBPUSD_FIB": "1306"
+    "USOIL_FIB": "1312",
+    "EURUSD_FIB": "1318"
   },
   "oanda_initial_balance": 99997.7957
 }
