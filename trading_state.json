@@ -1,6 +1,6 @@
 {
-  "account_equity": 124253.6261,
-  "daily_pnl": 24255.83039999999,
+  "account_equity": 123585.3622,
+  "daily_pnl": 23587.5665,
   "positions": {
     "BTCUSD": {
       "asset": "BTCUSD",
@@ -12,17 +12,6 @@
       "take_profit": 73840.59614138766,
       "risk_amount": 6128.946015,
       "position_id": "BTCUSD_1788340123.682061"
-    },
-    "USOIL_FIB": {
-      "asset": "USOIL_FIB",
-      "direction": "SHORT",
-      "entry_price": 91.233,
-      "entry_time": "2026-09-02T22:10:35.975486",
-      "quantity": 2136.744131004727,
-      "stop_loss": 91.5237545744412,
-      "take_profit": 90.917,
-      "risk_amount": 6212.681305,
-      "position_id": "USOIL_FIB_1788387035.975487"
     }
   },
   "trades": [
@@ -601,11 +590,22 @@
       "pnl": 671.3976,
       "pnl_percent": 0.5403735770422479,
       "strategy": "USOIL_FIB"
+    },
+    {
+      "asset": "USOIL_FIB",
+      "entry_price": 91.233,
+      "exit_price": 91.524,
+      "direction": "SHORT",
+      "quantity": 2136.744131004727,
+      "entry_time": "2026-09-02T22:10:35.975486",
+      "exit_time": "2026-09-03T01:33:58.171916",
+      "pnl": -653.7046,
+      "pnl_percent": -0.528949859726996,
+      "strategy": "USOIL_FIB"
     }
   ],
   "oanda_trade_ids": {
-    "BTCUSD": "1219",
-    "USOIL_FIB": "1248"
+    "BTCUSD": "1219"
   },
   "oanda_initial_balance": 99997.7957
 }
