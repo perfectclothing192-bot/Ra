@@ -34,6 +34,17 @@
       "take_profit": 93.05965963281399,
       "risk_amount": 6115.54744,
       "position_id": "USOIL_1788744883.554898"
+    },
+    "GBPUSD": {
+      "asset": "GBPUSD",
+      "direction": "LONG",
+      "entry_price": 1.35089,
+      "entry_time": "2026-09-07T02:34:57.760978",
+      "quantity": 715516.2154525252,
+      "stop_loss": 1.3504626478793962,
+      "take_profit": 1.3516400000000002,
+      "risk_amount": 6115.54744,
+      "position_id": "GBPUSD_1788748497.760979"
     }
   },
   "trades": [
@@ -857,7 +868,8 @@
   "oanda_trade_ids": {
     "BTCUSD": "1298",
     "XAUUSD": "1362",
-    "USOIL": "1390"
+    "USOIL": "1390",
+    "GBPUSD": "1394"
   },
   "oanda_initial_balance": 99997.7957
 }
