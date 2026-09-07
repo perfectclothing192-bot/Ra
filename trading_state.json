@@ -1,6 +1,6 @@
 {
-  "account_equity": 125833.3533,
-  "daily_pnl": 25835.5576,
+  "account_equity": 125792.7922,
+  "daily_pnl": 25794.996499999994,
   "positions": {
     "BTCUSD": {
       "asset": "BTCUSD",
@@ -12,17 +12,6 @@
       "take_profit": 82339.37121884164,
       "risk_amount": 6092.6430550000005,
       "position_id": "BTCUSD_1788441129.786262"
-    },
-    "XAUUSD": {
-      "asset": "XAUUSD",
-      "direction": "SHORT",
-      "entry_price": 4394.715,
-      "entry_time": "2026-09-04T12:35:21.869851",
-      "quantity": 14.667496298336017,
-      "stop_loss": 4478.393405505324,
-      "take_profit": 4227.358188989352,
-      "risk_amount": 6136.763515000001,
-      "position_id": "XAUUSD_1788525321.869852"
     }
   },
   "trades": [
@@ -865,11 +854,22 @@
       "pnl": 579.7095,
       "pnl_percent": 0.4606962182895273,
       "strategy": "GBPUSD"
+    },
+    {
+      "asset": "XAUUSD",
+      "entry_price": 4394.715,
+      "exit_price": 4394.055,
+      "direction": "SHORT",
+      "quantity": 14.667496298336017,
+      "entry_time": "2026-09-04T12:35:21.869851",
+      "exit_time": "2026-09-07T06:23:32.923003",
+      "pnl": -40.5611,
+      "pnl_percent": -0.03223398164022385,
+      "strategy": "XAUUSD (manually closed by user, trade 1362)"
     }
   ],
   "oanda_trade_ids": {
-    "BTCUSD": "1298",
-    "XAUUSD": "1362"
+    "BTCUSD": "1298"
   },
   "oanda_initial_balance": 99997.7957
 }
