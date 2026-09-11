@@ -599,6 +599,111 @@ class AdvancedTradingAgent:
 
         return hold
 
+    def fvg_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "fvg") -> Signal:
+        """
+        Fair Value Gap (FVG) continuation strategy - a distinct ICT/Smart
+        Money Concepts idea from smc_signal's liquidity-sweep + break-of-
+        structure logic above. Untested candidate, added 2026-09-11 at the
+        user's request to evaluate other strategies professional/ICT-style
+        traders use.
+
+        1. A bullish FVG is a 3-candle imbalance: candle[k]'s low sits above
+           candle[k-2]'s high, meaning the middle candle[k-1] displaced
+           price so hard that no wick from either outer candle overlaps -
+           an "inefficiency" ICT-style traders expect price to eventually
+           revisit. Gap zone = (high[k-2], low[k]). Mirror image (bearish)
+           when candle[k]'s high sits below candle[k-2]'s low.
+        2. Only the single most recent gap within a 50-bar lookback is
+           tracked, and only while still "fresh" - discarded if any bar
+           between its formation and now has already dipped into the zone
+           (first-touch entries only, not every repeated poke at a stale
+           gap).
+        3. Entry: the current bar's low reaches into the gap zone (a
+           retracement into the imbalance) while its close remains above
+           the zone's far edge and above its own open (a rejection/
+           continuation candle, not a fill-through). Mirror image for
+           bearish.
+        4. Stop just beyond the gap's far edge; target at 2x the stop
+           distance.
+
+        Backtested 2026-09-11 (1yr M15, 70/30 split, see backtest_candidates.py):
+        GBPUSD -41.0R/548 trades (train -25.0R, test -18.0R - consistently
+        negative, a real edge in the wrong direction); EURUSD -59.0R/575
+        trades (train -25.0R, test -34.0R - also consistently negative);
+        XAUUSD -8.0R/608 trades (train -19.0R, test +15.0R - sign flips);
+        USOIL -31.0R/523 trades (train -49.0R, test +11.0R - sign flips);
+        XAGUSD +16.0R/569 trades (train +23.0R PF 1.09, test -3.0R PF 0.97
+        - sign flips). Not deployed anywhere - doesn't hold up on any
+        instrument tried, the worst showing of the four candidate
+        strategies evaluated here (rsi2_pullback, donchian_breakout,
+        mark_douglas, fvg).
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
+
+        lookback = 50
+        if len(bars) < lookback + 5:
+            return hold
+
+        highs = np.array([b.high for b in bars])
+        lows = np.array([b.low for b in bars])
+        closes = np.array([b.close for b in bars])
+        opens = np.array([b.open for b in bars])
+        atr = self._atr(bars, 14)[-1]
+        n = len(bars)
+
+        current_high, current_low = highs[-1], lows[-1]
+        current_close, current_open = closes[-1], opens[-1]
+
+        # Most recent bullish FVG: candle k's low > candle k-2's high,
+        # k strictly before the current bar (n-1) so there's at least one
+        # bar to test freshness against.
+        for k in range(n - 2, 1, -1):
+            if lows[k] > highs[k - 2]:
+                gap_bottom, gap_top = highs[k - 2], lows[k]
+                # Fresh only if no bar since formation (k+1 .. n-2) has
+                # already dipped into the zone.
+                already_tested = np.any(lows[k + 1:n - 1] <= gap_top)
+                if already_tested:
+                    break
+                if current_low <= gap_top and current_close > gap_bottom and current_close > current_open:
+                    entry_price = current_close
+                    stop_loss = gap_bottom - atr * 0.2
+                    risk = entry_price - stop_loss
+                    if risk <= 0:
+                        break
+                    take_profit = entry_price + risk * 2.0
+                    return Signal(
+                        asset=asset, direction="BUY", strength=SignalStrength.STRONG,
+                        entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                        risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.65,
+                        timestamp=datetime.now()
+                    )
+                break  # only the single most recent gap is considered
+
+        # Most recent bearish FVG: candle k's high < candle k-2's low.
+        for k in range(n - 2, 1, -1):
+            if highs[k] < lows[k - 2]:
+                gap_top, gap_bottom = lows[k - 2], highs[k]
+                already_tested = np.any(highs[k + 1:n - 1] >= gap_bottom)
+                if already_tested:
+                    break
+                if current_high >= gap_bottom and current_close < gap_top and current_close < current_open:
+                    entry_price = current_close
+                    stop_loss = gap_top + atr * 0.2
+                    risk = stop_loss - entry_price
+                    if risk <= 0:
+                        break
+                    take_profit = entry_price - risk * 2.0
+                    return Signal(
+                        asset=asset, direction="SELL", strength=SignalStrength.STRONG,
+                        entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                        risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.65,
+                        timestamp=datetime.now()
+                    )
+                break
+
+        return hold
+
     # ============================================
     # STRATEGY 5: VOLATILITY BREAKOUT (BITCOIN)
     # ============================================

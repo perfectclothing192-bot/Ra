@@ -49,6 +49,14 @@ CANDIDATES = [
     ("XAUUSD", "mark_douglas_signal", {}),
     ("USOIL", "mark_douglas_signal", {}),
     ("XAGUSD", "mark_douglas_signal", {}),
+    # fvg_signal - ICT-style Fair Value Gap continuation, distinct from
+    # smc_signal's liquidity-sweep + break-of-structure logic. New, never
+    # backtested before this.
+    ("GBPUSD", "fvg_signal", {}),
+    ("EURUSD", "fvg_signal", {}),
+    ("XAUUSD", "fvg_signal", {}),
+    ("USOIL", "fvg_signal", {}),
+    ("XAGUSD", "fvg_signal", {}),
 ]
 
 
