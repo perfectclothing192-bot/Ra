@@ -929,6 +929,12 @@ class AdvancedTradingAgent:
         3. Stop beyond the signal bar's high/low plus a 0.5x ATR buffer;
            target is the 5-period SMA (a quick reversion back to the
            recent mean, not the full swing).
+
+        Backtested 2026-09-11 (1yr M15, 70/30 split, see backtest_candidates.py):
+        GBPUSD -54.0R/1300 trades (train -55.4R, test +1.2R - sign flips,
+        not robust); EURUSD +13.6R/1311 trades (train +18.2R, test -5.3R -
+        also sign flips). Not deployed - neither instrument holds up
+        out-of-sample.
         """
         hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "rsi2_pullback", 0, datetime.now())
 
@@ -994,6 +1000,13 @@ class AdvancedTradingAgent:
            likely a fakeout than a fresh trend leg.
         3. Stop at the opposite side of the channel; target at 2x the
            stop distance (fixed R:R, no discretion).
+
+        Backtested 2026-09-11 (1yr M15, 70/30 split, see backtest_candidates.py):
+        GBPUSD +6.0R/105 trades (train +3.0R, test +1.0R - sign-consistent
+        but a thin sample, 20 trades in the test half); EURUSD -1.0R/70
+        trades (train -4.0R, test +4.0R - sign flips). Not deployed -
+        GBPUSD is the more promising of the two candidates here but too
+        few trades to call it robust yet; EURUSD isn't robust at all.
         """
         hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "donchian_breakout", 0, datetime.now())
 
