@@ -3,7 +3,9 @@ Backtest harness for the two "data points" quant-style candidate strategies
 already implemented in trading_agent.py but never wired into run_loop.py's
 STRATEGIES dict: rsi2_pullback_signal and donchian_breakout_signal (both
 labeled "Candidate replacement for fx_range_reversion on GBPUSD/EURUSD" in
-their docstrings).
+their docstrings - both are generic (bars, asset) methods, so also tried
+here on the three commodity assets already live under other strategies:
+XAUUSD (gold), USOIL, XAGUSD (silver)).
 
 Every strategy actually live in run_loop.py has a documented 1-year M15
 backtest, checked out-of-sample on a chronological 70/30 train/test split,
@@ -27,12 +29,18 @@ GRANULARITY = "M15"
 LOOKBACK_DAYS = 365
 WINDOW = 250  # bars fed to each signal call, matching run_loop.py's fetch_candles(count=250)
 
-# (backtest asset label, OANDA instrument, strategy function name, kwargs)
+# (backtest asset label, strategy function name, kwargs)
 CANDIDATES = [
     ("GBPUSD", "rsi2_pullback_signal", {}),
     ("EURUSD", "rsi2_pullback_signal", {}),
     ("GBPUSD", "donchian_breakout_signal", {}),
     ("EURUSD", "donchian_breakout_signal", {}),
+    ("XAUUSD", "rsi2_pullback_signal", {}),
+    ("USOIL", "rsi2_pullback_signal", {}),
+    ("XAGUSD", "rsi2_pullback_signal", {}),
+    ("XAUUSD", "donchian_breakout_signal", {}),
+    ("USOIL", "donchian_breakout_signal", {}),
+    ("XAGUSD", "donchian_breakout_signal", {}),
 ]
 
 
@@ -167,9 +175,10 @@ def main():
 
     agent = AdvancedTradingAgent()
 
-    print(f"Fetching {LOOKBACK_DAYS}d of {GRANULARITY} candles for GBP_USD and EUR_USD...")
+    assets = sorted({asset for asset, _, _ in CANDIDATES})
+    print(f"Fetching {LOOKBACK_DAYS}d of {GRANULARITY} candles for {', '.join(assets)}...")
     candle_cache = {}
-    for asset in ("GBPUSD", "EURUSD"):
+    for asset in assets:
         instrument = ASSET_TO_OANDA_INSTRUMENT[asset]
         bars = fetch_historical_candles(instrument, GRANULARITY, from_dt, to_dt)
         candle_cache[asset] = bars

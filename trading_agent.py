@@ -933,8 +933,15 @@ class AdvancedTradingAgent:
         Backtested 2026-09-11 (1yr M15, 70/30 split, see backtest_candidates.py):
         GBPUSD -54.0R/1300 trades (train -55.4R, test +1.2R - sign flips,
         not robust); EURUSD +13.6R/1311 trades (train +18.2R, test -5.3R -
-        also sign flips). Not deployed - neither instrument holds up
-        out-of-sample.
+        also sign flips). Also tried on the commodities already live under
+        other strategies: XAUUSD -13.4R/1189 trades (train -21.9R, test
+        +2.8R - sign flips); USOIL +12.2R/1214 trades (train +18.4R, test
+        -15.2R - sign flips); XAGUSD +47.4R/1191 trades (train +12.2R/831
+        trades PF 1.03, test +19.8R/341 trades PF 1.11 - BOTH halves
+        positive, the one instrument here that's sign-consistent with a
+        real sample size). Not deployed anywhere yet - XAGUSD is the
+        strongest candidate found across this whole exercise and worth a
+        second look before wiring in, everything else fails out-of-sample.
         """
         hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "rsi2_pullback", 0, datetime.now())
 
@@ -1004,9 +1011,14 @@ class AdvancedTradingAgent:
         Backtested 2026-09-11 (1yr M15, 70/30 split, see backtest_candidates.py):
         GBPUSD +6.0R/105 trades (train +3.0R, test +1.0R - sign-consistent
         but a thin sample, 20 trades in the test half); EURUSD -1.0R/70
-        trades (train -4.0R, test +4.0R - sign flips). Not deployed -
-        GBPUSD is the more promising of the two candidates here but too
-        few trades to call it robust yet; EURUSD isn't robust at all.
+        trades (train -4.0R, test +4.0R - sign flips). Also tried on the
+        commodities already live under other strategies: XAUUSD +5.0R/97
+        trades (train +9.0R, test -12.0R - sign flips); USOIL -11.0R/68
+        trades (train -11.0R, test -3.0R - consistently negative, not just
+        non-robust); XAGUSD +23.0R/106 trades (train +20.0R, test -4.0R -
+        sign flips). Not deployed anywhere - GBPUSD is the closest to
+        promising but on too few trades to trust; every other instrument
+        either flips sign or is outright negative both halves.
         """
         hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "donchian_breakout", 0, datetime.now())
 
