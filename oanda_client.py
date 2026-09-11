@@ -42,6 +42,10 @@ ASSET_TO_OANDA_INSTRUMENT = {
     "EURUSD_FIB": "EUR_USD",
     "BTCUSD_FIB": "BTC_USD",
     "XAGUSD": "XAG_USD",
+    # Same pattern as XAUUSD_M15 above - gives rsi2_pullback_xagusd_signal
+    # its own independent position/trade-ID slot on XAG_USD, alongside
+    # (not instead of) jesse_livermore_xagusd's plain "XAGUSD" slot.
+    "XAGUSD_RSI2": "XAG_USD",
 }
 
 # Each OANDA instrument only accepts prices at its own tick precision

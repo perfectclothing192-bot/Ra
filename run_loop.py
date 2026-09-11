@@ -125,6 +125,21 @@ STRATEGIES = {
     # jesse_livermore_xagusd_signal's docstring in trading_agent.py for the
     # full comparison. Only jesse_livermore is deployed here.
     "XAGUSD": ["jesse_livermore_xagusd_signal"],
+    # "XAGUSD_RSI2" is a second synthetic key for the same XAG_USD
+    # instrument (see ASSET_TO_OANDA_INSTRUMENT), same pattern as
+    # XAUUSD_M15 - runs rsi2_pullback_xagusd_signal (Larry Connors-style
+    # RSI(2) trend-pullback) on its own independent position slot,
+    # alongside (not instead of) jesse_livermore_xagusd's slot on plain
+    # "XAGUSD". Added 2026-09-11: this and two other unvalidated
+    # candidates (rsi2_pullback, donchian_breakout, mark_douglas) sat
+    # implemented but never backtested; ran all three across GBPUSD,
+    # EURUSD, XAUUSD, USOIL, XAGUSD (see backtest_candidates.py) and this
+    # was the only sign-consistent, real-sample-size result: 1yr M15,
+    # +47.4R over 1191 trades (46.9% WR, PF 1.07 full year; train
+    # +12.2R/831 trades PF 1.03, test +19.8R/341 trades PF 1.11 on a
+    # 70/30 split). Risk sized in STRATEGY_RISK_OVERRIDE off its own much
+    # tighter stop distance than jesse_livermore_xagusd's.
+    "XAGUSD_RSI2": ["rsi2_pullback_xagusd_signal"],
 }
 
 # Paired-strategy support (correlation_hedge). Left in place, unused,

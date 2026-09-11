@@ -195,6 +195,17 @@ class AdvancedTradingAgent:
         # effects roughly cancel, so 3% risk (same as gold's jesse_livermore)
         # lands at a similar ~16% margin usage.
         "jesse_livermore_xagusd": 0.03,
+        # rsi2_pullback_xagusd, added 2026-09-11: runs on the same XAG_USD
+        # instrument (marginRate 0.10) as jesse_livermore_xagusd above, but
+        # its stop (signal bar's high/low +/- 0.5x ATR) is far tighter -
+        # sampled median 0.318% of price, tightest observed 0.113% - so it
+        # needs its own, much smaller risk_pct to avoid dwarfing the margin
+        # jesse_livermore_xagusd already uses on the same instrument. 0.5%
+        # lands at ~15% margin usage at the median stop and ~44% worst-case
+        # at the tightest observed stop - combined with jesse_livermore_
+        # xagusd's own ~16%, worst-case total stays comfortably under 100%
+        # even with both open at once.
+        "rsi2_pullback_xagusd": 0.005,
     }
 
     def __init__(self,
@@ -910,12 +921,16 @@ class AdvancedTradingAgent:
     def fx_range_reversion_eurusd_signal(self, bars: List[PriceBar]) -> Signal:
         return self.fx_range_reversion_signal(bars, "EURUSD")
 
-    def rsi2_pullback_signal(self, bars: List[PriceBar], asset: str) -> Signal:
+    def rsi2_pullback_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "rsi2_pullback") -> Signal:
         """
         Candidate replacement for fx_range_reversion on GBPUSD/EURUSD -
         Larry Connors-style RSI(2) pullback: only take a mean-reversion
         entry when it's a pullback WITHIN an established trend, not a
         fade against one.
+
+        strategy_label lets different instruments running this same logic
+        get their own STRATEGY_RISK_OVERRIDE entry, same pattern as
+        jesse_livermore_signal/fib_retracement_signal.
 
         1. Trend filter: close above/below SMA200 defines the only
            direction traded (longs only in an uptrend, shorts only in a
@@ -939,11 +954,13 @@ class AdvancedTradingAgent:
         -15.2R - sign flips); XAGUSD +47.4R/1191 trades (train +12.2R/831
         trades PF 1.03, test +19.8R/341 trades PF 1.11 - BOTH halves
         positive, the one instrument here that's sign-consistent with a
-        real sample size). Not deployed anywhere yet - XAGUSD is the
-        strongest candidate found across this whole exercise and worth a
-        second look before wiring in, everything else fails out-of-sample.
+        real sample size). Deployed 2026-09-11 on XAGUSD only, as its own
+        "XAGUSD_RSI2" synthetic position slot (see
+        rsi2_pullback_xagusd_signal) alongside (not instead of)
+        jesse_livermore_xagusd - everything else here still isn't robust
+        enough to trade.
         """
-        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "rsi2_pullback", 0, datetime.now())
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
 
         warmup = 210
         if len(bars) < warmup:
@@ -973,7 +990,7 @@ class AdvancedTradingAgent:
                 asset=asset, direction="BUY", strength=SignalStrength.MEDIUM,
                 entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
                 risk_reward_ratio=(take_profit - entry_price) / risk,
-                strategy="rsi2_pullback", confidence=0.55, timestamp=datetime.now()
+                strategy=strategy_label, confidence=0.55, timestamp=datetime.now()
             )
 
         if downtrend and rsi_2 > 90:
@@ -989,10 +1006,24 @@ class AdvancedTradingAgent:
                 asset=asset, direction="SELL", strength=SignalStrength.MEDIUM,
                 entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
                 risk_reward_ratio=(entry_price - take_profit) / risk,
-                strategy="rsi2_pullback", confidence=0.55, timestamp=datetime.now()
+                strategy=strategy_label, confidence=0.55, timestamp=datetime.now()
             )
 
         return hold
+
+    def rsi2_pullback_xagusd_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for the "XAGUSD_RSI2" synthetic position slot, alongside
+        (not instead of) jesse_livermore_xagusd_signal's XAGUSD slot - same
+        pattern as XAUUSD_M15/the "*_FIB" keys. Own "rsi2_pullback_xagusd"
+        strategy label so STRATEGY_RISK_OVERRIDE can size it independently.
+        1yr M15 backtest, out-of-sample checked (2026-09-11, see
+        backtest_candidates.py): +47.4R over 1191 trades (46.9% WR, PF 1.07
+        full year; train +12.2R/831 trades PF 1.03, test +19.8R/341 trades
+        PF 1.11 on a 70/30 split) - the only sign-consistent, real-sample
+        result out of 3 candidate strategies x 5 instruments tried (see
+        rsi2_pullback_signal, donchian_breakout_signal, and
+        mark_douglas_signal's docstrings for the rest)."""
+        return self.rsi2_pullback_signal(bars, asset="XAGUSD_RSI2", strategy_label="rsi2_pullback_xagusd")
 
     def donchian_breakout_signal(self, bars: List[PriceBar], asset: str, channel: int = 20) -> Signal:
         """
