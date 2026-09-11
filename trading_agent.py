@@ -1242,6 +1242,18 @@ class AdvancedTradingAgent:
            actual structural low), not a blanket ATR offset from the MA.
            Target fixed at 2R exactly - mechanical, no discretion.
         Mirror image for downtrends/SELL.
+
+        Backtested 2026-09-11 (1yr M15, 70/30 split, see backtest_candidates.py -
+        never backtested anywhere before this): GBPUSD -26.0R/692 trades
+        (train -14.0R, test -11.0R - consistently negative, a real edge in
+        the wrong direction, not just noise); EURUSD -35.0R/707 trades
+        (train -7.0R, test -30.0R - also consistently negative); XAUUSD
+        +15.0R/714 trades (train -8.0R, test +20.0R - sign flips); USOIL
+        -27.0R/654 trades (train -41.0R, test +19.0R - sign flips); XAGUSD
+        +22.0R/719 trades (train +24.0R, test +3.0R PF 1.02 - sign-
+        consistent but the test edge is too thin to call it real). Not
+        deployed anywhere - no instrument here clears the bar; XAGUSD is
+        the least bad but far weaker than rsi2_pullback's XAGUSD result.
         """
         hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, "mark_douglas", 0, datetime.now())
 

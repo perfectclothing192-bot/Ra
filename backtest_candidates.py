@@ -41,6 +41,14 @@ CANDIDATES = [
     ("XAUUSD", "donchian_breakout_signal", {}),
     ("USOIL", "donchian_breakout_signal", {}),
     ("XAGUSD", "donchian_breakout_signal", {}),
+    # mark_douglas_signal - mechanical EMA trend-continuation (trend +
+    # slope filter, shallow pullback, fixed 2R target) - never backtested
+    # anywhere before this, unlike every other strategy in this file.
+    ("GBPUSD", "mark_douglas_signal", {}),
+    ("EURUSD", "mark_douglas_signal", {}),
+    ("XAUUSD", "mark_douglas_signal", {}),
+    ("USOIL", "mark_douglas_signal", {}),
+    ("XAGUSD", "mark_douglas_signal", {}),
 ]
 
 
