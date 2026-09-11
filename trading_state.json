@@ -23,6 +23,17 @@
       "take_profit": 73174.29537191917,
       "risk_amount": 5353.781525,
       "position_id": "BTCUSD_1789045798.528662"
+    },
+    "XAGUSD": {
+      "asset": "XAGUSD",
+      "direction": "SHORT",
+      "entry_price": 63.124,
+      "entry_time": "2026-09-11T03:34:58.974751",
+      "quantity": 4224.98439215773,
+      "stop_loss": 63.88709949759446,
+      "take_profit": 60.83470150721662,
+      "risk_amount": 5373.472445,
+      "position_id": "XAGUSD_1789097698.974753"
     }
   },
   "trades": [
@@ -1121,7 +1132,8 @@
   ],
   "oanda_trade_ids": {
     "XAUUSD_M15": "1461",
-    "BTCUSD": "1521"
+    "BTCUSD": "1521",
+    "XAGUSD": "1542"
   },
   "oanda_initial_balance": 99997.7957
 }
