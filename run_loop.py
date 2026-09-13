@@ -140,6 +140,20 @@ STRATEGIES = {
     # 70/30 split). Risk sized in STRATEGY_RISK_OVERRIDE off its own much
     # tighter stop distance than jesse_livermore_xagusd's.
     "XAGUSD_RSI2": ["rsi2_pullback_xagusd_signal"],
+    # "XAUUSD_ORB" is a third synthetic key for the same XAU_USD
+    # instrument (see ASSET_TO_OANDA_INSTRUMENT), alongside "XAUUSD" (smc),
+    # "XAUUSD_M15" (jesse_livermore), and "XAUUSD_FIB" (fib_retracement).
+    # Runs orb_15m_xauusd_signal (classic Opening Range Breakout, 15-min
+    # range) on its own independent position slot. Added 2026-09-13: one
+    # of 5 candidate strategies (rsi2_pullback, donchian_breakout,
+    # mark_douglas, fvg, orb_15m) backtested across GBPUSD, EURUSD,
+    # XAUUSD, USOIL, XAGUSD - this was the second sign-consistent result
+    # after rsi2_pullback's XAGUSD one: 1yr M15, +13.0R over 254 trades
+    # (35.0% WR, PF 1.08 full year; train +9.0R/171 trades PF 1.08, test
+    # +4.0R/80 trades PF 1.08 on a 70/30 split - identical profit factor
+    # in both halves). Risk sized in STRATEGY_RISK_OVERRIDE off its own
+    # stop distance (opposite side of the opening range).
+    "XAUUSD_ORB": ["orb_15m_xauusd_signal"],
 }
 
 # Paired-strategy support (correlation_hedge). Left in place, unused,

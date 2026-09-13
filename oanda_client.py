@@ -46,6 +46,10 @@ ASSET_TO_OANDA_INSTRUMENT = {
     # its own independent position/trade-ID slot on XAG_USD, alongside
     # (not instead of) jesse_livermore_xagusd's plain "XAGUSD" slot.
     "XAGUSD_RSI2": "XAG_USD",
+    # Same pattern again - gives orb_15m_xauusd_signal its own independent
+    # position/trade-ID slot on XAU_USD, alongside (not instead of) the
+    # other three gold strategies' slots.
+    "XAUUSD_ORB": "XAU_USD",
 }
 
 # Each OANDA instrument only accepts prices at its own tick precision

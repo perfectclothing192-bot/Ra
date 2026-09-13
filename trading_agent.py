@@ -206,6 +206,18 @@ class AdvancedTradingAgent:
         # xagusd's own ~16%, worst-case total stays comfortably under 100%
         # even with both open at once.
         "rsi2_pullback_xagusd": 0.005,
+        # orb_15m_xauusd, added 2026-09-13: runs on the same XAU_USD
+        # instrument (marginRate 0.05, i.e. 20:1) as smc/jesse_livermore_
+        # xauusd_m15/fib_retracement_xauusd. Its stop (opposite side of
+        # the opening 15m range) sampled median 0.322% of price, tightest
+        # observed 0.106% - similar order to smc's own stop distances, so
+        # 1% risk (matching smc and fib_retracement_xauusd on this same
+        # instrument) lands at ~15% margin usage at the median stop and
+        # ~47% worst-case at the tightest observed stop. Fires at most
+        # once per day (first breakout only), far less often than the
+        # other three gold strategies, so realistic combined margin usage
+        # stays well under 100% even with all four open at once.
+        "orb_15m_xauusd": 0.01,
     }
 
     def __init__(self,
@@ -733,9 +745,11 @@ class AdvancedTradingAgent:
         sign-consistent result found across every candidate tried here);
         USOIL -6.0R/246 trades (train +5.0R, test -8.0R - sign flips);
         XAGUSD -15.0R/249 trades (train -23.0R, test +8.0R - sign flips).
-        Not deployed anywhere yet - XAUUSD is a genuine second candidate
-        alongside rsi2_pullback's XAGUSD result, though on a thinner edge
-        (PF 1.08 vs 1.03-1.11) and smaller sample.
+        Deployed 2026-09-13 on XAUUSD only, as its own "XAUUSD_ORB"
+        synthetic position slot (see orb_15m_xauusd_signal) alongside
+        (not instead of) smc/jesse_livermore_xauusd_m15/fib_retracement_
+        xauusd - the other four instruments here still aren't robust
+        enough to trade.
         """
         hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
 
@@ -791,6 +805,21 @@ class AdvancedTradingAgent:
             )
 
         return hold
+
+    def orb_15m_xauusd_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for the "XAUUSD_ORB" synthetic position slot, alongside
+        (not instead of) smc/jesse_livermore_xauusd_m15/fib_retracement_
+        xauusd's XAUUSD slots. Own "orb_15m_xauusd" strategy label so
+        STRATEGY_RISK_OVERRIDE can size it independently.
+        1yr M15 backtest, out-of-sample checked (2026-09-13, see
+        backtest_candidates.py): +13.0R over 254 trades (35.0% WR, PF 1.08
+        full year; train +9.0R/171 trades PF 1.08, test +4.0R/80 trades
+        PF 1.08 on a 70/30 split) - identical profit factor in both
+        halves, the most sign-consistent result out of 5 candidate
+        strategies x 5 instruments tried (see orb_15m_signal,
+        rsi2_pullback_signal, donchian_breakout_signal, mark_douglas_signal,
+        and fvg_signal's docstrings for the rest)."""
+        return self.orb_15m_signal(bars, asset="XAUUSD_ORB", strategy_label="orb_15m_xauusd")
 
     # ============================================
     # STRATEGY 5: VOLATILITY BREAKOUT (BITCOIN)
