@@ -723,6 +723,19 @@ class AdvancedTradingAgent:
            (BUY) or below the range low (SELL).
         4. Stop at the opposite side of the opening range (as wide as the
            whole range); target at 2x that distance.
+
+        Backtested 2026-09-13 (1yr M15, 70/30 split, see backtest_candidates.py):
+        GBPUSD -42.0R/288 trades (train -21.0R, test -17.0R - consistently
+        negative); EURUSD -15.0R/288 trades (train -7.0R, test -4.0R -
+        also consistently negative); XAUUSD +13.0R/254 trades (train
+        +9.0R/171 trades PF 1.08, test +4.0R/80 trades PF 1.08 - BOTH
+        halves positive with an identical profit factor, the most
+        sign-consistent result found across every candidate tried here);
+        USOIL -6.0R/246 trades (train +5.0R, test -8.0R - sign flips);
+        XAGUSD -15.0R/249 trades (train -23.0R, test +8.0R - sign flips).
+        Not deployed anywhere yet - XAUUSD is a genuine second candidate
+        alongside rsi2_pullback's XAGUSD result, though on a thinner edge
+        (PF 1.08 vs 1.03-1.11) and smaller sample.
         """
         hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
 
