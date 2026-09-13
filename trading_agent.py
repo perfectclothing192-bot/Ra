@@ -704,6 +704,81 @@ class AdvancedTradingAgent:
 
         return hold
 
+    def orb_15m_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "orb_15m") -> Signal:
+        """
+        Opening Range Breakout (ORB), 15-minute range - a classic
+        day-trading strategy distinct from every other pattern here.
+        Untested candidate, added 2026-09-13 at the user's request.
+
+        1. Opening range = the high/low of the first M15 candle after each
+           daily UTC boundary (00:00) - a fixed, arbitrary but consistent
+           session reset used across every instrument here (this isn't
+           each instrument's "real" trading-session open, just a uniform
+           reference point).
+        2. Only the first breakout of the day counts: if any earlier bar
+           that same day already closed beyond the range in either
+           direction, the day's opportunity is used up - no re-entries,
+           no reversals.
+        3. Entry: the current bar's close breaks above the range high
+           (BUY) or below the range low (SELL).
+        4. Stop at the opposite side of the opening range (as wide as the
+           whole range); target at 2x that distance.
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
+
+        if len(bars) < 30:
+            return hold
+
+        current_bar = bars[-1]
+        current_day = current_bar.timestamp.date()
+        day_bars = [b for b in bars if b.timestamp.date() == current_day]
+        if len(day_bars) < 2:
+            return hold
+
+        opening_bar = day_bars[0]
+        range_high = opening_bar.high
+        range_low = opening_bar.low
+        if range_high <= range_low:
+            return hold
+
+        prior_bars = day_bars[1:-1]
+        already_broke_up = any(b.close > range_high for b in prior_bars)
+        already_broke_down = any(b.close < range_low for b in prior_bars)
+        if already_broke_up or already_broke_down:
+            return hold
+
+        current_close = current_bar.close
+
+        if current_close > range_high:
+            entry_price = current_close
+            stop_loss = range_low
+            risk = entry_price - stop_loss
+            if risk <= 0:
+                return hold
+            take_profit = entry_price + risk * 2.0
+            return Signal(
+                asset=asset, direction="BUY", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        if current_close < range_low:
+            entry_price = current_close
+            stop_loss = range_high
+            risk = stop_loss - entry_price
+            if risk <= 0:
+                return hold
+            take_profit = entry_price - risk * 2.0
+            return Signal(
+                asset=asset, direction="SELL", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        return hold
+
     # ============================================
     # STRATEGY 5: VOLATILITY BREAKOUT (BITCOIN)
     # ============================================

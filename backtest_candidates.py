@@ -57,6 +57,13 @@ CANDIDATES = [
     ("XAUUSD", "fvg_signal", {}),
     ("USOIL", "fvg_signal", {}),
     ("XAGUSD", "fvg_signal", {}),
+    # orb_15m_signal - classic Opening Range Breakout, 15-min range.
+    # New, never backtested before this.
+    ("GBPUSD", "orb_15m_signal", {}),
+    ("EURUSD", "orb_15m_signal", {}),
+    ("XAUUSD", "orb_15m_signal", {}),
+    ("USOIL", "orb_15m_signal", {}),
+    ("XAGUSD", "orb_15m_signal", {}),
 ]
 
 
