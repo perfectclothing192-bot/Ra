@@ -1,19 +1,7 @@
 {
-  "account_equity": 107264.0832,
-  "daily_pnl": 7266.287499999991,
-  "positions": {
-    "GBPUSD": {
-      "asset": "GBPUSD",
-      "direction": "LONG",
-      "entry_price": 1.35056,
-      "entry_time": "2026-09-14T04:08:18.084138",
-      "quantity": 764017.5724818812,
-      "stop_loss": 1.3501388156435268,
-      "take_profit": 1.35204825,
-      "risk_amount": 5363.20416,
-      "position_id": "GBPUSD_1789358898.084139"
-    }
-  },
+  "account_equity": 106853.9654,
+  "daily_pnl": 6856.169699999999,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -1178,10 +1166,20 @@
       "pnl": -138.2606,
       "pnl_percent": -0.12889738659510588,
       "strategy": "GBPUSD"
+    },
+    {
+      "asset": "GBPUSD",
+      "entry_price": 1.35056,
+      "exit_price": 1.35014,
+      "direction": "LONG",
+      "quantity": 764017.5724818812,
+      "entry_time": "2026-09-14T04:08:18.084138",
+      "exit_time": "2026-09-14T05:08:54.279908",
+      "pnl": -410.1178,
+      "pnl_percent": -0.3838114930641591,
+      "strategy": "GBPUSD"
     }
   ],
-  "oanda_trade_ids": {
-    "GBPUSD": "1773"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957
 }
