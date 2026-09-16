@@ -1,6 +1,6 @@
 {
-  "account_equity": 112847.2468,
-  "daily_pnl": 12849.451099999991,
+  "account_equity": 113167.1893,
+  "daily_pnl": 13169.393599999996,
   "positions": {
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
@@ -23,28 +23,6 @@
       "take_profit": 1.34458,
       "risk_amount": 5642.36234,
       "position_id": "GBPUSD_FIB_1789565634.336931"
-    },
-    "EURUSD_FIB": {
-      "asset": "EURUSD_FIB",
-      "direction": "LONG",
-      "entry_price": 1.15372,
-      "entry_time": "2026-09-16T14:33:58.446492",
-      "quantity": 170366.23389926646,
-      "stop_loss": 1.152892024553977,
-      "take_profit": 1.15388,
-      "risk_amount": 5642.36234,
-      "position_id": "EURUSD_FIB_1789569238.446493"
-    },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
-      "direction": "LONG",
-      "entry_price": 64.311,
-      "entry_time": "2026-09-16T14:33:59.365329",
-      "quantity": 1344.1243255378713,
-      "stop_loss": 64.10111010243632,
-      "take_profit": 64.4508,
-      "risk_amount": 5642.36234,
-      "position_id": "XAGUSD_RSI2_1789569239.36533"
     }
   },
   "trades": [
@@ -1439,13 +1417,35 @@
       "pnl": -769.0276,
       "pnl_percent": -0.6814766171149512,
       "strategy": "BTCUSD"
+    },
+    {
+      "asset": "EURUSD_FIB",
+      "entry_price": 1.15372,
+      "exit_price": 1.15388,
+      "direction": "LONG",
+      "quantity": 170366.23389926646,
+      "entry_time": "2026-09-16T14:33:58.446492",
+      "exit_time": "2026-09-16T15:08:27.561225",
+      "pnl": 14.1866,
+      "pnl_percent": 0.012535965669689033,
+      "strategy": "EURUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 64.311,
+      "exit_price": 64.454,
+      "direction": "LONG",
+      "quantity": 1344.1243255378713,
+      "entry_time": "2026-09-16T14:33:59.365329",
+      "exit_time": "2026-09-16T15:08:29.490363",
+      "pnl": 305.7559,
+      "pnl_percent": 0.2701806962700628,
+      "strategy": "XAGUSD_RSI2"
     }
   ],
   "oanda_trade_ids": {
     "XAUUSD_M15": "1918",
-    "GBPUSD_FIB": "1924",
-    "EURUSD_FIB": "1928",
-    "XAGUSD_RSI2": "1932"
+    "GBPUSD_FIB": "1924"
   },
   "oanda_initial_balance": 99997.7957
 }
