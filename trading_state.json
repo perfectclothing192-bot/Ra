@@ -1,6 +1,6 @@
 {
-  "account_equity": 110690.526,
-  "daily_pnl": 10692.730299999996,
+  "account_equity": 112327.726,
+  "daily_pnl": 12329.930299999993,
   "positions": {
     "XAGUSD": {
       "asset": "XAGUSD",
@@ -12,28 +12,6 @@
       "take_profit": 70.95691004389133,
       "risk_amount": 5543.711555000001,
       "position_id": "XAGUSD_1789654099.550513"
-    },
-    "XAUUSD_FIB": {
-      "asset": "XAUUSD_FIB",
-      "direction": "SHORT",
-      "entry_price": 4367.66,
-      "entry_time": "2026-09-17T16:33:55.990349",
-      "quantity": 131.8846143326915,
-      "stop_loss": 4376.052982499139,
-      "take_profit": 4351.365,
-      "risk_amount": 5534.5263,
-      "position_id": "XAUUSD_FIB_1789662835.99035"
-    },
-    "BTCUSD_FIB": {
-      "asset": "BTCUSD_FIB",
-      "direction": "SHORT",
-      "entry_price": 76600.0,
-      "entry_time": "2026-09-17T18:09:35.238297",
-      "quantity": 0.47157246760440286,
-      "stop_loss": 76776.04482916853,
-      "take_profit": 76445.5,
-      "risk_amount": 5534.5263,
-      "position_id": "BTCUSD_FIB_1789668575.238298"
     }
   },
   "trades": [
@@ -1692,12 +1670,34 @@
       "pnl": -183.7051,
       "pnl_percent": -0.1659628033568112,
       "strategy": "GBPUSD_FIB"
+    },
+    {
+      "asset": "XAUUSD_FIB",
+      "entry_price": 4367.66,
+      "exit_price": 4351.315,
+      "direction": "SHORT",
+      "quantity": 131.8846143326915,
+      "entry_time": "2026-09-17T16:33:55.990349",
+      "exit_time": "2026-09-17T19:08:17.178475",
+      "pnl": 1562.9315,
+      "pnl_percent": 1.3914031340757311,
+      "strategy": "XAUUSD_FIB"
+    },
+    {
+      "asset": "BTCUSD_FIB",
+      "entry_price": 76600.0,
+      "exit_price": 76444.0,
+      "direction": "SHORT",
+      "quantity": 0.47157246760440286,
+      "entry_time": "2026-09-17T18:09:35.238297",
+      "exit_time": "2026-09-17T19:08:18.863272",
+      "pnl": 74.2685,
+      "pnl_percent": 0.0661176920825407,
+      "strategy": "BTCUSD_FIB"
     }
   ],
   "oanda_trade_ids": {
-    "XAGUSD": "2069",
-    "XAUUSD_FIB": "2075",
-    "BTCUSD_FIB": "2079"
+    "XAGUSD": "2069"
   },
   "oanda_initial_balance": 99997.7957
 }
