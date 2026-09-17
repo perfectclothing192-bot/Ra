@@ -1,18 +1,7 @@
 {
-  "account_equity": 110731.6958,
-  "daily_pnl": 10733.900099999999,
+  "account_equity": 111273.8035,
+  "daily_pnl": 11276.007799999992,
   "positions": {
-    "USOIL_FIB": {
-      "asset": "USOIL_FIB",
-      "direction": "SHORT",
-      "entry_price": 101.308,
-      "entry_time": "2026-09-17T08:34:22.883015",
-      "quantity": 661.8129464638346,
-      "stop_loss": 102.1445784954167,
-      "take_profit": 100.532,
-      "risk_amount": 5536.584790000001,
-      "position_id": "USOIL_FIB_1789634062.883016"
-    },
     "EURUSD_FIB": {
       "asset": "EURUSD_FIB",
       "direction": "LONG",
@@ -1619,10 +1608,21 @@
       "pnl": -166.3503,
       "pnl_percent": -0.15022826011845472,
       "strategy": "BTCUSD_FIB"
+    },
+    {
+      "asset": "USOIL_FIB",
+      "entry_price": 101.308,
+      "exit_price": 100.531,
+      "direction": "SHORT",
+      "quantity": 661.8129464638346,
+      "entry_time": "2026-09-17T08:34:22.883015",
+      "exit_time": "2026-09-17T10:08:01.995807",
+      "pnl": 551.1616,
+      "pnl_percent": 0.49532017659484434,
+      "strategy": "USOIL_FIB"
     }
   ],
   "oanda_trade_ids": {
-    "USOIL_FIB": "2023",
     "EURUSD_FIB": "2027",
     "GBPUSD_FIB": "2031",
     "XAGUSD_RSI2": "2037"
