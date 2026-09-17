@@ -1,6 +1,6 @@
 {
-  "account_equity": 111321.0049,
-  "daily_pnl": 11323.209199999998,
+  "account_equity": 111457.2836,
+  "daily_pnl": 11459.487899999993,
   "positions": {
     "EURUSD_FIB": {
       "asset": "EURUSD_FIB",
@@ -12,17 +12,6 @@
       "take_profit": 1.14837,
       "risk_amount": 5536.584790000001,
       "position_id": "EURUSD_FIB_1789634063.69464"
-    },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
-      "direction": "LONG",
-      "entry_price": 63.861,
-      "entry_time": "2026-09-17T09:07:52.799677",
-      "quantity": 1603.9128755435684,
-      "stop_loss": 63.688403817426064,
-      "take_profit": 64.04903,
-      "risk_amount": 5536.584790000001,
-      "position_id": "XAGUSD_RSI2_1789636072.799677"
     }
   },
   "trades": [
@@ -1621,11 +1610,22 @@
       "pnl": 47.2014,
       "pnl_percent": 0.04240116233445895,
       "strategy": "GBPUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 63.861,
+      "exit_price": 64.052,
+      "direction": "LONG",
+      "quantity": 1603.9128755435684,
+      "entry_time": "2026-09-17T09:07:52.799677",
+      "exit_time": "2026-09-17T11:08:19.243596",
+      "pnl": 136.2787,
+      "pnl_percent": 0.12226989174532511,
+      "strategy": "XAGUSD_RSI2"
     }
   ],
   "oanda_trade_ids": {
-    "EURUSD_FIB": "2027",
-    "XAGUSD_RSI2": "2037"
+    "EURUSD_FIB": "2027"
   },
   "oanda_initial_balance": 99997.7957
 }
