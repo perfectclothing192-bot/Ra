@@ -1,6 +1,6 @@
 {
-  "account_equity": 110653.6682,
-  "daily_pnl": 10655.872499999998,
+  "account_equity": 110425.4378,
+  "daily_pnl": 10427.642099999997,
   "positions": {
     "USOIL_FIB": {
       "asset": "USOIL_FIB",
@@ -12,28 +12,6 @@
       "take_profit": 100.902,
       "risk_amount": 5666.995075000001,
       "position_id": "USOIL_FIB_1789578483.399006"
-    },
-    "GBPUSD_FIB": {
-      "asset": "GBPUSD_FIB",
-      "direction": "SHORT",
-      "entry_price": 1.33814,
-      "entry_time": "2026-09-16T23:33:40.004328",
-      "quantity": 204627.38341261505,
-      "stop_loss": 1.338802290089747,
-      "take_profit": 1.33753,
-      "risk_amount": 5420.9075250000005,
-      "position_id": "GBPUSD_FIB_1789601620.004328"
-    },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
-      "direction": "SHORT",
-      "entry_price": 63.2475,
-      "entry_time": "2026-09-17T00:07:54.269464",
-      "quantity": 1226.9121424963564,
-      "stop_loss": 63.47297186625535,
-      "take_profit": 63.098600000000005,
-      "risk_amount": 5532.683410000001,
-      "position_id": "XAGUSD_RSI2_1789603674.269465"
     }
   },
   "trades": [
@@ -1512,12 +1490,34 @@
       "pnl": 2235.5177,
       "pnl_percent": 2.0202834089145902,
       "strategy": "XAUUSD"
+    },
+    {
+      "asset": "GBPUSD_FIB",
+      "entry_price": 1.33814,
+      "exit_price": 1.33753,
+      "direction": "SHORT",
+      "quantity": 204627.38341261505,
+      "entry_time": "2026-09-16T23:33:40.004328",
+      "exit_time": "2026-09-17T01:07:43.871439",
+      "pnl": 208.606,
+      "pnl_percent": 0.18891118220225883,
+      "strategy": "GBPUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 63.2475,
+      "exit_price": 63.475,
+      "direction": "SHORT",
+      "quantity": 1226.9121424963564,
+      "entry_time": "2026-09-17T00:07:54.269464",
+      "exit_time": "2026-09-17T01:07:45.361145",
+      "pnl": -436.8364,
+      "pnl_percent": -0.3955939941946963,
+      "strategy": "XAGUSD_RSI2"
     }
   ],
   "oanda_trade_ids": {
-    "USOIL_FIB": "1946",
-    "GBPUSD_FIB": "1965",
-    "XAGUSD_RSI2": "1973"
+    "USOIL_FIB": "1946"
   },
   "oanda_initial_balance": 99997.7957
 }
