@@ -1,19 +1,7 @@
 {
-  "account_equity": 110898.0461,
-  "daily_pnl": 10900.250400000004,
-  "positions": {
-    "BTCUSD_FIB": {
-      "asset": "BTCUSD_FIB",
-      "direction": "SHORT",
-      "entry_price": 76370.5,
-      "entry_time": "2026-09-17T04:08:53.873145",
-      "quantity": 0.33057335278224825,
-      "stop_loss": 76621.83824263424,
-      "take_profit": 75993.5,
-      "risk_amount": 5539.04837,
-      "position_id": "BTCUSD_FIB_1789618133.873146"
-    }
-  },
+  "account_equity": 110731.6958,
+  "daily_pnl": 10733.900099999999,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -1574,10 +1562,20 @@
       "pnl": -505.8372,
       "pnl_percent": -0.45612814453364836,
       "strategy": "EURUSD_FIB"
+    },
+    {
+      "asset": "BTCUSD_FIB",
+      "entry_price": 76370.5,
+      "exit_price": 76627.0,
+      "direction": "SHORT",
+      "quantity": 0.33057335278224825,
+      "entry_time": "2026-09-17T04:08:53.873145",
+      "exit_time": "2026-09-17T07:08:15.003122",
+      "pnl": -166.3503,
+      "pnl_percent": -0.15022826011845472,
+      "strategy": "BTCUSD_FIB"
     }
   ],
-  "oanda_trade_ids": {
-    "BTCUSD_FIB": "2001"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957
 }
