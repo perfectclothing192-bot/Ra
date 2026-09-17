@@ -1,6 +1,6 @@
 {
-  "account_equity": 110780.9674,
-  "daily_pnl": 10783.171699999992,
+  "account_equity": 111195.8876,
+  "daily_pnl": 11198.0919,
   "positions": {
     "USOIL_FIB": {
       "asset": "USOIL_FIB",
@@ -35,16 +35,16 @@
       "risk_amount": 5539.04837,
       "position_id": "BTCUSD_FIB_1789618133.873146"
     },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
       "direction": "SHORT",
-      "entry_price": 63.7235,
-      "entry_time": "2026-09-17T04:08:54.519358",
-      "quantity": 1521.477610328568,
-      "stop_loss": 63.90552858630315,
-      "take_profit": 63.4921,
-      "risk_amount": 5539.04837,
-      "position_id": "XAGUSD_RSI2_1789618134.519359"
+      "entry_price": 1.1465,
+      "entry_time": "2026-09-17T05:34:17.681523",
+      "quantity": 523855.5864526402,
+      "stop_loss": 1.1470306609802188,
+      "take_profit": 1.14561,
+      "risk_amount": 5559.79438,
+      "position_id": "EURUSD_FIB_1789623257.681525"
     }
   },
   "trades": [
@@ -1559,13 +1559,25 @@
       "pnl": 310.9677,
       "pnl_percent": 0.2807049868748483,
       "strategy": "XAUUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 63.7235,
+      "exit_price": 63.492,
+      "direction": "SHORT",
+      "quantity": 1521.477610328568,
+      "entry_time": "2026-09-17T04:08:54.519358",
+      "exit_time": "2026-09-17T05:34:10.964121",
+      "pnl": 414.9202,
+      "pnl_percent": 0.3731434758563859,
+      "strategy": "XAGUSD_RSI2"
     }
   ],
   "oanda_trade_ids": {
     "USOIL_FIB": "1946",
     "XAUUSD_FIB": "1997",
     "BTCUSD_FIB": "2001",
-    "XAGUSD_RSI2": "2005"
+    "EURUSD_FIB": "2011"
   },
   "oanda_initial_balance": 99997.7957
 }
