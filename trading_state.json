@@ -1,6 +1,6 @@
 {
-  "account_equity": 108418.1505,
-  "daily_pnl": 8420.354800000001,
+  "account_equity": 110653.6682,
+  "daily_pnl": 10655.872499999998,
   "positions": {
     "USOIL_FIB": {
       "asset": "USOIL_FIB",
@@ -13,17 +13,6 @@
       "risk_amount": 5666.995075000001,
       "position_id": "USOIL_FIB_1789578483.399006"
     },
-    "XAUUSD": {
-      "asset": "XAUUSD",
-      "direction": "SHORT",
-      "entry_price": 4324.78,
-      "entry_time": "2026-09-16T18:08:08.162180",
-      "quantity": 24.02202720189922,
-      "stop_loss": 4369.90452341717,
-      "take_profit": 4234.530953165659,
-      "risk_amount": 5419.912645,
-      "position_id": "XAUUSD_1789582088.162181"
-    },
     "GBPUSD_FIB": {
       "asset": "GBPUSD_FIB",
       "direction": "SHORT",
@@ -34,6 +23,17 @@
       "take_profit": 1.33753,
       "risk_amount": 5420.9075250000005,
       "position_id": "GBPUSD_FIB_1789601620.004328"
+    },
+    "XAGUSD_RSI2": {
+      "asset": "XAGUSD_RSI2",
+      "direction": "SHORT",
+      "entry_price": 63.2475,
+      "entry_time": "2026-09-17T00:07:54.269464",
+      "quantity": 1226.9121424963564,
+      "stop_loss": 63.47297186625535,
+      "take_profit": 63.098600000000005,
+      "risk_amount": 5532.683410000001,
+      "position_id": "XAGUSD_RSI2_1789603674.269465"
     }
   },
   "trades": [
@@ -1500,12 +1500,24 @@
       "pnl": -156.1535,
       "pnl_percent": -0.1440553660436348,
       "strategy": "XAGUSD_RSI2"
+    },
+    {
+      "asset": "XAUUSD",
+      "entry_price": 4324.78,
+      "exit_price": 4275.305,
+      "direction": "SHORT",
+      "quantity": 24.02202720189922,
+      "entry_time": "2026-09-16T18:08:08.162180",
+      "exit_time": "2026-09-17T00:07:46.005482",
+      "pnl": 2235.5177,
+      "pnl_percent": 2.0202834089145902,
+      "strategy": "XAUUSD"
     }
   ],
   "oanda_trade_ids": {
     "USOIL_FIB": "1946",
-    "XAUUSD": "1960",
-    "GBPUSD_FIB": "1965"
+    "GBPUSD_FIB": "1965",
+    "XAGUSD_RSI2": "1973"
   },
   "oanda_initial_balance": 99997.7957
 }
