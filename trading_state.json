@@ -1,6 +1,6 @@
 {
-  "account_equity": 118384.3872,
-  "daily_pnl": 18386.591499999995,
+  "account_equity": 118529.3635,
+  "daily_pnl": 18531.567800000004,
   "positions": {
     "BTCUSD": {
       "asset": "BTCUSD",
@@ -12,17 +12,6 @@
       "take_profit": 86738.0328477924,
       "risk_amount": 5948.65683,
       "position_id": "BTCUSD_1789740533.564868"
-    },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
-      "direction": "LONG",
-      "entry_price": 66.2555,
-      "entry_time": "2026-09-20T22:08:13.766741",
-      "quantity": 2483.7980316743824,
-      "stop_loss": 66.13634338411345,
-      "take_profit": 66.35300000000001,
-      "risk_amount": 5919.21936,
-      "position_id": "XAGUSD_RSI2_1789942093.766742"
     }
   },
   "trades": [
@@ -1873,11 +1862,22 @@
       "pnl": 368.4645,
       "pnl_percent": 0.3111212152452617,
       "strategy": "XAGUSD_RSI2"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 66.2555,
+      "exit_price": 66.353,
+      "direction": "LONG",
+      "quantity": 2483.7980316743824,
+      "entry_time": "2026-09-20T22:08:13.766741",
+      "exit_time": "2026-09-20T22:34:18.173961",
+      "pnl": 144.9763,
+      "pnl_percent": 0.12231256097144233,
+      "strategy": "XAGUSD_RSI2"
     }
   ],
   "oanda_trade_ids": {
-    "BTCUSD": "2183",
-    "XAGUSD_RSI2": "2399"
+    "BTCUSD": "2183"
   },
   "oanda_initial_balance": 99997.7957
 }
