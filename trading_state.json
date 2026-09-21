@@ -1,18 +1,7 @@
 {
-  "account_equity": 121277.6592,
-  "daily_pnl": 21279.863499999992,
+  "account_equity": 115802.0114,
+  "daily_pnl": 15804.2157,
   "positions": {
-    "XAGUSD": {
-      "asset": "XAGUSD",
-      "direction": "LONG",
-      "entry_price": 66.6215,
-      "entry_time": "2026-09-21T12:08:56.697594",
-      "quantity": 4138.952314838912,
-      "stop_loss": 65.74245392765074,
-      "take_profit": 69.25863821704776,
-      "risk_amount": 6063.88296,
-      "position_id": "XAGUSD_1789992536.697595"
-    },
     "BTCUSD": {
       "asset": "BTCUSD",
       "direction": "LONG",
@@ -1992,10 +1981,21 @@
       "pnl": -769.6622,
       "pnl_percent": -0.6346281789053528,
       "strategy": "XAUUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD",
+      "entry_price": 66.6215,
+      "exit_price": 65.741,
+      "direction": "LONG",
+      "quantity": 4138.952314838912,
+      "entry_time": "2026-09-21T12:08:56.697594",
+      "exit_time": "2026-09-21T17:33:57.747551",
+      "pnl": -5475.6478,
+      "pnl_percent": -4.728456555979994,
+      "strategy": "XAGUSD"
     }
   ],
   "oanda_trade_ids": {
-    "XAGUSD": "2455",
     "BTCUSD": "2459",
     "XAUUSD_FIB": "2463"
   },
