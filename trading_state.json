@@ -1,6 +1,6 @@
 {
-  "account_equity": 118862.12,
-  "daily_pnl": 18864.324299999993,
+  "account_equity": 119626.6491,
+  "daily_pnl": 19628.853399999993,
   "positions": {
     "BTCUSD_FIB": {
       "asset": "BTCUSD_FIB",
@@ -12,28 +12,6 @@
       "take_profit": 82097.5,
       "risk_amount": 5935.642540000001,
       "position_id": "BTCUSD_FIB_1789958058.287041"
-    },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
-      "direction": "LONG",
-      "entry_price": 66.31,
-      "entry_time": "2026-09-21T03:07:56.293691",
-      "quantity": 1863.6188088287659,
-      "stop_loss": 66.15054931266403,
-      "take_profit": 66.4525,
-      "risk_amount": 5943.106,
-      "position_id": "XAGUSD_RSI2_1789960076.293692"
-    },
-    "USOIL_FIB": {
-      "asset": "USOIL_FIB",
-      "direction": "LONG",
-      "entry_price": 97.966,
-      "entry_time": "2026-09-21T03:33:43.378435",
-      "quantity": 1951.6178394846463,
-      "stop_loss": 97.66147798345759,
-      "take_profit": 98.169,
-      "risk_amount": 5943.106,
-      "position_id": "USOIL_FIB_1789961623.378435"
     }
   },
   "trades": [
@@ -1932,12 +1910,34 @@
       "pnl": 149.2692,
       "pnl_percent": 0.12558180856945847,
       "strategy": "EURUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 66.31,
+      "exit_price": 66.456,
+      "direction": "LONG",
+      "quantity": 1863.6188088287659,
+      "entry_time": "2026-09-21T03:07:56.293691",
+      "exit_time": "2026-09-21T04:07:52.742600",
+      "pnl": 279.7177,
+      "pnl_percent": 0.23382557490695438,
+      "strategy": "XAGUSD_RSI2"
+    },
+    {
+      "asset": "USOIL_FIB",
+      "entry_price": 97.966,
+      "exit_price": 98.177,
+      "direction": "LONG",
+      "quantity": 1951.6178394846463,
+      "entry_time": "2026-09-21T03:33:43.378435",
+      "exit_time": "2026-09-21T04:07:54.301530",
+      "pnl": 477.2091,
+      "pnl_percent": 0.3989153784631087,
+      "strategy": "USOIL_FIB"
     }
   ],
   "oanda_trade_ids": {
-    "BTCUSD_FIB": "2419",
-    "XAGUSD_RSI2": "2425",
-    "USOIL_FIB": "2429"
+    "BTCUSD_FIB": "2419"
   },
   "oanda_initial_balance": 99997.7957
 }
