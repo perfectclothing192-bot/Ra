@@ -23,6 +23,17 @@
       "take_profit": 4323.37,
       "risk_amount": 5725.7849750000005,
       "position_id": "XAUUSD_ORB_1790037252.605988"
+    },
+    "XAGUSD_RSI2": {
+      "asset": "XAGUSD_RSI2",
+      "direction": "LONG",
+      "entry_price": 66.3645,
+      "entry_time": "2026-09-22T01:33:43.380850",
+      "quantity": 1570.6258549957583,
+      "stop_loss": 66.18074744121459,
+      "take_profit": 66.4574,
+      "risk_amount": 5772.130395,
+      "position_id": "XAGUSD_RSI2_1790040823.380851"
     }
   },
   "trades": [
@@ -2045,7 +2056,8 @@
   ],
   "oanda_trade_ids": {
     "BTCUSD": "2459",
-    "XAUUSD_ORB": "2490"
+    "XAUUSD_ORB": "2490",
+    "XAGUSD_RSI2": "2496"
   },
   "oanda_initial_balance": 99997.7957
 }
