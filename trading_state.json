@@ -1,6 +1,6 @@
 {
-  "account_equity": 105732.7798,
-  "daily_pnl": 5734.9841000000015,
+  "account_equity": 108732.5517,
+  "daily_pnl": 8734.755999999994,
   "positions": {
     "BTCUSD": {
       "asset": "BTCUSD",
@@ -12,28 +12,6 @@
       "take_profit": 88608.7556599983,
       "risk_amount": 6063.88296,
       "position_id": "BTCUSD_1789999745.414433"
-    },
-    "XAUUSD_ORB": {
-      "asset": "XAUUSD_ORB",
-      "direction": "SHORT",
-      "entry_price": 4358.96,
-      "entry_time": "2026-09-23T00:33:35.898917",
-      "quantity": 100.56530726414748,
-      "stop_loss": 4369.56,
-      "take_profit": 4337.759999999999,
-      "risk_amount": 5329.961285,
-      "position_id": "XAUUSD_ORB_1790123615.898919"
-    },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
-      "direction": "LONG",
-      "entry_price": 66.6235,
-      "entry_time": "2026-09-23T02:07:45.937915",
-      "quantity": 3193.1686856503893,
-      "stop_loss": 66.4579390945033,
-      "take_profit": 66.9047,
-      "risk_amount": 5286.63899,
-      "position_id": "XAGUSD_RSI2_1790129265.937916"
     }
   },
   "trades": [
@@ -2148,12 +2126,34 @@
       "pnl": -866.4459,
       "pnl_percent": -0.8194676254979159,
       "strategy": "XAGUSD_RSI2"
+    },
+    {
+      "asset": "XAUUSD_ORB",
+      "entry_price": 4358.96,
+      "exit_price": 4337.716,
+      "direction": "SHORT",
+      "quantity": 100.56530726414748,
+      "entry_time": "2026-09-23T00:33:35.898917",
+      "exit_time": "2026-09-23T02:33:38.585733",
+      "pnl": 3199.5381,
+      "pnl_percent": 2.9425761190887236,
+      "strategy": "XAUUSD_ORB"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 66.6235,
+      "exit_price": 66.457,
+      "direction": "LONG",
+      "quantity": 3193.1686856503893,
+      "entry_time": "2026-09-23T02:07:45.937915",
+      "exit_time": "2026-09-23T02:33:39.644256",
+      "pnl": -199.7662,
+      "pnl_percent": -0.1837225346749588,
+      "strategy": "XAGUSD_RSI2"
     }
   ],
   "oanda_trade_ids": {
-    "BTCUSD": "2459",
-    "XAUUSD_ORB": "2545",
-    "XAGUSD_RSI2": "2555"
+    "BTCUSD": "2459"
   },
   "oanda_initial_balance": 99997.7957
 }
