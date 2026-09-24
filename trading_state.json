@@ -1,6 +1,6 @@
 {
-  "account_equity": 116100.6826,
-  "daily_pnl": 16102.886899999998,
+  "account_equity": 116644.6253,
+  "daily_pnl": 16646.829599999997,
   "positions": {
     "GBPUSD_FIB": {
       "asset": "GBPUSD_FIB",
@@ -13,16 +13,27 @@
       "risk_amount": 5404.083095000001,
       "position_id": "GBPUSD_FIB_1790188454.353674"
     },
-    "XAUUSD_FIB": {
-      "asset": "XAUUSD_FIB",
+    "XAUUSD_M15": {
+      "asset": "XAUUSD_M15",
       "direction": "SHORT",
-      "entry_price": 4278.72,
-      "entry_time": "2026-09-24T08:08:16.238488",
-      "quantity": 40.20051676939495,
-      "stop_loss": 4293.1601977797945,
-      "take_profit": 4274.335,
-      "risk_amount": 5805.03413,
-      "position_id": "XAUUSD_FIB_1790237296.238489"
+      "entry_price": 4264.75,
+      "entry_time": "2026-09-24T08:33:50.657531",
+      "quantity": 135.8007121696453,
+      "stop_loss": 4290.518191514552,
+      "take_profit": 4187.445425456343,
+      "risk_amount": 5832.231265,
+      "position_id": "XAUUSD_M15_1790238830.657532"
+    },
+    "BTCUSD": {
+      "asset": "BTCUSD",
+      "direction": "SHORT",
+      "entry_price": 83763.5,
+      "entry_time": "2026-09-24T08:33:51.589181",
+      "quantity": 0.6341196080018887,
+      "stop_loss": 84683.23678016003,
+      "take_profit": 81004.2896595199,
+      "risk_amount": 5832.231265,
+      "position_id": "BTCUSD_1790238831.589182"
     }
   },
   "trades": [
@@ -2293,11 +2304,24 @@
       "pnl": 969.3248,
       "pnl_percent": 0.8349001731019968,
       "strategy": "USOIL"
+    },
+    {
+      "asset": "XAUUSD_FIB",
+      "entry_price": 4278.72,
+      "exit_price": 4274.325,
+      "direction": "SHORT",
+      "quantity": 40.20051676939495,
+      "entry_time": "2026-09-24T08:08:16.238488",
+      "exit_time": "2026-09-24T08:33:40.207755",
+      "pnl": 543.9427,
+      "pnl_percent": 0.4663247008604347,
+      "strategy": "XAUUSD_FIB"
     }
   ],
   "oanda_trade_ids": {
     "GBPUSD_FIB": "2581",
-    "XAUUSD_FIB": "2640"
+    "XAUUSD_M15": "2646",
+    "BTCUSD": "2650"
   },
   "oanda_initial_balance": 99997.7957
 }
