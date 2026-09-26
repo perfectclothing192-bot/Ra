@@ -36,26 +36,21 @@ import os
 import time
 
 from trading_agent import AdvancedTradingAgent, TradingMode
-from oanda_client import fetch_candles, place_market_order, ASSET_TO_OANDA_INSTRUMENT
+from oanda_client import fetch_candles, ASSET_TO_OANDA_INSTRUMENT
 from state_io import save_state, load_state
 from status_server import start_status_server, update_status, serialize_positions, serialize_trades
+import oanda_mirror
 import etoro_client
 
 POLL_INTERVAL_SECONDS = int(os.environ.get("POLL_INTERVAL_SECONDS", "300"))
 GRANULARITY = os.environ.get("OANDA_GRANULARITY", "M15")
 STATE_FILE = os.environ.get("STATE_FILE", "trading_state.json")
 
-# When enabled, every signal this loop acts on is also placed as a real market
-# order on the configured OANDA account (practice or live, per OANDA_ENV), so
-# trades are visible in the OANDA platform itself - independent of, and not
-# necessarily identical to, this app's own internal PAPER simulation below
-# (which drives the dashboard/status endpoint from its own simulated fills).
-OANDA_EXECUTE = os.environ.get("OANDA_EXECUTE", "false").lower() == "true"
-# Fraction of the internally-computed position size actually sent to OANDA,
-# to keep order size sane on an account sized independently of ACCOUNT_EQUITY.
-OANDA_MIRROR_SCALE = float(os.environ.get("OANDA_MIRROR_SCALE", "0.01"))
+# Real order mirroring to OANDA (OANDA_EXECUTE/OANDA_MIRROR_SCALE) is handled
+# by oanda_mirror.py, shared with run_scalp_loop.py and run_meanrev_loop.py so
+# all three bots coordinate on the same live account instead of colliding.
 
-# Same idea, mirrored to eToro's Agent Portfolios API instead/as well - see
+# Mirrored to eToro's Agent Portfolios API instead/as well - see
 # etoro_client.py's module docstring: THIS INTEGRATION IS UNVERIFIED against
 # a real eToro account (no credentials were available to test it). Leave
 # this off until it's been confirmed against ETORO_ENV=demo.
@@ -64,20 +59,6 @@ ETORO_EXECUTE = os.environ.get("ETORO_EXECUTE", "false").lower() == "true"
 # account currency, not asset units, so this isn't scaled from `quantity`
 # the way OANDA_MIRROR_SCALE is).
 ETORO_ORDER_AMOUNT = float(os.environ.get("ETORO_ORDER_AMOUNT", "20"))
-
-
-def mirror_to_oanda(agent, position):
-    if not OANDA_EXECUTE or position is None:
-        return
-    units = max(1, round(position.quantity * OANDA_MIRROR_SCALE))
-    if position.direction == "SHORT":
-        units = -units
-    try:
-        result = place_market_order(position.asset, units, stop_loss=position.stop_loss, take_profit=position.take_profit)
-        fill = result.get("orderFillTransaction", {})
-        agent.logger.info(f"[OANDA] {position.asset} order filled: {units} units | tradeID={fill.get('id')}")
-    except Exception as e:
-        agent.logger.error(f"[OANDA] {position.asset} order failed: {e}")
 
 
 def mirror_to_etoro(agent, position):
@@ -115,8 +96,11 @@ def poll_once(agent):
         if bars:
             current_prices[asset] = bars[-1].close
 
+    had_positions = set(agent.positions.keys())
     agent.update_positions(current_prices)
     agent.last_prices = current_prices
+    for asset in had_positions - set(agent.positions.keys()):
+        oanda_mirror.mirror_close(agent, asset)
 
     for asset, strategy_method in STRATEGIES.items():
         bars = agent.price_history.get(asset, [])
@@ -134,7 +118,7 @@ def poll_once(agent):
         events.append({"asset": asset, "price": price, "signal": signal.direction, "strategy": signal.strategy})
         if signal.direction != "HOLD":
             position = agent.execute_signal(signal)
-            mirror_to_oanda(agent, position)
+            oanda_mirror.mirror_open(agent, position, "swing")
             mirror_to_etoro(agent, position)
 
     gbp_asset, eur_asset = CORRELATION_PAIR
@@ -155,8 +139,8 @@ def poll_once(agent):
         if gbp_signal.direction != "HOLD" and eur_signal.direction != "HOLD":
             gbp_position = agent.execute_signal(gbp_signal)
             eur_position = agent.execute_signal(eur_signal)
-            mirror_to_oanda(agent, gbp_position)
-            mirror_to_oanda(agent, eur_position)
+            oanda_mirror.mirror_open(agent, gbp_position, "swing")
+            oanda_mirror.mirror_open(agent, eur_position, "swing")
             mirror_to_etoro(agent, gbp_position)
             mirror_to_etoro(agent, eur_position)
 
@@ -170,6 +154,7 @@ def build_agent():
         risk_per_trade=float(os.environ.get("RISK_PER_TRADE", "0.01")),
         daily_loss_limit=float(os.environ.get("DAILY_LOSS_LIMIT", "0.05")),
     )
+    agent.live_trade_ids = {}
     load_state(agent, STATE_FILE)
     return agent
 

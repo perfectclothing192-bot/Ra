@@ -34,9 +34,10 @@ import time
 
 from meanrev_agent import MeanReversionAgent
 from trading_agent import TradingMode
-from oanda_client import fetch_candles, place_market_order, is_market_closed
+from oanda_client import fetch_candles, is_market_closed
 from state_io import save_state, load_state
 from status_server import start_status_server, update_status, serialize_positions, serialize_trades
+import oanda_mirror
 import etoro_client
 
 POLL_INTERVAL_SECONDS = int(os.environ.get("MEANREV_POLL_INTERVAL_SECONDS", "300"))
@@ -46,25 +47,12 @@ STATE_FILE = os.environ.get("MEANREV_STATE_FILE", "meanrev_state.json")
 ASSET = "XAUUSD"
 MIN_BARS = 25  # MEAN_WINDOW (20) plus a small buffer
 
-OANDA_EXECUTE = os.environ.get("OANDA_EXECUTE", "false").lower() == "true"
-OANDA_MIRROR_SCALE = float(os.environ.get("OANDA_MIRROR_SCALE", "0.01"))
+# Real order mirroring to OANDA (OANDA_EXECUTE/OANDA_MIRROR_SCALE) is handled
+# by oanda_mirror.py, shared with run_loop.py and run_scalp_loop.py so all
+# three bots coordinate on the same live account instead of colliding.
 
 ETORO_EXECUTE = os.environ.get("ETORO_EXECUTE", "false").lower() == "true"
 ETORO_ORDER_AMOUNT = float(os.environ.get("ETORO_ORDER_AMOUNT", "20"))
-
-
-def mirror_to_oanda(agent, position):
-    if not OANDA_EXECUTE or position is None:
-        return
-    units = max(1, round(position.quantity * OANDA_MIRROR_SCALE))
-    if position.direction == "SHORT":
-        units = -units
-    try:
-        result = place_market_order(position.asset, units, stop_loss=position.stop_loss, take_profit=position.take_profit)
-        fill = result.get("orderFillTransaction", {})
-        agent.logger.info(f"[OANDA] {position.asset} order filled: {units} units | tradeID={fill.get('id')}")
-    except Exception as e:
-        agent.logger.error(f"[OANDA] {position.asset} order failed: {e}")
 
 
 def mirror_to_etoro(agent, position):
@@ -94,8 +82,11 @@ def poll_once(agent):
     agent.price_history[ASSET] = bars
     current_price = bars[-1].close if bars else None
 
+    had_position = ASSET in agent.positions
     if current_price is not None:
         agent.update_positions({ASSET: current_price})
+    if had_position and ASSET not in agent.positions:
+        oanda_mirror.mirror_close(agent, ASSET)
     agent.last_prices = {ASSET: current_price} if current_price is not None else {}
 
     if len(bars) < MIN_BARS:
@@ -113,7 +104,7 @@ def poll_once(agent):
     events.append({"asset": ASSET, "price": current_price, "signal": signal.direction, "strategy": signal.strategy})
     if signal.direction != "HOLD":
         position = agent.execute_signal(signal)
-        mirror_to_oanda(agent, position)
+        oanda_mirror.mirror_open(agent, position, "meanrev")
         mirror_to_etoro(agent, position)
 
     return events
@@ -126,6 +117,7 @@ def build_agent():
         risk_per_trade=float(os.environ.get("MEANREV_RISK_PER_TRADE", "0.0025")),
         daily_loss_limit=float(os.environ.get("MEANREV_DAILY_LOSS_LIMIT", "0.03")),
     )
+    agent.live_trade_ids = {}
     load_state(agent, STATE_FILE)
     return agent
 

@@ -100,7 +100,26 @@ def _post_with_retry(url: str, json_body: dict, headers: dict, timeout: int = 15
     raise last_exc
 
 
-def place_market_order(asset: str, units: float, stop_loss: float = None, take_profit: float = None) -> dict:
+def _put_with_retry(url: str, json_body: dict, headers: dict, timeout: int = 15,
+                     max_retries: int = 3, backoff_base: float = 2.0) -> requests.Response:
+    """PUT with retry/backoff for transient failures (network errors, rate limits, 5xx)."""
+    last_exc = None
+    for attempt in range(max_retries + 1):
+        try:
+            response = requests.put(url, json=json_body, headers=headers, timeout=timeout)
+            if response.status_code == 429 or response.status_code >= 500:
+                response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException as exc:
+            last_exc = exc
+            if attempt == max_retries:
+                break
+            time.sleep(backoff_base * (2 ** attempt))
+    raise last_exc
+
+
+def place_market_order(asset: str, units: float, stop_loss: float = None, take_profit: float = None,
+                        client_id: str = None, client_tag: str = None, client_comment: str = None) -> dict:
     """
     Place a real market order against the configured OANDA account (practice
     or live, per OANDA_ENV). This actually executes on OANDA's platform - on
@@ -108,6 +127,10 @@ def place_market_order(asset: str, units: float, stop_loss: float = None, take_p
     thing from this app's own internal PAPER simulation (which drives the
     dashboard/status endpoint): the two track independently and won't match
     exactly, since fill price/timing come from OANDA's own execution.
+
+    client_id/client_tag/client_comment are optional clientExtensions so a
+    trade opened by this call is identifiable (which bot placed it) when
+    viewed directly on the OANDA platform.
     """
     account_id = os.environ.get("OANDA_ACCOUNT_ID")
     if not account_id:
@@ -129,12 +152,55 @@ def place_market_order(asset: str, units: float, stop_loss: float = None, take_p
         order["stopLossOnFill"] = {"price": f"{stop_loss:.{precision}f}"}
     if take_profit:
         order["takeProfitOnFill"] = {"price": f"{take_profit:.{precision}f}"}
+    if client_id or client_tag or client_comment:
+        client_extensions = {}
+        if client_id:
+            client_extensions["id"] = client_id
+        if client_tag:
+            client_extensions["tag"] = client_tag
+        if client_comment:
+            client_extensions["comment"] = client_comment
+        order["clientExtensions"] = client_extensions
 
     url = f"{BASE_URL}/v3/accounts/{account_id}/orders"
     response = _post_with_retry(url, {"order": order}, _headers())
     body = response.json()
     if response.status_code >= 400:
         raise RuntimeError(f"OANDA order rejected: {body}")
+    return body
+
+
+def get_open_trades(instrument: str = None) -> list:
+    """
+    Fetch currently open trades on the configured account, optionally
+    filtered to one instrument. Used to check whether an instrument already
+    has live exposure open before mirroring a new entry - see
+    oanda_mirror.py for why (NETTING account collisions between bots).
+    """
+    account_id = os.environ.get("OANDA_ACCOUNT_ID")
+    if not account_id:
+        raise RuntimeError("OANDA_ACCOUNT_ID not configured")
+
+    url = f"{BASE_URL}/v3/accounts/{account_id}/openTrades"
+    response = _get_with_retry(url, {}, _headers())
+    response.raise_for_status()
+    trades = response.json().get("trades", [])
+    if instrument:
+        trades = [t for t in trades if t.get("instrument") == instrument]
+    return trades
+
+
+def close_trade(trade_id: str) -> dict:
+    """Fully close a specific open trade by its OANDA trade ID."""
+    account_id = os.environ.get("OANDA_ACCOUNT_ID")
+    if not account_id:
+        raise RuntimeError("OANDA_ACCOUNT_ID not configured")
+
+    url = f"{BASE_URL}/v3/accounts/{account_id}/trades/{trade_id}/close"
+    response = _put_with_retry(url, {"units": "ALL"}, _headers())
+    body = response.json()
+    if response.status_code >= 400:
+        raise RuntimeError(f"OANDA trade close rejected: {body}")
     return body
 
 
