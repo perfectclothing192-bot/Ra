@@ -31,6 +31,12 @@ def save_state(agent: AdvancedTradingAgent, path: str):
         # Not part of the core agent model; only meaningful to the OANDA-mirroring loop.
         "oanda_trade_ids": getattr(agent, "oanda_trade_ids", {}),
         "oanda_initial_balance": getattr(agent, "oanda_initial_balance", None),
+        # Baseline for the *daily* loss-limit circuit breaker; resets each
+        # UTC calendar day in run_loop.sync_oanda_state. Kept separate from
+        # oanda_initial_balance, which is the lifetime starting balance used
+        # for the (non-resetting) equity floor.
+        "daily_baseline_date": getattr(agent, "daily_baseline_date", None),
+        "daily_baseline_balance": getattr(agent, "daily_baseline_balance", None),
     }
     with open(path, "w") as f:
         json.dump(state, f, indent=2)
@@ -61,3 +67,5 @@ def load_state(agent: AdvancedTradingAgent, path: str):
 
     agent.oanda_trade_ids = state.get("oanda_trade_ids", {})
     agent.oanda_initial_balance = state.get("oanda_initial_balance")
+    agent.daily_baseline_date = state.get("daily_baseline_date")
+    agent.daily_baseline_balance = state.get("daily_baseline_balance")

@@ -173,7 +173,21 @@ def sync_oanda_state(agent):
     if getattr(agent, "oanda_initial_balance", None) is None:
         agent.oanda_initial_balance = balance
     agent.account_equity = balance
-    agent.daily_pnl = balance - agent.oanda_initial_balance
+
+    # daily_pnl feeds the circuit breaker's *daily* loss limit, so its
+    # baseline must reset every UTC calendar day. Reusing oanda_initial_balance
+    # (the lifetime starting balance, set once and never touched again) here
+    # made the "daily" limit permanent instead of daily: once tripped, it
+    # stayed tripped forever, since balance would have to recover all the way
+    # back to the account's original starting balance to clear it. Seen live
+    # 2026-09-28/29: a large loss on 2026-09-28 latched the breaker and it
+    # never released, blocking every signal for over a day straight.
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+    if getattr(agent, "daily_baseline_date", None) != today:
+        agent.daily_baseline_date = today
+        agent.daily_baseline_balance = balance
+    agent.daily_pnl = balance - agent.daily_baseline_balance
+
     # Circuit breaker's equity floor should be relative to the real OANDA
     # starting balance, not the agent's constructor default.
     agent.initial_equity = agent.oanda_initial_balance
@@ -376,6 +390,8 @@ def build_agent():
     )
     agent.oanda_trade_ids = {}
     agent.oanda_initial_balance = None
+    agent.daily_baseline_date = None
+    agent.daily_baseline_balance = None
     load_state(agent, STATE_FILE)
     return agent
 
