@@ -1,6 +1,6 @@
 {
   "account_equity": 77718.6654,
-  "daily_pnl": -2492.310500000007,
+  "daily_pnl": 0.0,
   "positions": {},
   "trades": [
     {
@@ -2538,6 +2538,6 @@
   ],
   "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957,
-  "daily_baseline_date": "2026-09-29",
-  "daily_baseline_balance": 80210.9759
+  "daily_baseline_date": "2026-09-30",
+  "daily_baseline_balance": 77718.6654
 }
