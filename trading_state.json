@@ -1,7 +1,19 @@
 {
   "account_equity": 77718.6654,
   "daily_pnl": 0.0,
-  "positions": {},
+  "positions": {
+    "XAUUSD_ORB": {
+      "asset": "XAUUSD_ORB",
+      "direction": "SHORT",
+      "entry_price": 4182.495,
+      "entry_time": "2026-09-30T00:34:17.190160",
+      "quantity": 154.51026918489848,
+      "stop_loss": 4187.525,
+      "take_profit": 4172.435,
+      "risk_amount": 3885.93327,
+      "position_id": "XAUUSD_ORB_1790728457.190161"
+    }
+  },
   "trades": [
     {
       "asset": "EURUSD",
@@ -2536,7 +2548,9 @@
       "strategy": "XAGUSD_RSI2"
     }
   ],
-  "oanda_trade_ids": {},
+  "oanda_trade_ids": {
+    "XAUUSD_ORB": "2859"
+  },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-09-30",
   "daily_baseline_balance": 77718.6654
