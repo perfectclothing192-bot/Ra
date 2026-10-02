@@ -1,7 +1,19 @@
 {
   "account_equity": 81122.5216,
   "daily_pnl": 6867.751099999994,
-  "positions": {},
+  "positions": {
+    "USOIL_FIB": {
+      "asset": "USOIL_FIB",
+      "direction": "LONG",
+      "entry_price": 91.652,
+      "entry_time": "2026-10-02T11:34:31.938670",
+      "quantity": 2436.249560147473,
+      "stop_loss": 91.3190188353155,
+      "take_profit": 92.212,
+      "risk_amount": 4056.12608,
+      "position_id": "USOIL_FIB_1790940871.938673"
+    }
+  },
   "trades": [
     {
       "asset": "EURUSD",
@@ -2740,7 +2752,9 @@
       "strategy": "XAGUSD"
     }
   ],
-  "oanda_trade_ids": {},
+  "oanda_trade_ids": {
+    "USOIL_FIB": "3001"
+  },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-02",
   "daily_baseline_balance": 74254.7705
