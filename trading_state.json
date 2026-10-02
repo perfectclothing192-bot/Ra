@@ -1,30 +1,7 @@
 {
-  "account_equity": 84439.1397,
-  "daily_pnl": 10184.369200000001,
-  "positions": {
-    "BTCUSD": {
-      "asset": "BTCUSD",
-      "direction": "LONG",
-      "entry_price": 86769.5,
-      "entry_time": "2026-10-02T04:34:41.961384",
-      "quantity": 0.17092898897643805,
-      "stop_loss": 84453.17447575217,
-      "take_profit": 93718.4765727435,
-      "risk_amount": 3959.2718000000004,
-      "position_id": "BTCUSD_1790915681.961386"
-    },
-    "XAGUSD": {
-      "asset": "XAGUSD",
-      "direction": "LONG",
-      "entry_price": 61.278,
-      "entry_time": "2026-10-02T04:34:42.940414",
-      "quantity": 2113.7566305327837,
-      "stop_loss": 60.15414163064684,
-      "take_profit": 64.64957510805948,
-      "risk_amount": 3959.2718000000004,
-      "position_id": "XAGUSD_1790915682.940416"
-    }
-  },
+  "account_equity": 83529.9718,
+  "daily_pnl": 9275.2013,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -2737,12 +2714,33 @@
       "pnl": 1601.5182,
       "pnl_percent": 2.0224908529896837,
       "strategy": "BTCUSD"
+    },
+    {
+      "asset": "BTCUSD",
+      "entry_price": 86769.5,
+      "exit_price": 86383.0,
+      "direction": "LONG",
+      "quantity": 0.17092898897643805,
+      "entry_time": "2026-10-02T04:34:41.961384",
+      "exit_time": "2026-10-02T10:08:39.467642",
+      "pnl": -32.1115,
+      "pnl_percent": -0.03844308732305833,
+      "strategy": "BTCUSD"
+    },
+    {
+      "asset": "XAGUSD",
+      "entry_price": 61.278,
+      "exit_price": 61.007,
+      "direction": "LONG",
+      "quantity": 2113.7566305327837,
+      "entry_time": "2026-10-02T04:34:42.940414",
+      "exit_time": "2026-10-02T10:08:41.028845",
+      "pnl": -877.0564,
+      "pnl_percent": -1.04999005877792,
+      "strategy": "XAGUSD"
     }
   ],
-  "oanda_trade_ids": {
-    "BTCUSD": "2967",
-    "XAGUSD": "2971"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-02",
   "daily_baseline_balance": 74254.7705
