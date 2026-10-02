@@ -23,6 +23,17 @@
       "take_profit": 1.12855,
       "risk_amount": 4225.133085,
       "position_id": "EURUSD_FIB_1790960879.421929"
+    },
+    "XAGUSD_RSI2": {
+      "asset": "XAGUSD_RSI2",
+      "direction": "SHORT",
+      "entry_price": 60.348,
+      "entry_time": "2026-10-02T18:34:28.060791",
+      "quantity": 1272.1354219607347,
+      "stop_loss": 60.51406459548496,
+      "take_profit": 60.23630000000001,
+      "risk_amount": 4225.133085,
+      "position_id": "XAGUSD_RSI2_1790966068.060792"
     }
   },
   "trades": [
@@ -2789,7 +2800,8 @@
   ],
   "oanda_trade_ids": {
     "GBPUSD_FIB": "3023",
-    "EURUSD_FIB": "3027"
+    "EURUSD_FIB": "3027",
+    "XAGUSD_RSI2": "3031"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-02",
