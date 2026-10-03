@@ -1,6 +1,6 @@
 {
-  "account_equity": 84547.1577,
-  "daily_pnl": 0.0,
+  "account_equity": 84373.1565,
+  "daily_pnl": -174.0011999999988,
   "positions": {
     "GBPUSD_FIB": {
       "asset": "GBPUSD_FIB",
