@@ -1,6 +1,6 @@
 {
   "account_equity": 84547.1577,
-  "daily_pnl": 10292.387199999997,
+  "daily_pnl": 0.0,
   "positions": {
     "GBPUSD_FIB": {
       "asset": "GBPUSD_FIB",
@@ -2828,6 +2828,6 @@
     "USOIL_FIB": "3043"
   },
   "oanda_initial_balance": 99997.7957,
-  "daily_baseline_date": "2026-10-02",
-  "daily_baseline_balance": 74254.7705
+  "daily_baseline_date": "2026-10-03",
+  "daily_baseline_balance": 84547.1577
 }
