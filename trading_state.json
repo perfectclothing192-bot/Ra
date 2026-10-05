@@ -1,18 +1,7 @@
 {
-  "account_equity": 83922.0959,
-  "daily_pnl": -1405.8552999999956,
+  "account_equity": 83128.2725,
+  "daily_pnl": -2199.6786999999895,
   "positions": {
-    "BTCUSD": {
-      "asset": "BTCUSD",
-      "direction": "LONG",
-      "entry_price": 86935.0,
-      "entry_time": "2026-10-05T01:33:55.327582",
-      "quantity": 0.49470938026380096,
-      "stop_loss": 86072.59517603548,
-      "take_profit": 89522.21447189356,
-      "risk_amount": 4266.39756,
-      "position_id": "BTCUSD_1791164035.327583"
-    },
     "XAGUSD_RSI2": {
       "asset": "XAGUSD_RSI2",
       "direction": "LONG",
@@ -23,17 +12,6 @@
       "take_profit": 61.285700000000006,
       "risk_amount": 4196.104795,
       "position_id": "XAGUSD_RSI2_1791169700.21392"
-    },
-    "GBPUSD": {
-      "asset": "GBPUSD",
-      "direction": "LONG",
-      "entry_price": 1.32072,
-      "entry_time": "2026-10-05T03:34:30.314762",
-      "quantity": 172359.8165909596,
-      "stop_loss": 1.3195027485321134,
-      "take_profit": 1.3236932499999998,
-      "risk_amount": 4196.104795,
-      "position_id": "GBPUSD_1791171270.314763"
     }
   },
   "trades": [
@@ -2880,12 +2858,34 @@
       "pnl": -1065.1322,
       "pnl_percent": -1.2691916098820883,
       "strategy": "XAUUSD_ORB"
+    },
+    {
+      "asset": "BTCUSD",
+      "entry_price": 86935.0,
+      "exit_price": 86049.0,
+      "direction": "LONG",
+      "quantity": 0.49470938026380096,
+      "entry_time": "2026-10-05T01:33:55.327582",
+      "exit_time": "2026-10-05T04:08:17.606899",
+      "pnl": -495.157,
+      "pnl_percent": -0.5956541440218187,
+      "strategy": "BTCUSD"
+    },
+    {
+      "asset": "GBPUSD",
+      "entry_price": 1.32072,
+      "exit_price": 1.3195,
+      "direction": "LONG",
+      "quantity": 172359.8165909596,
+      "entry_time": "2026-10-05T03:34:30.314762",
+      "exit_time": "2026-10-05T04:08:19.519340",
+      "pnl": -298.6664,
+      "pnl_percent": -0.3592837803768868,
+      "strategy": "GBPUSD"
     }
   ],
   "oanda_trade_ids": {
-    "BTCUSD": "3062",
-    "XAGUSD_RSI2": "3072",
-    "GBPUSD": "3076"
+    "XAGUSD_RSI2": "3072"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-05",
