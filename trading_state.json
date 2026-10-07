@@ -1,6 +1,6 @@
 {
-  "account_equity": 68403.4204,
-  "daily_pnl": 542.5048999999999,
+  "account_equity": 78007.4746,
+  "daily_pnl": 10146.559099999999,
   "positions": {
     "BTCUSD": {
       "asset": "BTCUSD",
@@ -13,16 +13,27 @@
       "risk_amount": 3458.3247100000003,
       "position_id": "BTCUSD_1791338886.937198"
     },
+    "XAUUSD_M15": {
+      "asset": "XAUUSD_M15",
+      "direction": "SHORT",
+      "entry_price": 4080.625,
+      "entry_time": "2026-10-07T12:34:39.936141",
+      "quantity": 50.564095660916344,
+      "stop_loss": 4126.907331512336,
+      "take_profit": 3941.778005462992,
+      "risk_amount": 3900.3737300000003,
+      "position_id": "XAUUSD_M15_1791376479.936143"
+    },
     "XAGUSD": {
       "asset": "XAGUSD",
       "direction": "SHORT",
-      "entry_price": 60.4655,
-      "entry_time": "2026-10-07T07:09:29.372681",
-      "quantity": 4599.232549601852,
-      "stop_loss": 60.91155486977987,
-      "take_profit": 59.127335390660384,
-      "risk_amount": 3419.18346,
-      "position_id": "XAGUSD_1791356969.372684"
+      "entry_price": 59.2115,
+      "entry_time": "2026-10-07T12:34:41.067439",
+      "quantity": 2032.188599744596,
+      "stop_loss": 60.36307827294874,
+      "take_profit": 55.75676518115378,
+      "risk_amount": 3900.3737300000003,
+      "position_id": "XAGUSD_1791376481.067441"
     }
   },
   "trades": [
@@ -3145,11 +3156,24 @@
       "pnl": -67.2904,
       "pnl_percent": -0.09837285855956993,
       "strategy": "EURUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD",
+      "entry_price": 60.4655,
+      "exit_price": 59.125,
+      "direction": "SHORT",
+      "quantity": 4599.232549601852,
+      "entry_time": "2026-10-07T07:09:29.372681",
+      "exit_time": "2026-10-07T12:34:30.959798",
+      "pnl": 9604.0542,
+      "pnl_percent": 12.311710190910347,
+      "strategy": "XAGUSD"
     }
   ],
   "oanda_trade_ids": {
     "BTCUSD": "3194",
-    "XAGUSD": "3214"
+    "XAUUSD_M15": "3236",
+    "XAGUSD": "3240"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-07",
