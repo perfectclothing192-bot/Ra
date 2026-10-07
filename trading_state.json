@@ -1,6 +1,6 @@
 {
   "account_equity": 67860.9155,
-  "daily_pnl": -12103.290899999993,
+  "daily_pnl": 0.0,
   "positions": {
     "EURUSD_FIB": {
       "asset": "EURUSD_FIB",
@@ -3056,6 +3056,6 @@
     "EURUSD_FIB": "3169"
   },
   "oanda_initial_balance": 99997.7957,
-  "daily_baseline_date": "2026-10-06",
-  "daily_baseline_balance": 79964.2064
+  "daily_baseline_date": "2026-10-07",
+  "daily_baseline_balance": 67860.9155
 }
