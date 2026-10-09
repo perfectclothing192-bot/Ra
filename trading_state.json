@@ -1,18 +1,7 @@
 {
-  "account_equity": 71548.9619,
-  "daily_pnl": 137.62309999999707,
+  "account_equity": 68691.8268,
+  "daily_pnl": -2719.5120000000024,
   "positions": {
-    "XAGUSD": {
-      "asset": "XAGUSD",
-      "direction": "SHORT",
-      "entry_price": 59.235,
-      "entry_time": "2026-10-08T06:08:42.670628",
-      "quantity": 2121.8457214675764,
-      "stop_loss": 60.266496443806574,
-      "take_profit": 56.140510668580276,
-      "risk_amount": 3647.79386,
-      "position_id": "XAGUSD_1791439722.67063"
-    },
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
       "direction": "LONG",
@@ -23,6 +12,17 @@
       "take_profit": 4188.828551736937,
       "risk_amount": 3570.56694,
       "position_id": "XAUUSD_M15_1791504528.265509"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
+      "direction": "SHORT",
+      "entry_price": 1.12252,
+      "entry_time": "2026-10-09T04:34:16.140834",
+      "quantity": 285345.6052346044,
+      "stop_loss": 1.1228209150375013,
+      "take_profit": 1.1224,
+      "risk_amount": 3434.59134,
+      "position_id": "EURUSD_FIB_1791520456.140836"
     }
   },
   "trades": [
@@ -3325,11 +3325,23 @@
       "pnl": 137.6231,
       "pnl_percent": 0.19234814362834243,
       "strategy": "GBPUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD",
+      "entry_price": 59.235,
+      "exit_price": 60.268,
+      "direction": "SHORT",
+      "quantity": 2121.8457214675764,
+      "entry_time": "2026-10-08T06:08:42.670628",
+      "exit_time": "2026-10-09T04:34:09.017803",
+      "pnl": -2857.1351,
+      "pnl_percent": -4.1593523321467405,
+      "strategy": "XAGUSD"
     }
   ],
   "oanda_trade_ids": {
-    "XAGUSD": "3285",
-    "XAUUSD_M15": "3322"
+    "XAUUSD_M15": "3322",
+    "EURUSD_FIB": "3330"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-09",
