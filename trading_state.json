@@ -1,6 +1,6 @@
 {
-  "account_equity": 77297.8433,
-  "daily_pnl": 5886.5044999999955,
+  "account_equity": 76149.7211,
+  "daily_pnl": 4738.3822999999975,
   "positions": {
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
@@ -12,17 +12,6 @@
       "take_profit": 4253.600841118146,
       "risk_amount": 3865.396215,
       "position_id": "XAUUSD_M15_1791524090.940434"
-    },
-    "USOIL_FIB": {
-      "asset": "USOIL_FIB",
-      "direction": "SHORT",
-      "entry_price": 92.077,
-      "entry_time": "2026-10-09T10:35:51.588967",
-      "quantity": 2225.9250537854837,
-      "stop_loss": 92.42415843675232,
-      "take_profit": 91.52,
-      "risk_amount": 3863.7433100000003,
-      "position_id": "USOIL_FIB_1791542151.588969"
     }
   },
   "trades": [
@@ -3421,11 +3410,22 @@
       "pnl": 22.9771,
       "pnl_percent": 0.02972540891060023,
       "strategy": "GBPUSD_FIB"
+    },
+    {
+      "asset": "USOIL_FIB",
+      "entry_price": 92.077,
+      "exit_price": 92.432,
+      "direction": "SHORT",
+      "quantity": 2225.9250537854837,
+      "entry_time": "2026-10-09T10:35:51.588967",
+      "exit_time": "2026-10-09T12:35:22.672859",
+      "pnl": -1111.8752,
+      "pnl_percent": -1.4601172321299547,
+      "strategy": "USOIL_FIB"
     }
   ],
   "oanda_trade_ids": {
-    "XAUUSD_M15": "3340",
-    "USOIL_FIB": "3368"
+    "XAUUSD_M15": "3340"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-09",
