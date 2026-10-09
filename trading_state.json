@@ -1,17 +1,17 @@
 {
-  "account_equity": 68605.7547,
-  "daily_pnl": -2805.5840999999928,
+  "account_equity": 77307.9243,
+  "daily_pnl": 5896.585500000001,
   "positions": {
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
       "direction": "LONG",
-      "entry_price": 4144.86,
-      "entry_time": "2026-10-09T00:08:48.265507",
-      "quantity": 146.17312233645362,
-      "stop_loss": 4130.203816087687,
-      "take_profit": 4188.828551736937,
-      "risk_amount": 3570.56694,
-      "position_id": "XAUUSD_M15_1791504528.265509"
+      "entry_price": 4192.27,
+      "entry_time": "2026-10-09T05:34:50.940432",
+      "quantity": 113.44558561649195,
+      "stop_loss": 4171.826386293952,
+      "take_profit": 4253.600841118146,
+      "risk_amount": 3865.396215,
+      "position_id": "XAUUSD_M15_1791524090.940434"
     }
   },
   "trades": [
@@ -3338,10 +3338,22 @@
       "pnl": -107.3976,
       "pnl_percent": -0.15654313616930446,
       "strategy": "EURUSD_FIB"
+    },
+    {
+      "asset": "XAUUSD_M15",
+      "entry_price": 4144.86,
+      "exit_price": 4188.906,
+      "direction": "LONG",
+      "quantity": 146.17312233645362,
+      "entry_time": "2026-10-09T00:08:48.265507",
+      "exit_time": "2026-10-09T05:34:43.372546",
+      "pnl": 8702.1696,
+      "pnl_percent": 11.25650401145229,
+      "strategy": "XAUUSD_M15"
     }
   ],
   "oanda_trade_ids": {
-    "XAUUSD_M15": "3322"
+    "XAUUSD_M15": "3340"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-09",
