@@ -716,6 +716,144 @@ class AdvancedTradingAgent:
 
         return hold
 
+    def order_block_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "order_block") -> Signal:
+        """
+        ICT-style Order Block retracement strategy - distinct from both
+        smc_signal's liquidity-sweep + break-of-structure logic and
+        fvg_signal's 3-candle imbalance logic above. Untested candidate,
+        added 2026-10-11 at the user's request to evaluate order blocks
+        specifically (as opposed to the sweep/BOS flavor of SMC already
+        covered by smc_signal).
+
+        1. A bullish order block is a single bearish base candle (close <
+           open) immediately followed by a strong impulsive displacement:
+           over the next 3 candles, price both clears the base candle's
+           high (close[k+3] > high[k] - a genuine structure break, not
+           just a wick) and travels at least 2x ATR from the base
+           candle's low to the displacement's high. The "institutions
+           absorbed sell-side liquidity at this candle before driving
+           price up" read ICT traders use. Zone = the base candle's full
+           range [low, high]. Mirror image (bearish) for a bullish base
+           candle followed by a strong down-displacement.
+        2. Only the single most recent qualifying block within a 50-bar
+           lookback is tracked, and only while still "fresh" - discarded
+           if any bar between its formation and now has already dipped
+           back into the zone (first-return entries only, matching
+           fvg_signal's freshness rule, not every repeated poke at a
+           stale block).
+        3. Entry: the current bar's low reaches into the zone (a
+           retracement back into the order block) while its close closes
+           back above the zone's bottom edge and above its own open (a
+           rejection/continuation candle off the block, not a fill-
+           through). Mirror image for bearish.
+        4. Stop just beyond the zone's far edge; target at 2x the stop
+           distance.
+
+        Backtested 2026-10-11 (1yr M15, 70/30 split, see
+        backtest_candidates.py): GBPUSD -13.0R/214 trades (train -4.0R,
+        test -9.0R - consistently negative); EURUSD +12.0R/198 trades
+        (train +6.0R PF 1.06, test +8.0R PF 1.27 - the only instrument
+        that holds up both halves, but a thin edge); XAUUSD -11.0R/206
+        trades (train +16.0R PF 1.17, test -27.0R PF 0.43, 17.5% WR -
+        sign flips badly, the worst out-of-sample showing of any
+        candidate tried here, and clearly worse than smc_signal already
+        live on this instrument); USOIL -21.0R/195 trades (train -14.0R,
+        test -8.0R - consistently negative); XAGUSD +14.0R/187 trades
+        (train +28.0R PF 1.37, test -14.0R PF 0.67 - sign flips). Not
+        deployed anywhere - only EURUSD shows a real (if thin) edge,
+        every other instrument is either consistently negative or
+        reverses out-of-sample, and XAUUSD specifically performs far
+        worse than the order-flow (sweep + BOS) reading smc_signal
+        already uses live for gold.
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
+
+        lookback = 50
+        displacement_bars = 3
+        displacement_mult = 2.0
+        if len(bars) < lookback + displacement_bars + 5:
+            return hold
+
+        highs = np.array([b.high for b in bars])
+        lows = np.array([b.low for b in bars])
+        closes = np.array([b.close for b in bars])
+        opens = np.array([b.open for b in bars])
+        atr = self._atr(bars, 14)[-1]
+        n = len(bars)
+
+        current_high, current_low = highs[-1], lows[-1]
+        current_close, current_open = closes[-1], opens[-1]
+
+        earliest_k = max(1, n - lookback)
+
+        # Most recent bullish order block: bearish base candle k, then a
+        # strong up-displacement clearing its high within displacement_bars.
+        for k in range(n - displacement_bars - 2, earliest_k - 1, -1):
+            if closes[k] >= opens[k]:
+                continue
+            window_end = k + displacement_bars
+            if window_end >= n - 1:
+                continue
+            displaced = (highs[k + 1:window_end + 1].max() - lows[k]) >= displacement_mult * atr
+            broke_structure = closes[window_end] > highs[k]
+            if not (displaced and broke_structure):
+                continue
+
+            zone_bottom, zone_top = lows[k], highs[k]
+            already_tested = np.any(lows[window_end + 1:n - 1] <= zone_top)
+            if already_tested:
+                break
+
+            if current_low <= zone_top and current_close > zone_bottom and current_close > current_open:
+                entry_price = current_close
+                stop_loss = zone_bottom - atr * 0.2
+                risk = entry_price - stop_loss
+                if risk <= 0:
+                    break
+                take_profit = entry_price + risk * 2.0
+                return Signal(
+                    asset=asset, direction="BUY", strength=SignalStrength.STRONG,
+                    entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                    risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.7,
+                    timestamp=datetime.now()
+                )
+            break  # only the single most recent block is considered
+
+        # Most recent bearish order block: bullish base candle k, then a
+        # strong down-displacement clearing its low within displacement_bars.
+        for k in range(n - displacement_bars - 2, earliest_k - 1, -1):
+            if closes[k] <= opens[k]:
+                continue
+            window_end = k + displacement_bars
+            if window_end >= n - 1:
+                continue
+            displaced = (highs[k] - lows[k + 1:window_end + 1].min()) >= displacement_mult * atr
+            broke_structure = closes[window_end] < lows[k]
+            if not (displaced and broke_structure):
+                continue
+
+            zone_bottom, zone_top = lows[k], highs[k]
+            already_tested = np.any(highs[window_end + 1:n - 1] >= zone_bottom)
+            if already_tested:
+                break
+
+            if current_high >= zone_bottom and current_close < zone_top and current_close < current_open:
+                entry_price = current_close
+                stop_loss = zone_top + atr * 0.2
+                risk = stop_loss - entry_price
+                if risk <= 0:
+                    break
+                take_profit = entry_price - risk * 2.0
+                return Signal(
+                    asset=asset, direction="SELL", strength=SignalStrength.STRONG,
+                    entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                    risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.7,
+                    timestamp=datetime.now()
+                )
+            break
+
+        return hold
+
     def orb_15m_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "orb_15m") -> Signal:
         """
         Opening Range Breakout (ORB), 15-minute range - a classic

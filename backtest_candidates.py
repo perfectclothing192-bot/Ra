@@ -64,6 +64,14 @@ CANDIDATES = [
     ("XAUUSD", "orb_15m_signal", {}),
     ("USOIL", "orb_15m_signal", {}),
     ("XAGUSD", "orb_15m_signal", {}),
+    # order_block_signal - ICT-style Order Block retracement, distinct
+    # from both smc_signal's sweep+BOS logic and fvg_signal's imbalance
+    # logic. New, never backtested before this.
+    ("GBPUSD", "order_block_signal", {}),
+    ("EURUSD", "order_block_signal", {}),
+    ("XAUUSD", "order_block_signal", {}),
+    ("USOIL", "order_block_signal", {}),
+    ("XAGUSD", "order_block_signal", {}),
 ]
 
 
