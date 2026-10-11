@@ -854,6 +854,248 @@ class AdvancedTradingAgent:
 
         return hold
 
+    def ema_crossover_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "ema_crossover") -> Signal:
+        """
+        EMA(9)/EMA(21) trend-following crossover - the single most commonly
+        cited "simple" gold/forex strategy in vendor and retail material
+        researched 2026-10-11 (e.g. a PineForge gold-strategy writeup
+        describing it as "the simplest and most reliable" setup for
+        XAUUSD, claiming a self-reported 74.2% win rate / PF 2.31 that is
+        unverified vendor marketing, not independent evidence). Distinct
+        from every momentum/structure strategy already in this file -
+        pure moving-average trend-following, no swing points, gaps, or
+        session ranges involved.
+
+        1. Bullish cross: EMA(9) was at or below EMA(21) on the prior bar
+           and is now above it on the current bar (and vice versa for a
+           bearish cross) - a single-bar crossover event, not "EMA9 is
+           currently above EMA21" (which would re-fire every bar of an
+           established trend).
+        2. Entry on the crossing bar's close.
+        3. Stop at 2x ATR(14) from entry (the stop convention most
+           consistently cited across the researched sources); target at
+           2x the stop distance, matching every other strategy here.
+
+        Backtested 2026-10-11 (1yr M15, 70/30 split, see
+        backtest_candidates.py): GBPUSD -25.0R/448 trades (train -32.0R,
+        test +6.0R - sign flips); EURUSD +2.0R/463 trades (train -32.0R,
+        test +33.0R - sign flips hard); XAUUSD +37.0R/425 trades (train
+        -2.0R, test +37.0R - sign flips, the biggest full-year number of
+        any candidate tried anywhere but not sign-consistent); USOIL
+        +9.0R/453 trades (train +12.0R, test -4.0R - sign flips); XAGUSD
+        -19.0R/457 trades (train -11.0R, test -5.0R - consistently
+        negative). Not deployed anywhere - not one instrument is
+        sign-consistent across both halves, despite this being the single
+        most commonly recommended "simple" gold strategy in vendor
+        material (claims of a 74.2% win rate / PF 2.31 did not hold up
+        under this repo's own out-of-sample methodology).
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
+
+        if len(bars) < 30:
+            return hold
+
+        closes = np.array([b.close for b in bars])
+        ema_fast = self._ema(closes, 9)
+        ema_slow = self._ema(closes, 21)
+        atr = self._atr(bars, 14)[-1]
+
+        current_close = closes[-1]
+        crossed_up = ema_fast[-2] <= ema_slow[-2] and ema_fast[-1] > ema_slow[-1]
+        crossed_down = ema_fast[-2] >= ema_slow[-2] and ema_fast[-1] < ema_slow[-1]
+
+        if crossed_up:
+            entry_price = current_close
+            stop_loss = entry_price - atr * 2.0
+            take_profit = entry_price + atr * 4.0
+            return Signal(
+                asset=asset, direction="BUY", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        if crossed_down:
+            entry_price = current_close
+            stop_loss = entry_price + atr * 2.0
+            take_profit = entry_price - atr * 4.0
+            return Signal(
+                asset=asset, direction="SELL", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        return hold
+
+    def macd_crossover_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "macd_crossover") -> Signal:
+        """
+        MACD(12,26,9) signal-line crossover - one of the most widely cited
+        momentum strategies worldwide across every asset class, researched
+        2026-10-11 alongside ema_crossover_signal and london_breakout_signal
+        as part of a broader survey of strategies retail/vendor sources
+        claim real traders use on gold. Distinct from ema_crossover_signal:
+        MACD reacts to the *spread* between two EMAs accelerating/decelerating
+        (a momentum derivative), not the two EMAs themselves crossing.
+
+        1. MACD line = EMA(12) - EMA(26) of closes. Signal line = EMA(9) of
+           the MACD line.
+        2. Bullish: MACD line was at or below the signal line on the prior
+           bar and is now above it on the current bar (mirror image for
+           bearish) - a single-bar crossover event, same discipline as
+           ema_crossover_signal's single-bar cross.
+        3. Entry on the crossing bar's close. Stop at 2x ATR(14); target
+           at 2x the stop distance.
+
+        Backtested 2026-10-11 (1yr M15, 70/30 split, see
+        backtest_candidates.py): GBPUSD +5.0R/595 trades (train +25.0R,
+        test -16.0R - sign flips); EURUSD -1.0R/616 trades (train -24.0R,
+        test +13.0R - sign flips); XAUUSD -16.0R/631 trades (train
+        -10.0R, test -9.0R - consistently negative); USOIL +15.0R/639
+        trades (train +1.0R PF 1.00, test +13.0R PF 1.11 - the only
+        sign-consistent instrument, though the train half is barely
+        positive); XAGUSD -10.0R/688 trades (train -6.0R, test +0.0R -
+        test is flat, not a real edge either way). Not deployed anywhere
+        - USOIL is the lone sign-consistent result but too marginal
+        (train PF exactly 1.00) to trust as a real edge rather than noise.
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
+
+        if len(bars) < 60:
+            return hold
+
+        closes = np.array([b.close for b in bars])
+        ema_12 = self._ema(closes, 12)
+        ema_26 = self._ema(closes, 26)
+        macd_line = ema_12 - ema_26
+        signal_line = self._ema(macd_line, 9)
+        atr = self._atr(bars, 14)[-1]
+
+        current_close = closes[-1]
+        crossed_up = macd_line[-2] <= signal_line[-2] and macd_line[-1] > signal_line[-1]
+        crossed_down = macd_line[-2] >= signal_line[-2] and macd_line[-1] < signal_line[-1]
+
+        if crossed_up:
+            entry_price = current_close
+            stop_loss = entry_price - atr * 2.0
+            take_profit = entry_price + atr * 4.0
+            return Signal(
+                asset=asset, direction="BUY", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        if crossed_down:
+            entry_price = current_close
+            stop_loss = entry_price + atr * 2.0
+            take_profit = entry_price - atr * 4.0
+            return Signal(
+                asset=asset, direction="SELL", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        return hold
+
+    def london_breakout_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "london_breakout") -> Signal:
+        """
+        London session breakout - a session-based range/breakout strategy
+        distinct from orb_15m_signal's fixed-UTC-midnight opening range.
+        Researched 2026-10-11: sources describe building a range during a
+        quiet pre-session window, then trading the first clean break once
+        the session most associated with gold/forex volume (London) opens,
+        since the move is widely described as repeatable and objectively
+        defined. Session hours here are a fixed UTC convention (not
+        adjusted for the UK's daylight-saving shifts), same simplification
+        orb_15m_signal already makes for its own UTC boundary.
+
+        1. Pre-range window: 06:00-07:59 UTC each day. Range = the
+           high/low of every M15 bar whose timestamp falls in that window
+           that day.
+        2. Trading window: 08:00-11:59 UTC the same day (London's open
+           through late-morning). Only the first breakout of the day
+           counts - if an earlier bar in the trading window already
+           closed beyond the range, the day's opportunity is used up, no
+           re-entries or reversals (same discipline as orb_15m_signal).
+        3. Entry: the current bar's close breaks above the range high
+           (BUY) or below the range low (SELL), and the current bar's
+           hour is within the trading window (06:00-07:59 pre-range bars
+           themselves can never trigger an entry).
+        4. Stop at the opposite side of the range; target at 2x that
+           distance.
+
+        Backtested 2026-10-11 (1yr M15, 70/30 split, see
+        backtest_candidates.py): GBPUSD -11.0R/149 trades (train -4.0R,
+        test -5.0R - consistently negative); EURUSD +10.0R/155 trades
+        (train -6.0R, test +17.0R - sign flips); XAUUSD -8.0R/128 trades
+        (train +7.0R, test -16.0R, 22.4% WR - sign flips); USOIL
+        +12.0R/186 trades (train +12.0R PF 1.14, test +0.0R - train
+        positive but test is exactly flat, not a real edge); XAGUSD
+        +6.0R/165 trades (train +19.0R, test -15.0R - sign flips hard).
+        Not deployed anywhere - no instrument holds up with a genuine
+        edge in both halves.
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
+
+        if len(bars) < 40:
+            return hold
+
+        current_bar = bars[-1]
+        if not (8 <= current_bar.timestamp.hour <= 11):
+            return hold
+
+        current_day = current_bar.timestamp.date()
+        day_bars = [b for b in bars if b.timestamp.date() == current_day]
+
+        pre_range_bars = [b for b in day_bars if 6 <= b.timestamp.hour <= 7]
+        if not pre_range_bars:
+            return hold
+        range_high = max(b.high for b in pre_range_bars)
+        range_low = min(b.low for b in pre_range_bars)
+        if range_high <= range_low:
+            return hold
+
+        trading_bars = [b for b in day_bars if 8 <= b.timestamp.hour <= 11]
+        prior_trading_bars = [b for b in trading_bars if b.timestamp < current_bar.timestamp]
+        already_broke_up = any(b.close > range_high for b in prior_trading_bars)
+        already_broke_down = any(b.close < range_low for b in prior_trading_bars)
+        if already_broke_up or already_broke_down:
+            return hold
+
+        current_close = current_bar.close
+
+        if current_close > range_high:
+            entry_price = current_close
+            stop_loss = range_low
+            risk = entry_price - stop_loss
+            if risk <= 0:
+                return hold
+            take_profit = entry_price + risk * 2.0
+            return Signal(
+                asset=asset, direction="BUY", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        if current_close < range_low:
+            entry_price = current_close
+            stop_loss = range_high
+            risk = stop_loss - entry_price
+            if risk <= 0:
+                return hold
+            take_profit = entry_price - risk * 2.0
+            return Signal(
+                asset=asset, direction="SELL", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        return hold
+
     def orb_15m_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "orb_15m") -> Signal:
         """
         Opening Range Breakout (ORB), 15-minute range - a classic

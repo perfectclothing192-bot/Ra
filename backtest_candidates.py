@@ -72,6 +72,25 @@ CANDIDATES = [
     ("XAUUSD", "order_block_signal", {}),
     ("USOIL", "order_block_signal", {}),
     ("XAGUSD", "order_block_signal", {}),
+    # ema_crossover_signal, macd_crossover_signal, london_breakout_signal -
+    # researched 2026-10-11 from real-world vendor/retail material on
+    # strategies people claim to use profitably on gold/forex. New, never
+    # backtested before this.
+    ("GBPUSD", "ema_crossover_signal", {}),
+    ("EURUSD", "ema_crossover_signal", {}),
+    ("XAUUSD", "ema_crossover_signal", {}),
+    ("USOIL", "ema_crossover_signal", {}),
+    ("XAGUSD", "ema_crossover_signal", {}),
+    ("GBPUSD", "macd_crossover_signal", {}),
+    ("EURUSD", "macd_crossover_signal", {}),
+    ("XAUUSD", "macd_crossover_signal", {}),
+    ("USOIL", "macd_crossover_signal", {}),
+    ("XAGUSD", "macd_crossover_signal", {}),
+    ("GBPUSD", "london_breakout_signal", {}),
+    ("EURUSD", "london_breakout_signal", {}),
+    ("XAUUSD", "london_breakout_signal", {}),
+    ("USOIL", "london_breakout_signal", {}),
+    ("XAGUSD", "london_breakout_signal", {}),
 ]
 
 
