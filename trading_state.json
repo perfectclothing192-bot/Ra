@@ -1,17 +1,17 @@
 {
-  "account_equity": 69508.9792,
-  "daily_pnl": -552.0464999999967,
+  "account_equity": 69276.1929,
+  "daily_pnl": -784.8328000000038,
   "positions": {
     "XAGUSD_RSI2": {
       "asset": "XAGUSD_RSI2",
       "direction": "LONG",
-      "entry_price": 60.7525,
-      "entry_time": "2026-10-12T08:34:20.192718",
-      "quantity": 1056.8157108231062,
-      "stop_loss": 60.58806977226932,
-      "take_profit": 60.83710000000001,
-      "risk_amount": 3475.44896,
-      "position_id": "XAGUSD_RSI2_1791794060.19272"
+      "entry_price": 60.5095,
+      "entry_time": "2026-10-12T09:08:39.582086",
+      "quantity": 3417.523395217101,
+      "stop_loss": 60.408145620104676,
+      "take_profit": 60.710499999999996,
+      "risk_amount": 3463.809645,
+      "position_id": "XAGUSD_RSI2_1791796119.582088"
     }
   },
   "trades": [
@@ -3578,10 +3578,22 @@
       "pnl": -3375.8774,
       "pnl_percent": -4.856750075823297,
       "strategy": "USOIL"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 60.7525,
+      "exit_price": 60.587,
+      "direction": "LONG",
+      "quantity": 1056.8157108231062,
+      "entry_time": "2026-10-12T08:34:20.192718",
+      "exit_time": "2026-10-12T09:08:31.550005",
+      "pnl": -232.7863,
+      "pnl_percent": -0.3360264042454331,
+      "strategy": "XAGUSD_RSI2"
     }
   ],
   "oanda_trade_ids": {
-    "XAGUSD_RSI2": "3463"
+    "XAGUSD_RSI2": "3469"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-12",
