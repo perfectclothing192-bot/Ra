@@ -1,6 +1,6 @@
 {
-  "account_equity": 70061.0257,
-  "daily_pnl": 0.0,
+  "account_equity": 72591.0356,
+  "daily_pnl": 2530.0099000000046,
   "positions": {
     "XAGUSD": {
       "asset": "XAGUSD",
@@ -16,13 +16,24 @@
     "USOIL": {
       "asset": "USOIL",
       "direction": "SHORT",
-      "entry_price": 91.982,
-      "entry_time": "2026-10-12T00:08:14.636423",
-      "quantity": 2320.3218868800636,
-      "stop_loss": 92.73686321635104,
-      "take_profit": 91.20110713459582,
-      "risk_amount": 3503.051285,
-      "position_id": "USOIL_1791763694.636427"
+      "entry_price": 91.445,
+      "entry_time": "2026-10-12T01:08:30.055736",
+      "quantity": 1436.2327873395864,
+      "stop_loss": 92.70856667665386,
+      "take_profit": 90.69415329338445,
+      "risk_amount": 3629.5517800000002,
+      "position_id": "USOIL_1791767310.055739"
+    },
+    "XAUUSD_ORB": {
+      "asset": "XAUUSD_ORB",
+      "direction": "LONG",
+      "entry_price": 4209.095,
+      "entry_time": "2026-10-12T01:08:30.990260",
+      "quantity": 33.521604987299845,
+      "stop_loss": 4187.44,
+      "take_profit": 4252.405000000002,
+      "risk_amount": 3629.5517800000002,
+      "position_id": "XAUUSD_ORB_1791767310.990262"
     }
   },
   "trades": [
@@ -3493,11 +3504,24 @@
       "pnl": -78.8905,
       "pnl_percent": -0.11260254786706614,
       "strategy": "EURUSD_FIB"
+    },
+    {
+      "asset": "USOIL",
+      "entry_price": 91.982,
+      "exit_price": 91.197,
+      "direction": "SHORT",
+      "quantity": 2320.3218868800636,
+      "entry_time": "2026-10-12T00:08:14.636423",
+      "exit_time": "2026-10-12T01:08:22.629845",
+      "pnl": 2546.3233,
+      "pnl_percent": 3.507765496047008,
+      "strategy": "USOIL"
     }
   ],
   "oanda_trade_ids": {
     "XAGUSD": "3382",
-    "USOIL": "3415"
+    "USOIL": "3423",
+    "XAUUSD_ORB": "3427"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-12",
