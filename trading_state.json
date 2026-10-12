@@ -1,6 +1,6 @@
 {
   "account_equity": 70061.0257,
-  "daily_pnl": -300.4627000000037,
+  "daily_pnl": 0.0,
   "positions": {
     "XAGUSD": {
       "asset": "XAGUSD",
@@ -12,6 +12,17 @@
       "take_profit": 63.059976796983285,
       "risk_amount": 3575.00104,
       "position_id": "XAGUSD_1791552862.397774"
+    },
+    "USOIL": {
+      "asset": "USOIL",
+      "direction": "SHORT",
+      "entry_price": 91.982,
+      "entry_time": "2026-10-12T00:08:14.636423",
+      "quantity": 2320.3218868800636,
+      "stop_loss": 92.73686321635104,
+      "take_profit": 91.20110713459582,
+      "risk_amount": 3503.051285,
+      "position_id": "USOIL_1791763694.636427"
     }
   },
   "trades": [
@@ -3485,9 +3496,10 @@
     }
   ],
   "oanda_trade_ids": {
-    "XAGUSD": "3382"
+    "XAGUSD": "3382",
+    "USOIL": "3415"
   },
   "oanda_initial_balance": 99997.7957,
-  "daily_baseline_date": "2026-10-11",
-  "daily_baseline_balance": 70361.4884
+  "daily_baseline_date": "2026-10-12",
+  "daily_baseline_balance": 70061.0257
 }
