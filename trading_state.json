@@ -1,19 +1,7 @@
 {
-  "account_equity": 72948.3978,
-  "daily_pnl": 2887.372100000008,
-  "positions": {
-    "USOIL": {
-      "asset": "USOIL",
-      "direction": "SHORT",
-      "entry_price": 91.445,
-      "entry_time": "2026-10-12T01:08:30.055736",
-      "quantity": 1436.2327873395864,
-      "stop_loss": 92.70856667665386,
-      "take_profit": 90.69415329338445,
-      "risk_amount": 3629.5517800000002,
-      "position_id": "USOIL_1791767310.055739"
-    }
-  },
+  "account_equity": 69508.9792,
+  "daily_pnl": -552.0464999999967,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -3566,11 +3554,21 @@
       "pnl": 280.0293,
       "pnl_percent": 0.38387313285172653,
       "strategy": "XAGUSD_RSI2"
+    },
+    {
+      "asset": "USOIL",
+      "entry_price": 91.445,
+      "exit_price": 92.711,
+      "direction": "SHORT",
+      "quantity": 1436.2327873395864,
+      "entry_time": "2026-10-12T01:08:30.055736",
+      "exit_time": "2026-10-12T06:34:40.595433",
+      "pnl": -3375.8774,
+      "pnl_percent": -4.856750075823297,
+      "strategy": "USOIL"
     }
   ],
-  "oanda_trade_ids": {
-    "USOIL": "3423"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-12",
   "daily_baseline_balance": 70061.0257
