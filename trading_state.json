@@ -23,6 +23,17 @@
       "take_profit": 4252.405000000002,
       "risk_amount": 3629.5517800000002,
       "position_id": "XAUUSD_ORB_1791767310.990262"
+    },
+    "XAGUSD_RSI2": {
+      "asset": "XAGUSD_RSI2",
+      "direction": "LONG",
+      "entry_price": 61.0535,
+      "entry_time": "2026-10-12T03:08:25.388594",
+      "quantity": 1402.8464975794993,
+      "stop_loss": 60.92188271181588,
+      "take_profit": 61.1867,
+      "risk_amount": 3692.777035,
+      "position_id": "XAGUSD_RSI2_1791774505.388595"
     }
   },
   "trades": [
@@ -3521,7 +3532,8 @@
   ],
   "oanda_trade_ids": {
     "USOIL": "3423",
-    "XAUUSD_ORB": "3427"
+    "XAUUSD_ORB": "3427",
+    "XAGUSD_RSI2": "3435"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-12",
