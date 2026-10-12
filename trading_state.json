@@ -1,7 +1,19 @@
 {
   "account_equity": 69508.9792,
   "daily_pnl": -552.0464999999967,
-  "positions": {},
+  "positions": {
+    "XAGUSD_RSI2": {
+      "asset": "XAGUSD_RSI2",
+      "direction": "LONG",
+      "entry_price": 60.7525,
+      "entry_time": "2026-10-12T08:34:20.192718",
+      "quantity": 1056.8157108231062,
+      "stop_loss": 60.58806977226932,
+      "take_profit": 60.83710000000001,
+      "risk_amount": 3475.44896,
+      "position_id": "XAGUSD_RSI2_1791794060.19272"
+    }
+  },
   "trades": [
     {
       "asset": "EURUSD",
@@ -3568,7 +3580,9 @@
       "strategy": "USOIL"
     }
   ],
-  "oanda_trade_ids": {},
+  "oanda_trade_ids": {
+    "XAGUSD_RSI2": "3463"
+  },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-12",
   "daily_baseline_balance": 70061.0257
