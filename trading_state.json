@@ -34,6 +34,28 @@
       "take_profit": 61.1867,
       "risk_amount": 3692.777035,
       "position_id": "XAGUSD_RSI2_1791774505.388595"
+    },
+    "GBPUSD_FIB": {
+      "asset": "GBPUSD_FIB",
+      "direction": "SHORT",
+      "entry_price": 1.32452,
+      "entry_time": "2026-10-12T04:08:33.252215",
+      "quantity": 153282.11701928714,
+      "stop_loss": 1.3251222843869215,
+      "take_profit": 1.32404,
+      "risk_amount": 3692.777035,
+      "position_id": "GBPUSD_FIB_1791778113.252217"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
+      "direction": "SHORT",
+      "entry_price": 1.12095,
+      "entry_time": "2026-10-12T04:08:34.162336",
+      "quantity": 153797.18915045777,
+      "stop_loss": 1.1215502673155793,
+      "take_profit": 1.1206,
+      "risk_amount": 3692.777035,
+      "position_id": "EURUSD_FIB_1791778114.162337"
     }
   },
   "trades": [
@@ -3533,7 +3555,9 @@
   "oanda_trade_ids": {
     "USOIL": "3423",
     "XAUUSD_ORB": "3427",
-    "XAGUSD_RSI2": "3435"
+    "XAGUSD_RSI2": "3435",
+    "GBPUSD_FIB": "3439",
+    "EURUSD_FIB": "3443"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-12",
