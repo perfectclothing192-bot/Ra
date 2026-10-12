@@ -1,6 +1,6 @@
 {
-  "account_equity": 68018.5352,
-  "daily_pnl": -2042.4904999999999,
+  "account_equity": 67921.167,
+  "daily_pnl": -2139.858699999997,
   "positions": {
     "USOIL": {
       "asset": "USOIL",
@@ -15,25 +15,14 @@
     },
     "BTCUSD": {
       "asset": "BTCUSD",
-      "direction": "LONG",
-      "entry_price": 82980.5,
-      "entry_time": "2026-10-12T20:34:29.938201",
-      "quantity": 0.4034596661199531,
-      "stop_loss": 82137.71477249499,
-      "take_profit": 85508.85568251503,
-      "risk_amount": 3400.298465,
-      "position_id": "BTCUSD_1791837269.938203"
-    },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
       "direction": "SHORT",
-      "entry_price": 60.321,
-      "entry_time": "2026-10-12T22:08:28.871384",
-      "quantity": 3633.4902008704203,
-      "stop_loss": 60.36779972384658,
-      "take_profit": 60.2565,
-      "risk_amount": 3400.9267600000003,
-      "position_id": "XAGUSD_RSI2_1791842908.871385"
+      "entry_price": 82053.0,
+      "entry_time": "2026-10-12T23:08:33.055975",
+      "quantity": 0.3169250893125416,
+      "stop_loss": 83124.56500527193,
+      "take_profit": 78838.30498418421,
+      "risk_amount": 3396.0583500000002,
+      "position_id": "BTCUSD_1791846513.055977"
     }
   },
   "trades": [
@@ -3648,12 +3637,35 @@
       "pnl": 29.4443,
       "pnl_percent": 0.04329664043182751,
       "strategy": "BTCUSD_FIB"
+    },
+    {
+      "asset": "BTCUSD",
+      "entry_price": 82980.5,
+      "exit_price": 82093.0,
+      "direction": "LONG",
+      "quantity": 0.4034596661199531,
+      "entry_time": "2026-10-12T20:34:29.938201",
+      "exit_time": "2026-10-12T23:08:22.576252",
+      "pnl": -521.327,
+      "pnl_percent": -0.7675471771561286,
+      "strategy": "BTCUSD"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 60.321,
+      "exit_price": 60.256,
+      "direction": "SHORT",
+      "quantity": 3633.4902008704203,
+      "entry_time": "2026-10-12T22:08:28.871384",
+      "exit_time": "2026-10-12T23:08:23.636204",
+      "pnl": 423.9588,
+      "pnl_percent": 0.6241924553504801,
+      "strategy": "XAGUSD_RSI2"
     }
   ],
   "oanda_trade_ids": {
     "USOIL": "3483",
-    "BTCUSD": "3501",
-    "XAGUSD_RSI2": "3510"
+    "BTCUSD": "3518"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-12",
