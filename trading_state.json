@@ -1,6 +1,6 @@
 {
-  "account_equity": 73855.5407,
-  "daily_pnl": 3794.5149999999994,
+  "account_equity": 73578.6617,
+  "daily_pnl": 3517.6359999999986,
   "positions": {
     "USOIL": {
       "asset": "USOIL",
@@ -24,17 +24,6 @@
       "risk_amount": 3629.5517800000002,
       "position_id": "XAUUSD_ORB_1791767310.990262"
     },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
-      "direction": "LONG",
-      "entry_price": 61.0535,
-      "entry_time": "2026-10-12T03:08:25.388594",
-      "quantity": 1402.8464975794993,
-      "stop_loss": 60.92188271181588,
-      "take_profit": 61.1867,
-      "risk_amount": 3692.777035,
-      "position_id": "XAGUSD_RSI2_1791774505.388595"
-    },
     "GBPUSD_FIB": {
       "asset": "GBPUSD_FIB",
       "direction": "SHORT",
@@ -45,17 +34,6 @@
       "take_profit": 1.32404,
       "risk_amount": 3692.777035,
       "position_id": "GBPUSD_FIB_1791778113.252217"
-    },
-    "EURUSD_FIB": {
-      "asset": "EURUSD_FIB",
-      "direction": "SHORT",
-      "entry_price": 1.12095,
-      "entry_time": "2026-10-12T04:08:34.162336",
-      "quantity": 153797.18915045777,
-      "stop_loss": 1.1215502673155793,
-      "take_profit": 1.1206,
-      "risk_amount": 3692.777035,
-      "position_id": "EURUSD_FIB_1791778114.162337"
     }
   },
   "trades": [
@@ -3550,14 +3528,36 @@
       "pnl": 1264.5051,
       "pnl_percent": 1.712133020779577,
       "strategy": "XAGUSD"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 61.0535,
+      "exit_price": 60.918,
+      "direction": "LONG",
+      "quantity": 1402.8464975794993,
+      "entry_time": "2026-10-12T03:08:25.388594",
+      "exit_time": "2026-10-12T05:08:19.724760",
+      "pnl": -355.4508,
+      "pnl_percent": -0.48308951506792636,
+      "strategy": "XAGUSD_RSI2"
+    },
+    {
+      "asset": "EURUSD_FIB",
+      "entry_price": 1.12095,
+      "exit_price": 1.1206,
+      "direction": "SHORT",
+      "quantity": 153797.18915045777,
+      "entry_time": "2026-10-12T04:08:34.162336",
+      "exit_time": "2026-10-12T05:08:20.727879",
+      "pnl": 78.5718,
+      "pnl_percent": 0.10678612274895455,
+      "strategy": "EURUSD_FIB"
     }
   ],
   "oanda_trade_ids": {
     "USOIL": "3423",
     "XAUUSD_ORB": "3427",
-    "XAGUSD_RSI2": "3435",
-    "GBPUSD_FIB": "3439",
-    "EURUSD_FIB": "3443"
+    "GBPUSD_FIB": "3439"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-12",
