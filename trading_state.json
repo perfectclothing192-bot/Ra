@@ -12,6 +12,17 @@
       "take_profit": 95.70955835430993,
       "risk_amount": 3395.2046250000003,
       "position_id": "USOIL_1791814171.040845"
+    },
+    "XAGUSD_RSI2": {
+      "asset": "XAGUSD_RSI2",
+      "direction": "SHORT",
+      "entry_price": 60.5135,
+      "entry_time": "2026-10-13T04:08:24.290330",
+      "quantity": 3152.232165113086,
+      "stop_loss": 60.61670866895549,
+      "take_profit": 60.343199999999996,
+      "risk_amount": 3253.3768600000003,
+      "position_id": "XAGUSD_RSI2_1791864504.290331"
     }
   },
   "trades": [
@@ -3677,7 +3688,8 @@
     }
   ],
   "oanda_trade_ids": {
-    "USOIL": "3483"
+    "USOIL": "3483",
+    "XAGUSD_RSI2": "3534"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-13",
