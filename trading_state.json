@@ -12,6 +12,17 @@
       "take_profit": 79650.35297890291,
       "risk_amount": 4529.969985,
       "position_id": "BTCUSD_1792001295.461119"
+    },
+    "XAGUSD_RSI2": {
+      "asset": "XAGUSD_RSI2",
+      "direction": "SHORT",
+      "entry_price": 56.8185,
+      "entry_time": "2026-10-15T10:08:49.794723",
+      "quantity": 1684.0217814999764,
+      "stop_loss": 56.953195588258936,
+      "take_profit": 56.723800000000004,
+      "risk_amount": 4536.60609,
+      "position_id": "XAGUSD_RSI2_1792058929.794725"
     }
   },
   "trades": [
@@ -3893,7 +3904,8 @@
     }
   ],
   "oanda_trade_ids": {
-    "BTCUSD": "3633"
+    "BTCUSD": "3633",
+    "XAGUSD_RSI2": "3682"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-15",
