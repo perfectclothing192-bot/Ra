@@ -1,30 +1,7 @@
 {
-  "account_equity": 86666.8876,
-  "daily_pnl": 2230.6968999999954,
-  "positions": {
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
-      "direction": "LONG",
-      "entry_price": 57.369,
-      "entry_time": "2026-10-19T08:09:08.883084",
-      "quantity": 4795.783634617083,
-      "stop_loss": 57.27851100694628,
-      "take_profit": 57.6092,
-      "risk_amount": 4339.65632,
-      "position_id": "XAGUSD_RSI2_1792397348.883086"
-    },
-    "EURUSD_FIB": {
-      "asset": "EURUSD_FIB",
-      "direction": "SHORT",
-      "entry_price": 1.12105,
-      "entry_time": "2026-10-19T09:34:17.911913",
-      "quantity": 204052.36379395644,
-      "stop_loss": 1.1221133683039277,
-      "take_profit": 1.11866,
-      "risk_amount": 4339.65632,
-      "position_id": "EURUSD_FIB_1792402457.911918"
-    }
-  },
+  "account_equity": 87110.73,
+  "daily_pnl": 2674.5392999999895,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -4141,12 +4118,33 @@
       "pnl": -126.2388,
       "pnl_percent": -0.1456597825257544,
       "strategy": "BTCUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 57.369,
+      "exit_price": 57.613,
+      "direction": "LONG",
+      "quantity": 4795.783634617083,
+      "entry_time": "2026-10-19T08:09:08.883084",
+      "exit_time": "2026-10-19T11:18:13.335927",
+      "pnl": 679.7626,
+      "pnl_percent": 0.7803431333889638,
+      "strategy": "XAGUSD_RSI2"
+    },
+    {
+      "asset": "EURUSD_FIB",
+      "entry_price": 1.12105,
+      "exit_price": 1.12212,
+      "direction": "SHORT",
+      "quantity": 204052.36379395644,
+      "entry_time": "2026-10-19T09:34:17.911913",
+      "exit_time": "2026-10-19T11:18:14.376335",
+      "pnl": -235.9202,
+      "pnl_percent": -0.27082794507634134,
+      "strategy": "EURUSD_FIB"
     }
   ],
-  "oanda_trade_ids": {
-    "XAGUSD_RSI2": "3806",
-    "EURUSD_FIB": "3814"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-19",
   "daily_baseline_balance": 84436.1907
