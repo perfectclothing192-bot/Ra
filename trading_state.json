@@ -1,7 +1,19 @@
 {
   "account_equity": 87110.73,
   "daily_pnl": 2674.5392999999895,
-  "positions": {},
+  "positions": {
+    "XAGUSD_RSI2": {
+      "asset": "XAGUSD_RSI2",
+      "direction": "LONG",
+      "entry_price": 57.4355,
+      "entry_time": "2026-10-19T13:09:50.145915",
+      "quantity": 1955.2196313205504,
+      "stop_loss": 57.32411771766637,
+      "take_profit": 57.560100000000006,
+      "risk_amount": 4355.5365,
+      "position_id": "XAGUSD_RSI2_1792415390.145917"
+    }
+  },
   "trades": [
     {
       "asset": "EURUSD",
@@ -4144,7 +4156,9 @@
       "strategy": "EURUSD_FIB"
     }
   ],
-  "oanda_trade_ids": {},
+  "oanda_trade_ids": {
+    "XAGUSD_RSI2": "3824"
+  },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-19",
   "daily_baseline_balance": 84436.1907
