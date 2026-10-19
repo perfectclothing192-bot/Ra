@@ -1,30 +1,7 @@
 {
-  "account_equity": 84444.8904,
-  "daily_pnl": 8.699699999997392,
-  "positions": {
-    "XAUUSD_M15": {
-      "asset": "XAUUSD_M15",
-      "direction": "LONG",
-      "entry_price": 4175.69,
-      "entry_time": "2026-10-15T20:08:22.201831",
-      "quantity": 86.03715547769008,
-      "stop_loss": 4144.381847539073,
-      "take_profit": 4269.6144573827805,
-      "risk_amount": 4489.440635,
-      "position_id": "XAUUSD_M15_1792094902.201833"
-    },
-    "XAGUSD": {
-      "asset": "XAGUSD",
-      "direction": "LONG",
-      "entry_price": 57.426,
-      "entry_time": "2026-10-18T23:33:54.143609",
-      "quantity": 4871.242825874962,
-      "stop_loss": 56.90415440558675,
-      "take_profit": 58.99153678323975,
-      "risk_amount": 4236.72768,
-      "position_id": "XAGUSD_1792366434.143611"
-    }
-  },
+  "account_equity": 86793.1264,
+  "daily_pnl": 2356.9356999999873,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -4105,12 +4082,33 @@
       "pnl": 8.6997,
       "pnl_percent": 0.010302221909213349,
       "strategy": "GBPUSD_FIB"
+    },
+    {
+      "asset": "XAUUSD_M15",
+      "entry_price": 4175.69,
+      "exit_price": 4177.625,
+      "direction": "LONG",
+      "quantity": 86.03715547769008,
+      "entry_time": "2026-10-15T20:08:22.201831",
+      "exit_time": "2026-10-19T04:34:06.795344",
+      "pnl": 481.7304,
+      "pnl_percent": 0.555032892558644,
+      "strategy": "XAUUSD_M15"
+    },
+    {
+      "asset": "XAGUSD",
+      "entry_price": 57.426,
+      "exit_price": 57.678,
+      "direction": "LONG",
+      "quantity": 4871.242825874962,
+      "entry_time": "2026-10-18T23:33:54.143609",
+      "exit_time": "2026-10-19T04:34:07.846464",
+      "pnl": 1866.5056,
+      "pnl_percent": 2.150522371319948,
+      "strategy": "XAGUSD"
     }
   ],
-  "oanda_trade_ids": {
-    "XAUUSD_M15": "3712",
-    "XAGUSD": "3786"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-19",
   "daily_baseline_balance": 84436.1907
