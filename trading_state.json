@@ -1,6 +1,6 @@
 {
-  "account_equity": 86449.02,
-  "daily_pnl": 276.56170000000566,
+  "account_equity": 86499.6695,
+  "daily_pnl": 327.2112000000052,
   "positions": {
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
@@ -23,17 +23,6 @@
       "take_profit": 79151.12508661434,
       "risk_amount": 4308.622915,
       "position_id": "BTCUSD_1792456460.337571"
-    },
-    "EURUSD_FIB": {
-      "asset": "EURUSD_FIB",
-      "direction": "SHORT",
-      "entry_price": 1.12285,
-      "entry_time": "2026-10-20T08:08:53.257523",
-      "quantity": 198878.74548611694,
-      "stop_loss": 1.123392236754543,
-      "take_profit": 1.12249,
-      "risk_amount": 4313.57462,
-      "position_id": "EURUSD_FIB_1792483733.257526"
     }
   },
   "trades": [
@@ -4272,12 +4261,23 @@
       "pnl": 175.3846,
       "pnl_percent": 0.20287633104458558,
       "strategy": "USOIL_FIB"
+    },
+    {
+      "asset": "EURUSD_FIB",
+      "entry_price": 1.12285,
+      "exit_price": 1.12247,
+      "direction": "SHORT",
+      "quantity": 198878.74548611694,
+      "entry_time": "2026-10-20T08:08:53.257523",
+      "exit_time": "2026-10-20T09:08:23.264470",
+      "pnl": 50.6495,
+      "pnl_percent": 0.05855455898591612,
+      "strategy": "EURUSD_FIB"
     }
   ],
   "oanda_trade_ids": {
     "XAUUSD_M15": "3848",
-    "BTCUSD": "3865",
-    "EURUSD_FIB": "3881"
+    "BTCUSD": "3865"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-20",
