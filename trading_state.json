@@ -34,6 +34,17 @@
       "take_profit": 101.772,
       "risk_amount": 4313.57462,
       "position_id": "USOIL_FIB_1792481670.962226"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
+      "direction": "SHORT",
+      "entry_price": 1.12285,
+      "entry_time": "2026-10-20T08:08:53.257523",
+      "quantity": 198878.74548611694,
+      "stop_loss": 1.123392236754543,
+      "take_profit": 1.12249,
+      "risk_amount": 4313.57462,
+      "position_id": "EURUSD_FIB_1792483733.257526"
     }
   },
   "trades": [
@@ -4265,7 +4276,8 @@
   "oanda_trade_ids": {
     "XAUUSD_M15": "3848",
     "BTCUSD": "3865",
-    "USOIL_FIB": "3877"
+    "USOIL_FIB": "3877",
+    "EURUSD_FIB": "3881"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-20",
