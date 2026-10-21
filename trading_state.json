@@ -1,6 +1,6 @@
 {
-  "account_equity": 85840.3612,
-  "daily_pnl": -1672.9434000000037,
+  "account_equity": 84834.3471,
+  "daily_pnl": -2678.957500000004,
   "positions": {
     "GBPUSD_FIB": {
       "asset": "GBPUSD_FIB",
@@ -13,17 +13,6 @@
       "risk_amount": 4288.5667650000005,
       "position_id": "GBPUSD_FIB_1792512648.982869"
     },
-    "XAUUSD_FIB": {
-      "asset": "XAUUSD_FIB",
-      "direction": "LONG",
-      "entry_price": 4129.66,
-      "entry_time": "2026-10-21T13:09:27.871620",
-      "quantity": 33.312637143369514,
-      "stop_loss": 4117.038518527655,
-      "take_profit": 4141.985,
-      "risk_amount": 4204.548325,
-      "position_id": "XAUUSD_FIB_1792588167.871622"
-    },
     "BTCUSD": {
       "asset": "BTCUSD",
       "direction": "LONG",
@@ -34,6 +23,17 @@
       "take_profit": 88774.29613108348,
       "risk_amount": 4204.548325,
       "position_id": "BTCUSD_1792595394.974638"
+    },
+    "XAUUSD_M15": {
+      "asset": "XAUUSD_M15",
+      "direction": "SHORT",
+      "entry_price": 4113.425,
+      "entry_time": "2026-10-21T19:08:43.926075",
+      "quantity": 85.23509895330527,
+      "stop_loss": 4143.283948300093,
+      "take_profit": 4023.848155099723,
+      "risk_amount": 4241.717355,
+      "position_id": "XAUUSD_M15_1792609723.926076"
     }
   },
   "trades": [
@@ -4428,12 +4428,24 @@
       "pnl": 1767.1196,
       "pnl_percent": 2.058611561387512,
       "strategy": "USOIL"
+    },
+    {
+      "asset": "XAUUSD_FIB",
+      "entry_price": 4129.66,
+      "exit_price": 4116.945,
+      "direction": "LONG",
+      "quantity": 33.312637143369514,
+      "entry_time": "2026-10-21T13:09:27.871620",
+      "exit_time": "2026-10-21T19:08:35.845456",
+      "pnl": -1006.0141,
+      "pnl_percent": -1.1858570666125867,
+      "strategy": "XAUUSD_FIB"
     }
   ],
   "oanda_trade_ids": {
     "GBPUSD_FIB": "3903",
-    "XAUUSD_FIB": "3962",
-    "BTCUSD": "3970"
+    "BTCUSD": "3970",
+    "XAUUSD_M15": "3978"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-21",
