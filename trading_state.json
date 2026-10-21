@@ -23,6 +23,17 @@
       "take_profit": 4141.985,
       "risk_amount": 4204.548325,
       "position_id": "XAUUSD_FIB_1792588167.871622"
+    },
+    "USOIL": {
+      "asset": "USOIL",
+      "direction": "SHORT",
+      "entry_price": 99.373,
+      "entry_time": "2026-10-21T13:34:30.773884",
+      "quantity": 1386.7830209372646,
+      "stop_loss": 100.88893589679168,
+      "take_profit": 98.38837641283321,
+      "risk_amount": 4204.548325,
+      "position_id": "USOIL_1792589670.773886"
     }
   },
   "trades": [
@@ -4409,7 +4420,8 @@
   ],
   "oanda_trade_ids": {
     "GBPUSD_FIB": "3903",
-    "XAUUSD_FIB": "3962"
+    "XAUUSD_FIB": "3962",
+    "USOIL": "3966"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-21",
