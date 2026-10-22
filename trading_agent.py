@@ -1096,6 +1096,94 @@ class AdvancedTradingAgent:
 
         return hold
 
+    def ny_session_breakout_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "ny_session_breakout") -> Signal:
+        """
+        New York session breakout - same session-based range/breakout
+        discipline as london_breakout_signal, anchored to NY's open
+        instead of London's. Added 2026-10-22 at the user's request,
+        after asking whether orb_15m_signal's fixed-UTC-midnight range
+        could instead be anchored to a real trading session.
+
+        Session hours here are a fixed UTC convention (not adjusted for
+        US daylight-saving shifts), the same simplification
+        london_breakout_signal and orb_15m_signal already make.
+
+        1. Pre-range window: 11:00-12:59 UTC each day (the quiet window
+           immediately before NY's cash-market open). Range = the
+           high/low of every M15 bar whose timestamp falls in that
+           window that day.
+        2. Trading window: 13:00-16:59 UTC the same day (NY's open
+           through early afternoon). Only the first breakout of the day
+           counts - if an earlier bar in the trading window already
+           closed beyond the range, the day's opportunity is used up, no
+           re-entries or reversals (same discipline as
+           london_breakout_signal/orb_15m_signal).
+        3. Entry: the current bar's close breaks above the range high
+           (BUY) or below the range low (SELL), and the current bar's
+           hour is within the trading window (pre-range bars themselves
+           can never trigger an entry).
+        4. Stop at the opposite side of the range; target at 2x that
+           distance.
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
+
+        if len(bars) < 40:
+            return hold
+
+        current_bar = bars[-1]
+        if not (13 <= current_bar.timestamp.hour <= 16):
+            return hold
+
+        current_day = current_bar.timestamp.date()
+        day_bars = [b for b in bars if b.timestamp.date() == current_day]
+
+        pre_range_bars = [b for b in day_bars if 11 <= b.timestamp.hour <= 12]
+        if not pre_range_bars:
+            return hold
+        range_high = max(b.high for b in pre_range_bars)
+        range_low = min(b.low for b in pre_range_bars)
+        if range_high <= range_low:
+            return hold
+
+        trading_bars = [b for b in day_bars if 13 <= b.timestamp.hour <= 16]
+        prior_trading_bars = [b for b in trading_bars if b.timestamp < current_bar.timestamp]
+        already_broke_up = any(b.close > range_high for b in prior_trading_bars)
+        already_broke_down = any(b.close < range_low for b in prior_trading_bars)
+        if already_broke_up or already_broke_down:
+            return hold
+
+        current_close = current_bar.close
+
+        if current_close > range_high:
+            entry_price = current_close
+            stop_loss = range_low
+            risk = entry_price - stop_loss
+            if risk <= 0:
+                return hold
+            take_profit = entry_price + risk * 2.0
+            return Signal(
+                asset=asset, direction="BUY", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        if current_close < range_low:
+            entry_price = current_close
+            stop_loss = range_high
+            risk = stop_loss - entry_price
+            if risk <= 0:
+                return hold
+            take_profit = entry_price - risk * 2.0
+            return Signal(
+                asset=asset, direction="SELL", strength=SignalStrength.STRONG,
+                entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.6,
+                timestamp=datetime.now()
+            )
+
+        return hold
+
     def orb_15m_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "orb_15m") -> Signal:
         """
         Opening Range Breakout (ORB), 15-minute range - a classic
