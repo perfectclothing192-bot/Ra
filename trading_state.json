@@ -1,18 +1,7 @@
 {
-  "account_equity": 90097.8775,
-  "daily_pnl": -1146.8417999999947,
+  "account_equity": 85965.3976,
+  "daily_pnl": -5279.3217,
   "positions": {
-    "XAUUSD_M15": {
-      "asset": "XAUUSD_M15",
-      "direction": "LONG",
-      "entry_price": 4043.975,
-      "entry_time": "2026-10-27T14:34:51.716359",
-      "quantity": 71.19800376742405,
-      "stop_loss": 4006.4032741024835,
-      "take_profit": 4156.69017769255,
-      "risk_amount": 4458.38647,
-      "position_id": "XAUUSD_M15_1793111691.716361"
-    },
     "XAGUSD": {
       "asset": "XAGUSD",
       "direction": "SHORT",
@@ -23,6 +12,28 @@
       "take_profit": 48.949490797520546,
       "risk_amount": 4531.332765,
       "position_id": "XAGUSD_1793244871.644811"
+    },
+    "XAUUSD_M15": {
+      "asset": "XAUUSD_M15",
+      "direction": "SHORT",
+      "entry_price": 4007.175,
+      "entry_time": "2026-10-29T18:10:01.129139",
+      "quantity": 116.60812934158643,
+      "stop_loss": 4029.2914848674086,
+      "take_profit": 3940.825545397775,
+      "risk_amount": 4298.26988,
+      "position_id": "XAUUSD_M15_1793297401.129144"
+    },
+    "GBPUSD_FIB": {
+      "asset": "GBPUSD_FIB",
+      "direction": "SHORT",
+      "entry_price": 1.33686,
+      "entry_time": "2026-10-29T18:10:01.769200",
+      "quantity": 113011.1626728004,
+      "stop_loss": 1.337810850734198,
+      "take_profit": 1.33624,
+      "risk_amount": 4298.26988,
+      "position_id": "GBPUSD_FIB_1793297401.769201"
     }
   },
   "trades": [
@@ -4993,11 +5004,24 @@
       "pnl": -674.4407,
       "pnl_percent": -0.7485644708999942,
       "strategy": "USOIL_FIB"
+    },
+    {
+      "asset": "XAUUSD_M15",
+      "entry_price": 4043.975,
+      "exit_price": 4006.385,
+      "direction": "LONG",
+      "quantity": 71.19800376742405,
+      "entry_time": "2026-10-27T14:34:51.716359",
+      "exit_time": "2026-10-29T18:09:52.263401",
+      "pnl": -4132.4799,
+      "pnl_percent": -4.807143356945284,
+      "strategy": "XAUUSD_M15"
     }
   ],
   "oanda_trade_ids": {
-    "XAUUSD_M15": "4380",
-    "XAGUSD": "4462"
+    "XAGUSD": "4462",
+    "XAUUSD_M15": "4492",
+    "GBPUSD_FIB": "4496"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-29",
