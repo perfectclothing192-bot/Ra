@@ -1,6 +1,6 @@
 {
-  "account_equity": 82061.4914,
-  "daily_pnl": -790.5078999999969,
+  "account_equity": 82669.1966,
+  "daily_pnl": -182.8027000000002,
   "positions": {
     "XAGUSD": {
       "asset": "XAGUSD",
@@ -24,17 +24,6 @@
       "risk_amount": 4142.599965,
       "position_id": "BTCUSD_1793318971.601738"
     },
-    "USOIL": {
-      "asset": "USOIL",
-      "direction": "LONG",
-      "entry_price": 104.243,
-      "entry_time": "2026-10-30T01:34:32.008005",
-      "quantity": 1699.4718034615794,
-      "stop_loss": 103.03583829197912,
-      "take_profit": 104.77248683208354,
-      "risk_amount": 4103.07457,
-      "position_id": "USOIL_1793324072.008007"
-    },
     "GBPUSD": {
       "asset": "GBPUSD",
       "direction": "SHORT",
@@ -56,6 +45,17 @@
       "take_profit": 1.11767125,
       "risk_amount": 4103.07457,
       "position_id": "EURUSD_1793324073.776568"
+    },
+    "USOIL": {
+      "asset": "USOIL",
+      "direction": "LONG",
+      "entry_price": 105.778,
+      "entry_time": "2026-10-30T02:08:24.824739",
+      "quantity": 747.1705182140677,
+      "stop_loss": 103.01192470042847,
+      "take_profit": 106.5997411982862,
+      "risk_amount": 4133.45983,
+      "position_id": "USOIL_1793326104.82474"
     }
   },
   "trades": [
@@ -5074,14 +5074,26 @@
       "pnl": -790.5079,
       "pnl_percent": -0.9633116416892222,
       "strategy": "XAUUSD_ORB"
+    },
+    {
+      "asset": "USOIL",
+      "entry_price": 104.243,
+      "exit_price": 104.78,
+      "direction": "LONG",
+      "quantity": 1699.4718034615794,
+      "entry_time": "2026-10-30T01:34:32.008005",
+      "exit_time": "2026-10-30T02:08:18.367369",
+      "pnl": 607.4008,
+      "pnl_percent": 0.7347365463570987,
+      "strategy": "USOIL"
     }
   ],
   "oanda_trade_ids": {
     "XAGUSD": "4462",
     "BTCUSD": "4505",
-    "USOIL": "4515",
     "GBPUSD": "4519",
-    "EURUSD": "4523"
+    "EURUSD": "4523",
+    "USOIL": "4529"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-10-30",
