@@ -1,6 +1,6 @@
 {
-  "account_equity": 90627.7055,
-  "daily_pnl": -2775.297200000001,
+  "account_equity": 90697.9647,
+  "daily_pnl": -2705.0380000000005,
   "positions": {
     "BTCUSD": {
       "asset": "BTCUSD",
@@ -12,17 +12,6 @@
       "take_profit": 71718.42211568823,
       "risk_amount": 4142.599965,
       "position_id": "BTCUSD_1793318971.601738"
-    },
-    "GBPUSD_FIB": {
-      "asset": "GBPUSD_FIB",
-      "direction": "LONG",
-      "entry_price": 1.34124,
-      "entry_time": "2026-11-03T07:09:52.369996",
-      "quantity": 88528.44654321062,
-      "stop_loss": 1.3399603589772728,
-      "take_profit": 1.34176,
-      "risk_amount": 4531.385275,
-      "position_id": "GBPUSD_FIB_1793689792.369998"
     },
     "XAGUSD": {
       "asset": "XAGUSD",
@@ -5268,11 +5257,22 @@
       "pnl": -717.4894,
       "pnl_percent": -0.7916888064654799,
       "strategy": "USOIL_FIB"
+    },
+    {
+      "asset": "GBPUSD_FIB",
+      "entry_price": 1.34124,
+      "exit_price": 1.34177,
+      "direction": "LONG",
+      "quantity": 88528.44654321062,
+      "entry_time": "2026-11-03T07:09:52.369996",
+      "exit_time": "2026-11-03T07:34:08.473421",
+      "pnl": 70.2592,
+      "pnl_percent": 0.0774650238650835,
+      "strategy": "GBPUSD_FIB"
     }
   ],
   "oanda_trade_ids": {
     "BTCUSD": "4505",
-    "GBPUSD_FIB": "4625",
     "XAGUSD": "4629"
   },
   "oanda_initial_balance": 99997.7957,
