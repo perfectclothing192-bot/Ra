@@ -1,6 +1,6 @@
 {
   "account_equity": 93403.0027,
-  "daily_pnl": -7576.262600000002,
+  "daily_pnl": 0.0,
   "positions": {
     "BTCUSD": {
       "asset": "BTCUSD",
@@ -5216,6 +5216,6 @@
     "BTCUSD": "4505"
   },
   "oanda_initial_balance": 99997.7957,
-  "daily_baseline_date": "2026-11-02",
-  "daily_baseline_balance": 100979.2653
+  "daily_baseline_date": "2026-11-03",
+  "daily_baseline_balance": 93403.0027
 }
