@@ -1,30 +1,7 @@
 {
-  "account_equity": 90046.4933,
-  "daily_pnl": 4501.690600000002,
-  "positions": {
-    "BTCUSD": {
-      "asset": "BTCUSD",
-      "direction": "SHORT",
-      "entry_price": 77800.5,
-      "entry_time": "2026-10-30T00:09:31.601736",
-      "quantity": 0.20433477063910185,
-      "stop_loss": 79827.85929477059,
-      "take_profit": 71718.42211568823,
-      "risk_amount": 4142.599965,
-      "position_id": "BTCUSD_1793318971.601738"
-    },
-    "GBPUSD_FIB": {
-      "asset": "GBPUSD_FIB",
-      "direction": "LONG",
-      "entry_price": 1.34852,
-      "entry_time": "2026-11-04T14:34:49.689076",
-      "quantity": 219111.13393539854,
-      "stop_loss": 1.3474925933629809,
-      "take_profit": 1.35032,
-      "risk_amount": 4502.324665,
-      "position_id": "GBPUSD_FIB_1793802889.689077"
-    }
-  },
+  "account_equity": 88954.0531,
+  "daily_pnl": 3409.2504000000044,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -5437,12 +5414,33 @@
       "pnl": -450.3777,
       "pnl_percent": -0.500161287235824,
       "strategy": "XAUUSD_FIB"
+    },
+    {
+      "asset": "BTCUSD",
+      "entry_price": 77800.5,
+      "exit_price": 79837.0,
+      "direction": "SHORT",
+      "quantity": 0.20433477063910185,
+      "entry_time": "2026-10-30T00:09:31.601736",
+      "exit_time": "2026-11-04T15:10:02.847882",
+      "pnl": -587.9222,
+      "pnl_percent": -0.6609279504544576,
+      "strategy": "BTCUSD"
+    },
+    {
+      "asset": "GBPUSD_FIB",
+      "entry_price": 1.34852,
+      "exit_price": 1.34749,
+      "direction": "LONG",
+      "quantity": 219111.13393539854,
+      "entry_time": "2026-11-04T14:34:49.689076",
+      "exit_time": "2026-11-04T15:10:03.709777",
+      "pnl": -504.518,
+      "pnl_percent": -0.5671669613894186,
+      "strategy": "GBPUSD_FIB"
     }
   ],
-  "oanda_trade_ids": {
-    "BTCUSD": "4505",
-    "GBPUSD_FIB": "4718"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-04",
   "daily_baseline_balance": 85544.8027
