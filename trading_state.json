@@ -12,6 +12,28 @@
       "take_profit": 71718.42211568823,
       "risk_amount": 4142.599965,
       "position_id": "BTCUSD_1793318971.601738"
+    },
+    "GBPUSD_FIB": {
+      "asset": "GBPUSD_FIB",
+      "direction": "LONG",
+      "entry_price": 1.34794,
+      "entry_time": "2026-11-04T11:34:06.312424",
+      "quantity": 51335.26703537152,
+      "stop_loss": 1.3457271602592087,
+      "take_profit": 1.34987,
+      "risk_amount": 4543.86876,
+      "position_id": "GBPUSD_FIB_1793792046.312426"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
+      "direction": "LONG",
+      "entry_price": 1.12492,
+      "entry_time": "2026-11-04T11:34:07.085016",
+      "quantity": 57722.39189610781,
+      "stop_loss": 1.1229520164277935,
+      "take_profit": 1.12652,
+      "risk_amount": 4543.86876,
+      "position_id": "EURUSD_FIB_1793792047.085017"
     }
   },
   "trades": [
@@ -5381,7 +5403,9 @@
     }
   ],
   "oanda_trade_ids": {
-    "BTCUSD": "4505"
+    "BTCUSD": "4505",
+    "GBPUSD_FIB": "4694",
+    "EURUSD_FIB": "4698"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-04",
