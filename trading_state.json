@@ -1,6 +1,6 @@
 {
-  "account_equity": 81118.0151,
-  "daily_pnl": -3684.4679999999935,
+  "account_equity": 81238.2306,
+  "daily_pnl": -3564.2525000000023,
   "positions": {
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
@@ -12,28 +12,6 @@
       "take_profit": 4187.728571651243,
       "risk_amount": 4447.702655,
       "position_id": "XAUUSD_M15_1793812189.162755"
-    },
-    "XAGUSD_RSI2": {
-      "asset": "XAGUSD_RSI2",
-      "direction": "SHORT",
-      "entry_price": 51.947,
-      "entry_time": "2026-11-06T08:34:04.908182",
-      "quantity": 539.5959054456349,
-      "stop_loss": 52.32243363275282,
-      "take_profit": 51.6218,
-      "risk_amount": 4051.6490200000003,
-      "position_id": "XAGUSD_RSI2_1793954044.908184"
-    },
-    "USOIL_FIB": {
-      "asset": "USOIL_FIB",
-      "direction": "LONG",
-      "entry_price": 91.194,
-      "entry_time": "2026-11-06T13:11:50.366665",
-      "quantity": 426.4533139279563,
-      "stop_loss": 90.24292267862991,
-      "take_profit": 91.975,
-      "risk_amount": 4055.9007550000006,
-      "position_id": "USOIL_FIB_1793970710.366666"
     }
   },
   "trades": [
@@ -5628,12 +5606,34 @@
       "pnl": 85.0347,
       "pnl_percent": 0.10482837862239557,
       "strategy": "EURUSD_FIB"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 51.947,
+      "exit_price": 52.324,
+      "direction": "SHORT",
+      "quantity": 539.5959054456349,
+      "entry_time": "2026-11-06T08:34:04.908182",
+      "exit_time": "2026-11-06T13:34:08.153660",
+      "pnl": -320.4223,
+      "pnl_percent": -0.39442304150824287,
+      "strategy": "XAGUSD_RSI2"
+    },
+    {
+      "asset": "USOIL_FIB",
+      "entry_price": 91.194,
+      "exit_price": 92.137,
+      "direction": "LONG",
+      "quantity": 426.4533139279563,
+      "entry_time": "2026-11-06T13:11:50.366665",
+      "exit_time": "2026-11-06T13:34:09.730957",
+      "pnl": 440.2316,
+      "pnl_percent": 0.5419020044486297,
+      "strategy": "USOIL_FIB"
     }
   ],
   "oanda_trade_ids": {
-    "XAUUSD_M15": "4726",
-    "XAGUSD_RSI2": "4812",
-    "USOIL_FIB": "4822"
+    "XAUUSD_M15": "4726"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-06",
