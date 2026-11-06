@@ -12,6 +12,28 @@
       "take_profit": 4187.728571651243,
       "risk_amount": 4447.702655,
       "position_id": "XAUUSD_M15_1793812189.162755"
+    },
+    "USOIL_FIB": {
+      "asset": "USOIL_FIB",
+      "direction": "LONG",
+      "entry_price": 91.916,
+      "entry_time": "2026-11-06T00:34:38.403011",
+      "quantity": 950.1576750485897,
+      "stop_loss": 91.46974520815367,
+      "take_profit": 92.363,
+      "risk_amount": 4240.124155,
+      "position_id": "USOIL_FIB_1793925278.403012"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
+      "direction": "SHORT",
+      "entry_price": 1.12256,
+      "entry_time": "2026-11-06T00:34:39.127722",
+      "quantity": 78651.36357423662,
+      "stop_loss": 1.123907759263893,
+      "take_profit": 1.12151,
+      "risk_amount": 4240.124155,
+      "position_id": "EURUSD_FIB_1793925279.127722"
     }
   },
   "trades": [
@@ -5537,7 +5559,9 @@
     }
   ],
   "oanda_trade_ids": {
-    "XAUUSD_M15": "4726"
+    "XAUUSD_M15": "4726",
+    "USOIL_FIB": "4778",
+    "EURUSD_FIB": "4782"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-06",
