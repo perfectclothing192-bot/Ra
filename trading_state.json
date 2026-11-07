@@ -1,6 +1,6 @@
 {
   "account_equity": 81483.616,
-  "daily_pnl": -3318.867100000003,
+  "daily_pnl": 0.0,
   "positions": {
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
@@ -5684,6 +5684,6 @@
     "BTCUSD_FIB": "4846"
   },
   "oanda_initial_balance": 99997.7957,
-  "daily_baseline_date": "2026-11-06",
-  "daily_baseline_balance": 84802.4831
+  "daily_baseline_date": "2026-11-07",
+  "daily_baseline_balance": 81483.616
 }
