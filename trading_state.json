@@ -1,6 +1,6 @@
 {
-  "account_equity": 77408.3682,
-  "daily_pnl": -3930.5167999999976,
+  "account_equity": 78610.0031,
+  "daily_pnl": -2728.881899999993,
   "positions": {
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
@@ -13,16 +13,16 @@
       "risk_amount": 4447.702655,
       "position_id": "XAUUSD_M15_1793812189.162755"
     },
-    "USOIL": {
-      "asset": "USOIL",
+    "BTCUSD_FIB": {
+      "asset": "BTCUSD_FIB",
       "direction": "SHORT",
-      "entry_price": 88.024,
-      "entry_time": "2026-11-09T13:15:01.332194",
-      "quantity": 568.3661425207086,
-      "stop_loss": 91.4609377173603,
-      "take_profit": 86.88190913055888,
-      "risk_amount": 3906.8780650000003,
-      "position_id": "USOIL_1794230101.332195"
+      "entry_price": 74784.5,
+      "entry_time": "2026-11-09T20:09:11.917100",
+      "quantity": 0.11586235058787682,
+      "stop_loss": 75293.35815820112,
+      "take_profit": 74334.5,
+      "risk_amount": 3930.500155,
+      "position_id": "BTCUSD_FIB_1794254951.917102"
     }
   },
   "trades": [
@@ -5797,11 +5797,23 @@
       "pnl": -62.041,
       "pnl_percent": -0.08014766548198597,
       "strategy": "BTCUSD_FIB"
+    },
+    {
+      "asset": "USOIL",
+      "entry_price": 88.024,
+      "exit_price": 86.881,
+      "direction": "SHORT",
+      "quantity": 568.3661425207086,
+      "entry_time": "2026-11-09T13:15:01.332194",
+      "exit_time": "2026-11-09T20:09:01.467070",
+      "pnl": 1215.1373,
+      "pnl_percent": 1.5457794836291008,
+      "strategy": "USOIL"
     }
   ],
   "oanda_trade_ids": {
     "XAUUSD_M15": "4726",
-    "USOIL": "4905"
+    "BTCUSD_FIB": "4919"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-09",
