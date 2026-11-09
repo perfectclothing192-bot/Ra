@@ -23,6 +23,17 @@
       "take_profit": 86.88190913055888,
       "risk_amount": 3906.8780650000003,
       "position_id": "USOIL_1794230101.332195"
+    },
+    "BTCUSD_FIB": {
+      "asset": "BTCUSD_FIB",
+      "direction": "LONG",
+      "entry_price": 74974.5,
+      "entry_time": "2026-11-09T17:09:39.662837",
+      "quantity": 0.10951308327685842,
+      "stop_loss": 74443.94415076771,
+      "take_profit": 75481.5,
+      "risk_amount": 3873.5204599999997,
+      "position_id": "BTCUSD_FIB_1794244179.662838"
     }
   },
   "trades": [
@@ -5789,7 +5800,8 @@
   ],
   "oanda_trade_ids": {
     "XAUUSD_M15": "4726",
-    "USOIL": "4905"
+    "USOIL": "4905",
+    "BTCUSD_FIB": "4911"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-09",
