@@ -12,6 +12,17 @@
       "take_profit": 3893.3524972451332,
       "risk_amount": 3725.7490850000004,
       "position_id": "XAUUSD_M15_1794328457.649643"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
+      "direction": "LONG",
+      "entry_price": 1.11655,
+      "entry_time": "2026-11-11T03:08:11.822442",
+      "quantity": 184569.56379497802,
+      "stop_loss": 1.1160475806237045,
+      "take_profit": 1.11702,
+      "risk_amount": 3709.2530050000005,
+      "position_id": "EURUSD_FIB_1794366491.822444"
     }
   },
   "trades": [
@@ -5969,7 +5980,8 @@
     }
   ],
   "oanda_trade_ids": {
-    "XAUUSD_M15": "4980"
+    "XAUUSD_M15": "4980",
+    "EURUSD_FIB": "5013"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-11",
