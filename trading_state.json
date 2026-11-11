@@ -12,6 +12,17 @@
       "take_profit": 3878.84133141676,
       "risk_amount": 3973.64966,
       "position_id": "XAUUSD_M15_1794411278.619262"
+    },
+    "XAGUSD": {
+      "asset": "XAGUSD",
+      "direction": "SHORT",
+      "entry_price": 51.7225,
+      "entry_time": "2026-11-11T21:08:52.864819",
+      "quantity": 6536.609319782969,
+      "stop_loss": 52.07351648771571,
+      "take_profit": 50.669450536852864,
+      "risk_amount": 3824.096075,
+      "position_id": "XAGUSD_1794431332.86482"
     }
   },
   "trades": [
@@ -6101,7 +6112,8 @@
     }
   ],
   "oanda_trade_ids": {
-    "XAUUSD_M15": "5067"
+    "XAUUSD_M15": "5067",
+    "XAGUSD": "5083"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-11",
