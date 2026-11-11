@@ -12,6 +12,28 @@
       "take_profit": 3893.3524972451332,
       "risk_amount": 3725.7490850000004,
       "position_id": "XAUUSD_M15_1794328457.649643"
+    },
+    "GBPUSD": {
+      "asset": "GBPUSD",
+      "direction": "LONG",
+      "entry_price": 1.33365,
+      "entry_time": "2026-11-11T07:09:34.854924",
+      "quantity": 137500.84558973502,
+      "stop_loss": 1.332977541480902,
+      "take_profit": 1.334635,
+      "risk_amount": 3698.5446000000006,
+      "position_id": "GBPUSD_1794380974.854926"
+    },
+    "EURUSD": {
+      "asset": "EURUSD",
+      "direction": "LONG",
+      "entry_price": 1.11554,
+      "entry_time": "2026-11-11T07:09:35.576675",
+      "quantity": 349988.98393629806,
+      "stop_loss": 1.1150116198552305,
+      "take_profit": 1.11645825,
+      "risk_amount": 3698.5446000000006,
+      "position_id": "EURUSD_1794380975.576677"
     }
   },
   "trades": [
@@ -5981,7 +6003,9 @@
     }
   ],
   "oanda_trade_ids": {
-    "XAUUSD_M15": "4980"
+    "XAUUSD_M15": "4980",
+    "GBPUSD": "5019",
+    "EURUSD": "5023"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-11",
