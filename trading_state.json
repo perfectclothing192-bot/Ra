@@ -23,6 +23,17 @@
       "take_profit": 73972.5,
       "risk_amount": 3723.4789,
       "position_id": "BTCUSD_FIB_1794353673.037112"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
+      "direction": "LONG",
+      "entry_price": 1.11678,
+      "entry_time": "2026-11-11T00:34:07.931603",
+      "quantity": 196064.72789499204,
+      "stop_loss": 1.1163052232591788,
+      "take_profit": 1.11698,
+      "risk_amount": 3723.4789,
+      "position_id": "EURUSD_FIB_1794357247.931604"
     }
   },
   "trades": [
@@ -5957,7 +5968,8 @@
   ],
   "oanda_trade_ids": {
     "XAUUSD_M15": "4980",
-    "BTCUSD_FIB": "4999"
+    "BTCUSD_FIB": "4999",
+    "EURUSD_FIB": "5003"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-11",
