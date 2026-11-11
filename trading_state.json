@@ -23,6 +23,17 @@
       "take_profit": 50.669450536852864,
       "risk_amount": 3824.096075,
       "position_id": "XAGUSD_1794431332.86482"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
+      "direction": "SHORT",
+      "entry_price": 1.10888,
+      "entry_time": "2026-11-11T22:34:05.077543",
+      "quantity": 198607.68042162966,
+      "stop_loss": 1.1093625798518796,
+      "take_profit": 1.10864,
+      "risk_amount": 3833.7626,
+      "position_id": "EURUSD_FIB_1794436445.077544"
     }
   },
   "trades": [
@@ -6113,7 +6124,8 @@
   ],
   "oanda_trade_ids": {
     "XAUUSD_M15": "5067",
-    "XAGUSD": "5083"
+    "XAGUSD": "5083",
+    "EURUSD_FIB": "5088"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-11",
