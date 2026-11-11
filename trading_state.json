@@ -1,30 +1,7 @@
 {
-  "account_equity": 70702.6052,
-  "daily_pnl": -3766.9727999999886,
-  "positions": {
-    "GBPUSD": {
-      "asset": "GBPUSD",
-      "direction": "LONG",
-      "entry_price": 1.33365,
-      "entry_time": "2026-11-11T07:09:34.854924",
-      "quantity": 137500.84558973502,
-      "stop_loss": 1.332977541480902,
-      "take_profit": 1.334635,
-      "risk_amount": 3698.5446000000006,
-      "position_id": "GBPUSD_1794380974.854926"
-    },
-    "EURUSD": {
-      "asset": "EURUSD",
-      "direction": "LONG",
-      "entry_price": 1.11554,
-      "entry_time": "2026-11-11T07:09:35.576675",
-      "quantity": 349988.98393629806,
-      "stop_loss": 1.1150116198552305,
-      "take_profit": 1.11645825,
-      "risk_amount": 3698.5446000000006,
-      "position_id": "EURUSD_1794380975.576677"
-    }
-  },
+  "account_equity": 70035.4492,
+  "daily_pnl": -4434.128799999991,
+  "positions": {},
   "trades": [
     {
       "asset": "EURUSD",
@@ -6001,12 +5978,33 @@
       "pnl": -3268.2868,
       "pnl_percent": -4.622583270807112,
       "strategy": "XAUUSD_M15"
+    },
+    {
+      "asset": "GBPUSD",
+      "entry_price": 1.33365,
+      "exit_price": 1.33297,
+      "direction": "LONG",
+      "quantity": 137500.84558973502,
+      "entry_time": "2026-11-11T07:09:34.854924",
+      "exit_time": "2026-11-11T08:09:16.321383",
+      "pnl": -260.6843,
+      "pnl_percent": -0.3722176454606077,
+      "strategy": "GBPUSD"
+    },
+    {
+      "asset": "EURUSD",
+      "entry_price": 1.11554,
+      "exit_price": 1.11501,
+      "direction": "LONG",
+      "quantity": 349988.98393629806,
+      "entry_time": "2026-11-11T07:09:35.576675",
+      "exit_time": "2026-11-11T08:09:17.079274",
+      "pnl": -406.4717,
+      "pnl_percent": -0.5803799427904576,
+      "strategy": "EURUSD"
     }
   ],
-  "oanda_trade_ids": {
-    "GBPUSD": "5019",
-    "EURUSD": "5023"
-  },
+  "oanda_trade_ids": {},
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-11",
   "daily_baseline_balance": 74469.578
