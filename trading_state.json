@@ -1,6 +1,6 @@
 {
   "account_equity": 96217.1233,
-  "daily_pnl": 19703.102900000013,
+  "daily_pnl": 0.0,
   "positions": {
     "XAGUSD": {
       "asset": "XAGUSD",
@@ -6224,6 +6224,6 @@
     "XAUUSD_M15": "5138"
   },
   "oanda_initial_balance": 99997.7957,
-  "daily_baseline_date": "2026-11-12",
-  "daily_baseline_balance": 76514.0204
+  "daily_baseline_date": "2026-11-13",
+  "daily_baseline_balance": 96217.1233
 }
