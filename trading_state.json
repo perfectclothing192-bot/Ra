@@ -1,6 +1,6 @@
 {
-  "account_equity": 95682.2549,
-  "daily_pnl": 0.0,
+  "account_equity": 95613.0173,
+  "daily_pnl": -69.23759999999311,
   "positions": {
     "XAGUSD": {
       "asset": "XAGUSD",
