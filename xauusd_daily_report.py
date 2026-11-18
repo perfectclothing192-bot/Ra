@@ -1,15 +1,28 @@
 """
 Daily XAUUSD market-read report: price, structure/trend, order-block
-zones, and an order-flow (CVD) proxy. For the user's own informational
-daily briefing - NOT a trading strategy, does not place orders, does not
-touch trading_state.json. Reuses the same detection logic already live
-in trading_agent.py (smc_signal's fractal swing structure) and already
-backtested there (order_block_signal's zone definition), and the same
-honest order-flow proxy from the order-flow backtest research
-(buy/sell volume split from OHLCV, since OANDA's REST API has no real
-bid/ask depth - this is a proxy, not genuine tape data).
+zones, an order-flow (CVD) proxy, and (if ANTHROPIC_API_KEY is set) a
+real TradingAgents multi-agent LLM decision. For the user's own
+informational daily briefing - NOT a trading strategy, does not place
+orders, does not touch trading_state.json. Reuses the same detection
+logic already live in trading_agent.py (smc_signal's fractal swing
+structure) and already backtested there (order_block_signal's zone
+definition), and the same honest order-flow proxy from the order-flow
+backtest research (buy/sell volume split from OHLCV, since OANDA's
+REST API has no real bid/ask depth - this is a proxy, not genuine tape
+data).
 
-Run standalone: OANDA_API_KEY=... OANDA_ACCOUNT_ID=... python3 xauusd_daily_report.py
+The LLM section costs real money every run (~$0.30/day on current
+pricing, confirmed by an earlier manual test - see llm_strategy.py on
+the feature/tradingagents-llm-strategy branch for the full cost
+breakdown) - added here at the user's explicit request to run
+automatically every day, not gated by any cache (this script already
+runs once/day via its own schedule, so there is nothing to cache
+against). If ANTHROPIC_API_KEY is missing or the call fails, the report
+still completes with llm_decision=None rather than failing the whole
+run - a market read without the LLM's opinion is still useful; no
+report at all is not.
+
+Run standalone: OANDA_API_KEY=... OANDA_ACCOUNT_ID=... ANTHROPIC_API_KEY=... python3 xauusd_daily_report.py
 Writes a JSON data file (default: xauusd_report_data.json) for the
 dashboard artifact to render.
 """
@@ -149,6 +162,46 @@ def cvd_divergence_read(closes, cvd, window=CVD_DIVERGENCE_WINDOW):
     return "confirming_down"
 
 
+RATING_TO_DIRECTION = {
+    "buy": "BUY", "overweight": "BUY", "hold": "HOLD",
+    "underweight": "SELL", "sell": "SELL",
+}
+
+
+def get_llm_decision():
+    """Real TradingAgents multi-agent decision for XAUUSD, or None if no
+    key is configured or the call fails - see module docstring."""
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        return None
+    try:
+        from tradingagents.default_config import DEFAULT_CONFIG
+        from tradingagents.graph.trading_graph import TradingAgentsGraph
+    except ImportError:
+        return None
+
+    config = DEFAULT_CONFIG.copy()
+    config["llm_provider"] = "anthropic"
+    config["quick_think_llm"] = "claude-haiku-4-5"
+    config["deep_think_llm"] = "claude-sonnet-5"
+
+    try:
+        graph = TradingAgentsGraph(
+            selected_analysts=["market", "social", "news"], debug=False, config=config,
+        )
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        state, rating = graph.propagate("XAUUSD", today)
+    except Exception as e:
+        return {"error": str(e)}
+
+    reasoning = state.get("final_trade_decision", "")
+    direction = RATING_TO_DIRECTION.get(str(rating).strip().lower())
+    return {
+        "rating": str(rating),
+        "direction": direction,
+        "reasoning": reasoning[:4000],  # dashboard-sized excerpt, not the full transcript
+    }
+
+
 def main():
     bars = fetch_candles("XAUUSD", granularity=GRANULARITY, count=LOOKBACK_BARS)
     if len(bars) < 100:
@@ -174,6 +227,8 @@ def main():
     day_change = current_price - closes[day_ago_idx]
     day_change_pct = (day_change / closes[day_ago_idx]) * 100 if closes[day_ago_idx] else 0.0
 
+    llm_decision = get_llm_decision()
+
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "instrument": "XAUUSD",
@@ -183,6 +238,7 @@ def main():
         "day_change_pct": day_change_pct,
         "structure_bias": bias,
         "cvd_divergence": divergence,
+        "llm_decision": llm_decision,
         "zones": zones,
         "candles": [
             {"t": timestamps[i], "o": float(opens[i]), "h": float(highs[i]),
@@ -200,6 +256,8 @@ def main():
     print(json.dumps({
         "current_price": current_price, "day_change_pct": round(day_change_pct, 3),
         "structure_bias": bias, "cvd_divergence": divergence,
+        "llm_rating": (llm_decision or {}).get("rating"),
+        "llm_direction": (llm_decision or {}).get("direction"),
         "zone_count": len(zones), "output_file": OUTPUT_FILE,
     }))
 
