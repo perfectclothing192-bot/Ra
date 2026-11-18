@@ -2361,6 +2361,80 @@ class AdvancedTradingAgent:
             "open_positions": len(self.positions)
         }
 
+    # ============================================
+    # STRATEGY (CANDIDATE, UNTESTED, NOT WIRED INTO run_loop.py's
+    # STRATEGIES): TRADINGAGENTS MULTI-AGENT LLM DECISION
+    # ============================================
+
+    def tradingagents_llm_signal(self, bars: List[PriceBar], asset: str, strategy_label: str) -> Signal:
+        """Wraps the TauricResearch/TradingAgents multi-agent LLM pipeline
+        (see llm_strategy.py's module docstring for the full explanation of
+        why this is unlike every other strategy here) as a Signal.
+
+        *** Added 2026-11-18 at the user's request, after they pointed at
+        github.com/TauricResearch/TradingAgents. NOT backtested - there is
+        no cheap way to backtest an LLM making a fresh real decision per
+        historical day without actually re-running the LLM for every one
+        of those days, which the framework does support (see its CHANGELOG:
+        "backtest over a ticker/date grid") but which hasn't been attempted
+        here yet. NOT wired into run_loop.py's STRATEGIES dict - requires a
+        working OPENAI_API_KEY (unset here, intentionally) and a trial
+        period against live paper trades, same as every other candidate
+        strategy in this file before it was ever deployed (see
+        backtest_candidates.py's convention). ***
+
+        llm_strategy.get_llm_signal() returns None (not "HOLD") when no
+        real decision is available yet (missing key, failed call, or an
+        unparseable rating) - that's treated as HOLD here, since there is
+        nothing else safe to do with "the LLM didn't answer" other than not
+        trade this cycle.
+
+        Stop-loss/take-profit are NOT the LLM's own call (it isn't asked
+        for price levels) - sized the same ATR-based way as every other
+        strategy here (1.5x ATR stop, 3x ATR target, 2:1 reward:risk) so
+        this doesn't need its own separate risk-sizing logic.
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
+
+        if len(bars) < 20:
+            return hold
+
+        import llm_strategy
+        direction = llm_strategy.get_llm_signal(asset, logger=self.logger)
+        if direction is None or direction == "HOLD":
+            return hold
+
+        current_bar = bars[-1]
+        entry_price = current_bar.close
+        atr = self._atr(bars, 14)[-1]
+        if atr <= 0:
+            return hold
+
+        if direction == "BUY":
+            stop_loss = entry_price - atr * 1.5
+            take_profit = entry_price + atr * 3.0
+        else:  # "SELL"
+            stop_loss = entry_price + atr * 1.5
+            take_profit = entry_price - atr * 3.0
+
+        return Signal(
+            asset=asset, direction=direction, strength=SignalStrength.MEDIUM,
+            entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+            risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.5,
+            timestamp=datetime.now()
+        )
+
+    def tradingagents_llm_xauusd_signal(self, bars: List[PriceBar]) -> Signal:
+        """Wrapper for a prospective "XAUUSD_LLM" synthetic position slot,
+        alongside (not instead of) smc/jesse_livermore_xauusd_m15/
+        fib_retracement_xauusd/orb_15m_xauusd's XAUUSD slots - same pattern
+        as those. Own "tradingagents_llm_xauusd" strategy label so
+        STRATEGY_RISK_OVERRIDE could size it independently if/when this
+        goes live. Gold picked as the first instrument to try this on
+        since it already has the most strategies and the deepest trade
+        history to compare against."""
+        return self.tradingagents_llm_signal(bars, asset="XAUUSD_LLM", strategy_label="tradingagents_llm_xauusd")
+
 
 # ============================================
 # DEMO: Run the Agent
