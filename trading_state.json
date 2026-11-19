@@ -1,6 +1,6 @@
 {
-  "account_equity": 123387.6941,
-  "daily_pnl": 15295.220199999996,
+  "account_equity": 125743.2394,
+  "daily_pnl": 17650.76550000001,
   "positions": {
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
@@ -13,17 +13,6 @@
       "risk_amount": 4809.017445,
       "position_id": "XAUUSD_M15_1794496244.2009"
     },
-    "BTCUSD": {
-      "asset": "BTCUSD",
-      "direction": "SHORT",
-      "entry_price": 64556.5,
-      "entry_time": "2026-11-17T00:34:17.459444",
-      "quantity": 0.5439592930211192,
-      "stop_loss": 65556.79143996787,
-      "take_profit": 61555.62568009639,
-      "risk_amount": 5441.178245,
-      "position_id": "BTCUSD_1794875657.459446"
-    },
     "XAGUSD": {
       "asset": "XAGUSD",
       "direction": "SHORT",
@@ -34,6 +23,17 @@
       "take_profit": 41.484479789899844,
       "risk_amount": 6169.384705,
       "position_id": "XAGUSD_1795122480.439809"
+    },
+    "BTCUSD": {
+      "asset": "BTCUSD",
+      "direction": "SHORT",
+      "entry_price": 61511.5,
+      "entry_time": "2026-11-19T21:33:58.197031",
+      "quantity": 0.38971215084356725,
+      "stop_loss": 63124.783536679795,
+      "take_profit": 56671.649389960614,
+      "risk_amount": 6287.161970000001,
+      "position_id": "BTCUSD_1795124038.197032"
     }
   },
   "trades": [
@@ -6480,12 +6480,24 @@
       "pnl": 14093.0372,
       "pnl_percent": 11.421752633271717,
       "strategy": "XAGUSD"
+    },
+    {
+      "asset": "BTCUSD",
+      "entry_price": 64556.5,
+      "exit_price": 61551.0,
+      "direction": "SHORT",
+      "quantity": 0.5439592930211192,
+      "entry_time": "2026-11-17T00:34:17.459444",
+      "exit_time": "2026-11-19T21:33:52.006620",
+      "pnl": 2355.5453,
+      "pnl_percent": 1.8732977703133677,
+      "strategy": "BTCUSD"
     }
   ],
   "oanda_trade_ids": {
     "XAUUSD_M15": "5138",
-    "BTCUSD": "5211",
-    "XAGUSD": "5287"
+    "XAGUSD": "5287",
+    "BTCUSD": "5293"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-19",
