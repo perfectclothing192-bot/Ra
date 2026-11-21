@@ -854,6 +854,165 @@ class AdvancedTradingAgent:
 
         return hold
 
+    def supply_demand_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "supply_demand") -> Signal:
+        """
+        Classic retail Supply & Demand zone strategy (drop-base-rally /
+        rally-base-drop) - distinct from order_block_signal's single-candle
+        ICT order block above. Untested candidate, added 2026-11-21 at the
+        user's request to evaluate retail-style supply/demand specifically.
+
+        The key difference from order_block_signal: there the "base" is
+        just one candle of the opposite color to the move. Here the base
+        has to actually be a tight-range consolidation (every candle in it,
+        high-low <= SD_BASE_RANGE_MULT x ATR, color-agnostic) - the real
+        "pause before the move" retail S&D traders (e.g. Sam Seiden) draw
+        their zones from, not just any one candle that happens to be the
+        opposite color.
+
+        1. A demand zone is a base (1 to SD_MAX_BASE_BARS consecutive
+           tight-range candles, ending at candle k) immediately followed by
+           a strong impulsive up-displacement: over the next
+           SD_DISPLACEMENT_BARS candles, price both clears the base's high
+           (a genuine structure break, not just a wick) and travels at
+           least SD_DISPLACEMENT_MULT x ATR from the base's low. Zone = the
+           base's full range [low, high] across all its candles. Mirror
+           image (supply zone) for a base followed by a strong
+           down-displacement.
+        2. Only the single most recent qualifying zone within a 50-bar
+           lookback is tracked, and only while still fresh - discarded if
+           any bar between formation and now has already returned into the
+           zone (first-return entries only, same freshness rule as
+           order_block_signal and fvg_signal).
+        3. Entry: the current bar's low reaches into the zone (a
+           retracement back into demand) while its close closes back above
+           the zone's bottom edge and above its own open (a
+           rejection/continuation candle, not a fill-through). Mirror
+           image for supply.
+        4. Stop just beyond the zone's far edge; target at 2x the stop
+           distance (same R:R as order_block_signal, for direct
+           comparability).
+
+        Backtested 2026-11-21 (1yr, 70/30 split, see
+        backtest_supply_demand_timeframes.py) on XAUUSD across
+        granularities, window=250 bars matching run_loop.py's live fetch:
+        M15 -3.0R/66 trades (train +1.0R PF 1.03, test -3.0R PF 0.77 -
+        sign flips, and the only timeframe with enough trades to actually
+        trust a verdict - it's a net loser); M30 +10.0R/29 trades (train
+        +11.0R PF 2.00, test -1.0R PF 0.67/4 trades - the "full year" win
+        is entirely a train-period artifact that reverses out-of-sample);
+        H1 +9.0R/21 trades (train +8.0R PF 2.00, test +2.0R PF 2.00/4
+        trades - the only granularity that doesn't flip sign, but on 4
+        test trades that's not a real validation, just too little data);
+        H4 -2.0R/5 trades (0 in test - nowhere near enough data to say
+        anything). Not deployed anywhere - no granularity clears this
+        repo's own bar for a live candidate (order_block_signal's history
+        above shows the same sign-flip-on-XAUUSD pattern), and trade count
+        collapses too fast as granularity increases to validate the one
+        granularity (H1) that didn't reverse.
+        """
+        hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
+
+        lookback = 50
+        sd_max_base_bars = 3
+        sd_base_range_mult = 0.6
+        displacement_bars = 3
+        displacement_mult = 2.0
+        if len(bars) < lookback + displacement_bars + sd_max_base_bars + 5:
+            return hold
+
+        highs = np.array([b.high for b in bars])
+        lows = np.array([b.low for b in bars])
+        closes = np.array([b.close for b in bars])
+        opens = np.array([b.open for b in bars])
+        atr = self._atr(bars, 14)[-1]
+        n = len(bars)
+        if atr <= 0:
+            return hold
+
+        current_high, current_low = highs[-1], lows[-1]
+        current_close, current_open = closes[-1], opens[-1]
+
+        earliest_k = max(sd_max_base_bars, n - lookback)
+
+        def base_bounds(k):
+            base_start = k
+            while (base_start > k - sd_max_base_bars + 1 and base_start > 0 and
+                   (highs[base_start - 1] - lows[base_start - 1]) <= sd_base_range_mult * atr):
+                base_start -= 1
+            return base_start, lows[base_start:k + 1].min(), highs[base_start:k + 1].max()
+
+        # Most recent demand zone: tight-range base ending at k, then a
+        # strong up-displacement clearing the base's high within
+        # displacement_bars.
+        for k in range(n - displacement_bars - 2, earliest_k - 1, -1):
+            if (highs[k] - lows[k]) > sd_base_range_mult * atr:
+                continue
+            base_start, zone_bottom, zone_top = base_bounds(k)
+
+            window_end = k + displacement_bars
+            if window_end >= n - 1:
+                continue
+            displaced = (highs[k + 1:window_end + 1].max() - zone_bottom) >= displacement_mult * atr
+            broke_structure = closes[window_end] > zone_top
+            if not (displaced and broke_structure):
+                continue
+
+            already_tested = np.any(lows[window_end + 1:n - 1] <= zone_top)
+            if already_tested:
+                break
+
+            if current_low <= zone_top and current_close > zone_bottom and current_close > current_open:
+                entry_price = current_close
+                stop_loss = zone_bottom - atr * 0.2
+                risk = entry_price - stop_loss
+                if risk <= 0:
+                    break
+                take_profit = entry_price + risk * 2.0
+                return Signal(
+                    asset=asset, direction="BUY", strength=SignalStrength.STRONG,
+                    entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                    risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.7,
+                    timestamp=datetime.now()
+                )
+            break  # only the single most recent zone is considered
+
+        # Most recent supply zone: tight-range base ending at k, then a
+        # strong down-displacement clearing the base's low within
+        # displacement_bars.
+        for k in range(n - displacement_bars - 2, earliest_k - 1, -1):
+            if (highs[k] - lows[k]) > sd_base_range_mult * atr:
+                continue
+            base_start, zone_bottom, zone_top = base_bounds(k)
+
+            window_end = k + displacement_bars
+            if window_end >= n - 1:
+                continue
+            displaced = (zone_top - lows[k + 1:window_end + 1].min()) >= displacement_mult * atr
+            broke_structure = closes[window_end] < zone_bottom
+            if not (displaced and broke_structure):
+                continue
+
+            already_tested = np.any(highs[window_end + 1:n - 1] >= zone_bottom)
+            if already_tested:
+                break
+
+            if current_high >= zone_bottom and current_close < zone_top and current_close < current_open:
+                entry_price = current_close
+                stop_loss = zone_top + atr * 0.2
+                risk = stop_loss - entry_price
+                if risk <= 0:
+                    break
+                take_profit = entry_price - risk * 2.0
+                return Signal(
+                    asset=asset, direction="SELL", strength=SignalStrength.STRONG,
+                    entry_price=entry_price, stop_loss=stop_loss, take_profit=take_profit,
+                    risk_reward_ratio=2.0, strategy=strategy_label, confidence=0.7,
+                    timestamp=datetime.now()
+                )
+            break
+
+        return hold
+
     def ema_crossover_signal(self, bars: List[PriceBar], asset: str, strategy_label: str = "ema_crossover") -> Signal:
         """
         EMA(9)/EMA(21) trend-following crossover - the single most commonly
