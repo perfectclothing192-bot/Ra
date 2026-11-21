@@ -909,6 +909,22 @@ class AdvancedTradingAgent:
         above shows the same sign-flip-on-XAUUSD pattern), and trade count
         collapses too fast as granularity increases to validate the one
         granularity (H1) that didn't reverse.
+
+        Follow-up 2026-11-21 (see backtest_supply_demand_m30.py): M30's
+        "good" full-year number above does not survive a proper test. 5yr
+        of XAUUSD M30 (163 trades) breaks into yearly folds that climb
+        monotonically - Year1 -4.0R PF 0.78, Year2 -1.0R PF 0.96, Year3
+        +2.0R PF 1.08, Year4 +4.0R PF 1.20, Year5 (the exact year tested
+        above) +10.0R PF 1.62 - i.e. the original result was just "the
+        most recent of 5 years happened to be the best one" (likely
+        riding gold's 2025-26 trend), not a real edge; full 5yr is barely
+        breakeven (+11.0R/163 trades, PF 1.10) and the 70/30 split on the
+        full 5yr goes negative in training (-1.0R, PF 0.99). Cross-asset
+        on the same 5yr/window: GBPUSD -17.0R/149, EURUSD -12.0R/129,
+        USOIL +4.0R/152, XAGUSD -21.0R/198 - net -35R across ~791 trades
+        over 5 assets. No spread/commission modeled anywhere in this
+        harness, so live results would be worse. Net conclusion: this is
+        a losing strategy in aggregate; M30 does not clear the bar either.
         """
         hold = Signal(asset, "HOLD", SignalStrength.WEAK, 0, 0, 0, 0, strategy_label, 0, datetime.now())
 
