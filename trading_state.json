@@ -34,6 +34,17 @@
       "take_profit": 36.700271781617744,
       "risk_amount": 7639.023870000001,
       "position_id": "XAGUSD_1795142035.22098"
+    },
+    "USOIL": {
+      "asset": "USOIL",
+      "direction": "SHORT",
+      "entry_price": 82.878,
+      "entry_time": "2026-11-23T13:33:56.830209",
+      "quantity": 2733.416153482288,
+      "stop_loss": 84.30678073926818,
+      "take_profit": 82.17101704292729,
+      "risk_amount": 7810.904705,
+      "position_id": "USOIL_1795440836.83021"
     }
   },
   "trades": [
@@ -6653,7 +6664,8 @@
   "oanda_trade_ids": {
     "BTCUSD": "5293",
     "XAUUSD_M15": "5304",
-    "XAGUSD": "5312"
+    "XAGUSD": "5312",
+    "USOIL": "5387"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-23",
