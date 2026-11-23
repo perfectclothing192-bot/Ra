@@ -1,50 +1,28 @@
 {
-  "account_equity": 156218.0941,
-  "daily_pnl": 4966.796399999992,
+  "account_equity": 145764.7568,
+  "daily_pnl": -5486.540899999993,
   "positions": {
-    "BTCUSD": {
-      "asset": "BTCUSD",
-      "direction": "SHORT",
-      "entry_price": 61511.5,
-      "entry_time": "2026-11-19T21:33:58.197031",
-      "quantity": 0.38971215084356725,
-      "stop_loss": 63124.783536679795,
-      "take_profit": 56671.649389960614,
-      "risk_amount": 6287.161970000001,
-      "position_id": "BTCUSD_1795124038.197032"
-    },
     "XAUUSD_M15": {
       "asset": "XAUUSD_M15",
-      "direction": "SHORT",
-      "entry_price": 3575.305,
-      "entry_time": "2026-11-20T01:33:46.588637",
-      "quantity": 62.45680367259636,
-      "stop_loss": 3641.6562191837997,
-      "take_profit": 3376.2513424486,
-      "risk_amount": 6906.80845,
-      "position_id": "XAUUSD_M15_1795138426.588638"
-    },
-    "XAGUSD": {
-      "asset": "XAGUSD",
-      "direction": "SHORT",
-      "entry_price": 41.5945,
-      "entry_time": "2026-11-20T02:33:55.220978",
-      "quantity": 2809.4813630380786,
-      "stop_loss": 43.225909406127414,
-      "take_profit": 36.700271781617744,
-      "risk_amount": 7639.023870000001,
-      "position_id": "XAGUSD_1795142035.22098"
+      "direction": "LONG",
+      "entry_price": 3654.435,
+      "entry_time": "2026-11-23T14:08:31.793353",
+      "quantity": 96.20630510588781,
+      "stop_loss": 3608.9811942521646,
+      "take_profit": 3790.796417243506,
+      "risk_amount": 7288.237840000001,
+      "position_id": "XAUUSD_M15_1795442911.793355"
     },
     "USOIL": {
       "asset": "USOIL",
       "direction": "SHORT",
-      "entry_price": 82.878,
-      "entry_time": "2026-11-23T13:33:56.830209",
-      "quantity": 2733.416153482288,
-      "stop_loss": 84.30678073926818,
-      "take_profit": 82.17101704292729,
-      "risk_amount": 7810.904705,
-      "position_id": "USOIL_1795440836.83021"
+      "entry_price": 82.856,
+      "entry_time": "2026-11-23T14:08:32.446909",
+      "quantity": 2491.854156436619,
+      "stop_loss": 84.31841260171146,
+      "take_profit": 82.05750959315417,
+      "risk_amount": 7288.237840000001,
+      "position_id": "USOIL_1795442912.446909"
     }
   },
   "trades": [
@@ -6659,13 +6637,59 @@
       "pnl": -828.2476,
       "pnl_percent": -0.5301867269420234,
       "strategy": "USOIL_FIB"
+    },
+    {
+      "asset": "BTCUSD",
+      "entry_price": 61511.5,
+      "exit_price": 63130.0,
+      "direction": "SHORT",
+      "quantity": 0.38971215084356725,
+      "entry_time": "2026-11-19T21:33:58.197031",
+      "exit_time": "2026-11-23T14:08:13.048995",
+      "pnl": -1030.3243,
+      "pnl_percent": -0.7068404754474917,
+      "strategy": "BTCUSD"
+    },
+    {
+      "asset": "XAUUSD_M15",
+      "entry_price": 3575.305,
+      "exit_price": 3641.675,
+      "direction": "SHORT",
+      "quantity": 62.45680367259636,
+      "entry_time": "2026-11-20T01:33:46.588637",
+      "exit_time": "2026-11-23T14:08:13.947389",
+      "pnl": -5307.9853,
+      "pnl_percent": -3.6414737118403373,
+      "strategy": "XAUUSD_M15"
+    },
+    {
+      "asset": "XAGUSD",
+      "entry_price": 41.5945,
+      "exit_price": 43.235,
+      "direction": "SHORT",
+      "quantity": 2809.4813630380786,
+      "entry_time": "2026-11-20T02:33:55.220978",
+      "exit_time": "2026-11-23T14:08:14.909505",
+      "pnl": -6861.6678,
+      "pnl_percent": -4.707357217639868,
+      "strategy": "XAGUSD"
+    },
+    {
+      "asset": "USOIL",
+      "entry_price": 82.878,
+      "exit_price": 82.166,
+      "direction": "SHORT",
+      "quantity": 2733.416153482288,
+      "entry_time": "2026-11-23T13:33:56.830209",
+      "exit_time": "2026-11-23T14:08:15.859621",
+      "pnl": 2749.0984,
+      "pnl_percent": 1.885982908592895,
+      "strategy": "USOIL"
     }
   ],
   "oanda_trade_ids": {
-    "BTCUSD": "5293",
-    "XAUUSD_M15": "5304",
-    "XAGUSD": "5312",
-    "USOIL": "5387"
+    "XAUUSD_M15": "5399",
+    "USOIL": "5403"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-23",
