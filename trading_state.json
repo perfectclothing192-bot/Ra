@@ -1,7 +1,19 @@
 {
   "account_equity": 129873.6211,
   "daily_pnl": -4700.703800000003,
-  "positions": {},
+  "positions": {
+    "GBPUSD": {
+      "asset": "GBPUSD",
+      "direction": "LONG",
+      "entry_price": 1.3099,
+      "entry_time": "2026-11-25T03:34:31.630111",
+      "quantity": 961843.5263302079,
+      "stop_loss": 1.309494922819945,
+      "take_profit": 1.3112665,
+      "risk_amount": 6493.681055000001,
+      "position_id": "GBPUSD_1795577671.630112"
+    }
+  },
   "trades": [
     {
       "asset": "EURUSD",
@@ -6796,7 +6808,9 @@
       "strategy": "XAGUSD_RSI2"
     }
   ],
-  "oanda_trade_ids": {},
+  "oanda_trade_ids": {
+    "GBPUSD": "5466"
+  },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-25",
   "daily_baseline_balance": 134574.3249
