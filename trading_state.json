@@ -1,17 +1,17 @@
 {
-  "account_equity": 132045.6734,
-  "daily_pnl": -2528.651500000007,
+  "account_equity": 131317.5206,
+  "daily_pnl": -3256.804300000018,
   "positions": {
     "XAGUSD_RSI2": {
       "asset": "XAGUSD_RSI2",
       "direction": "SHORT",
-      "entry_price": 40.833,
-      "entry_time": "2026-11-25T19:34:12.352657",
-      "quantity": 1567.2096129482973,
-      "stop_loss": 41.05443671218755,
-      "take_profit": 40.5869,
-      "risk_amount": 6940.75488,
-      "position_id": "XAGUSD_RSI2_1795635252.352659"
+      "entry_price": 41.074,
+      "entry_time": "2026-11-25T20:33:46.830792",
+      "quantity": 1340.7258746025543,
+      "stop_loss": 41.318862732732235,
+      "take_profit": 40.842200000000005,
+      "risk_amount": 6565.876029999999,
+      "position_id": "XAGUSD_RSI2_1795638826.830793"
     }
   },
   "trades": [
@@ -6962,10 +6962,22 @@
       "pnl": -6769.4242,
       "pnl_percent": -5.126577816369409,
       "strategy": "XAUUSD_M15"
+    },
+    {
+      "asset": "XAGUSD_RSI2",
+      "entry_price": 40.833,
+      "exit_price": 41.061,
+      "direction": "SHORT",
+      "quantity": 1567.2096129482973,
+      "entry_time": "2026-11-25T19:34:12.352657",
+      "exit_time": "2026-11-25T20:33:39.933183",
+      "pnl": -728.1528,
+      "pnl_percent": -0.5544978283727967,
+      "strategy": "XAGUSD_RSI2"
     }
   ],
   "oanda_trade_ids": {
-    "XAGUSD_RSI2": "5542"
+    "XAGUSD_RSI2": "5550"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-25",
