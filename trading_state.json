@@ -1,6 +1,6 @@
 {
   "account_equity": 131554.1232,
-  "daily_pnl": -3020.201700000005,
+  "daily_pnl": 0.0,
   "positions": {
     "USOIL_FIB": {
       "asset": "USOIL_FIB",
@@ -7004,6 +7004,6 @@
     "USOIL_FIB": "5562"
   },
   "oanda_initial_balance": 99997.7957,
-  "daily_baseline_date": "2026-11-25",
-  "daily_baseline_balance": 134574.3249
+  "daily_baseline_date": "2026-11-26",
+  "daily_baseline_balance": 131554.1232
 }
