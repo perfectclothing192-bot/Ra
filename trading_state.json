@@ -1,6 +1,6 @@
 {
-  "account_equity": 129051.0926,
-  "daily_pnl": -1050.0458999999973,
+  "account_equity": 146757.0617,
+  "daily_pnl": 16655.92319999999,
   "positions": {
     "BTCUSD": {
       "asset": "BTCUSD",
@@ -13,17 +13,6 @@
       "risk_amount": 6523.240155,
       "position_id": "BTCUSD_1795728855.270671"
     },
-    "XAUUSD_M15": {
-      "asset": "XAUUSD_M15",
-      "direction": "LONG",
-      "entry_price": 3576.28,
-      "entry_time": "2026-11-27T01:33:59.703479",
-      "quantity": 188.56723152776604,
-      "stop_loss": 3555.7486873926455,
-      "take_profit": 3637.8739378220644,
-      "risk_amount": 6452.5546300000005,
-      "position_id": "XAUUSD_M15_1795743239.703481"
-    },
     "XAGUSD": {
       "asset": "XAGUSD",
       "direction": "LONG",
@@ -34,6 +23,17 @@
       "take_profit": 46.69176299255569,
       "risk_amount": 6452.5546300000005,
       "position_id": "XAGUSD_1795745300.371969"
+    },
+    "EURUSD_FIB": {
+      "asset": "EURUSD_FIB",
+      "direction": "LONG",
+      "entry_price": 1.09714,
+      "entry_time": "2026-11-27T05:08:10.290866",
+      "quantity": 590632.8114600445,
+      "stop_loss": 1.0965188143036906,
+      "take_profit": 1.09837,
+      "risk_amount": 7337.853085,
+      "position_id": "EURUSD_FIB_1795756090.290867"
     }
   },
   "trades": [
@@ -7164,12 +7164,24 @@
       "pnl": -1050.0459,
       "pnl_percent": -0.8136668034688146,
       "strategy": "XAUUSD_ORB"
+    },
+    {
+      "asset": "XAUUSD_M15",
+      "entry_price": 3576.28,
+      "exit_price": 3637.906,
+      "direction": "LONG",
+      "quantity": 188.56723152776604,
+      "entry_time": "2026-11-27T01:33:59.703479",
+      "exit_time": "2026-11-27T05:08:02.890312",
+      "pnl": 17705.9691,
+      "pnl_percent": 12.064815753939287,
+      "strategy": "XAUUSD_M15"
     }
   ],
   "oanda_trade_ids": {
     "BTCUSD": "5626",
-    "XAUUSD_M15": "5639",
-    "XAGUSD": "5643"
+    "XAGUSD": "5643",
+    "EURUSD_FIB": "5649"
   },
   "oanda_initial_balance": 99997.7957,
   "daily_baseline_date": "2026-11-27",
